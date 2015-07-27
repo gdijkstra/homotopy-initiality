@@ -47,6 +47,9 @@ module _ (F G : Container) where
 apply : {F G : Container} (α : ContainerMorphism F G) (X : Type0) → ⟦ F ⟧₀ X → ⟦ G ⟧₀ X
 apply (mk-cont-morphism f g) X (s , t) = f s , t ∘ (g s)
 
+_‼_ : {F G : Container} (α : ContainerMorphism F G) {X : Type0} → ⟦ F ⟧₀ X → ⟦ G ⟧₀ X
+_‼_ α {X} = apply α X
+
 -- FX - Ff -> FY
 --  |          |
 -- apply X    apply Y

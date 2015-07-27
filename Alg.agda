@@ -8,51 +8,57 @@ module Alg (hit : Desc) where
   open import FreeMonad
   open Desc.Desc hit
 
-  record Algebra : Type1 where
-    constructor mk-algebra
+  -- G₀ : Type -> Type is the identity functor.
+  -- G₀₀ : Type0 → Type0
+  -- G₀₀ X = X
+
+  -- G₀₁ : {X Y : Type0} → X → Y → G₀₀ X → G₀₀ Y
+  -- G₀₁ f = f
+
+  record F₀-alg : Type1 where
+    constructor mk-F₀-alg
     field
       X : Type0
       θ₀ : ⟦ F₀ ⟧₀ X → X
-      θ₁ : (x : ⟦ F₁ ⟧₀ X) → (θ₀ *¹) (apply l X x) == (θ₀ *¹) (apply r X x)
 
-  ap∘ : {X Y Z : Type0} (f : Y → Z) {g h : X → Y} → g == h → f ∘ g == f ∘ h
-  ap∘ f = ap (λ x → f ∘ x)
-
-  module _ (θ ρ : Algebra) where
-    open Algebra θ
-    open Algebra ρ renaming (X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
-
-    open import lib.PathGroupoid
-
-    module Comm (f : X → Y) (f₀ : f ∘ θ₀ == ρ₀ ∘ ⟦ F₀ ⟧₁ f) where
-      -- TODO: Refactor ActionMorphisms?
-      open ActionMorphisms F₀ θ₀ ρ₀ f (λ x → ! (ap (λ g → g x) f₀))
-
-      comm : (ρ₀ *¹) ∘ apply l Y ∘ ⟦ F₁ ⟧₁ f == (ρ₀ *¹) ∘ apply r Y ∘ ⟦ F₁ ⟧₁ f
-           → f ∘ (θ₀ *¹) ∘ apply l X == f ∘ (θ₀ *¹) ∘ apply r X
-      comm p = 
-        f ∘ (θ₀ *¹) ∘ apply l X 
-          =⟨ ap (λ g → g ∘ apply l X) (! comm*-ext) ⟩ 
-        (ρ₀ *¹) ∘ ⟦ F₀ * ⟧₁ f ∘ apply l X
-          =⟨ idp ⟩ -- naturality of l
-        (ρ₀ *¹) ∘ apply l Y ∘ ⟦ F₁ ⟧₁ f
-          =⟨ p ⟩
-        (ρ₀ *¹) ∘ apply r Y ∘ ⟦ F₁ ⟧₁ f
-          =⟨ idp ⟩ -- naturality of r
-        (ρ₀ *¹) ∘ ⟦ F₀ * ⟧₁ f ∘ apply r X
-          =⟨ ap (λ g → g ∘ apply r X) comm*-ext ⟩
-        f ∘ (θ₀ *¹) ∘ apply r X ∎
-
-  open import lib.Funext
-
-  record AlgebraMorphism (θ ρ : Algebra) : Type0 where
-    constructor mk-morphism
-    open Algebra θ
-    open Algebra ρ renaming (X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
-    open Comm θ ρ
-
+  record F₀-alg-morph (θ ρ : F₀-alg) : Type0 where
+    constructor mk-F₀-alg-morph
+    open F₀-alg θ
+    open F₀-alg ρ renaming (X to Y ; θ₀ to ρ₀)
     field
       f : X → Y
       f₀ : f ∘ θ₀ == ρ₀ ∘ ⟦ F₀ ⟧₁ f
-      f₁ : ap f ∘ θ₁ == {!!} ∘ ρ₁ ∘ ⟦ F₁ ⟧₁ f
---      f₁ : (x : ⟦ F₁ ⟧₀ X) → .
+
+  -- G₁ : ∫ (F₀-alg) (F₁ ∘ U₀) → Type
+  module _ (alg : F₀-alg) where
+    open F₀-alg alg
+
+    G₁₀ : ⟦ F₁ ⟧₀ X → Type0
+    G₁₀ x = (θ₀ *¹) (l ‼ x) == (θ₀ *¹) (r ‼ x)
+
+  module _ {θ ρ : F₀-alg} (morph : F₀-alg-morph θ ρ) where
+    open F₀-alg θ
+    open F₀-alg ρ renaming (X to Y; θ₀ to ρ₀)
+    open F₀-alg-morph morph
+
+    -- goal: (ρ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ f x)) == (ρ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ f x))
+    G₁₁ : (x : ⟦ F₁ ⟧₀ X) → G₁₀ θ x → G₁₀ ρ (⟦ F₁ ⟧₁ f x)
+    G₁₁ x p = {!ap p !}
+
+  record F₁-alg : Type1 where
+    constructor mk-F₁-alg
+    open F₀-alg
+    field
+      prev₀ : F₀-alg
+      θ₁ : (x : ⟦ F₁ ⟧₀ (X prev₀)) → G₁₀ prev₀ x
+    open F₀-alg prev₀ public
+
+  record F₁-alg-morph (θ ρ : F₁-alg) : Type0 where
+    constructor mk-F₁-alg-morph
+    open F₁-alg θ renaming (prev₀ to θ')
+    open F₁-alg ρ renaming (X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁ ; prev₀ to ρ')
+    open F₀-alg-morph
+    field
+      prev₁ : F₀-alg-morph θ' ρ'
+      f₁ : (x : ⟦ F₁ ⟧₀ X) → G₁₁ prev₁ x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ (f prev₁) x)
+    open F₀-alg-morph prev₁ public 

@@ -12,6 +12,14 @@ open import lib.Funext using (λ= ; app=-β ; λ=-η ; app=)
 
 open Container.Container F renaming (Shapes to S ; Positions to P)
 
+record HasInductionPrinciple (T : Type0) : Type1 where
+  field
+    c : ⟦ F ⟧₀ T → T
+    ind    : (B : T → Type0) (m : (x : ⟦ F ⟧₀ T) → □ F B x → B (c x)) → (x : T) → B x
+    ind-β₀ : (B : T → Type0) (m : (x : ⟦ F ⟧₀ T) → □ F B x → B (c x))
+             (s : S) (t : P s → T)
+            → ind B m (c (s , t)) == m (s , t) (ind B m ∘ t)
+
 module Induction⇒Initiality
   (T : Type0)
   (c : ⟦ F ⟧₀ T → T)
