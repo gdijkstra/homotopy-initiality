@@ -74,6 +74,8 @@ module Induction⇒Initiality
     lemma : (s : S) (t : P s → T) →
       ap (λ X → θ (s , X ∘ t)) (λ= p) == ap (λ X → θ (s , X)) (λ= (p ∘ t))
     lemma s t = ↯
+      ap (λ X → θ (⟦ F ⟧₁ X (s , t))) (λ= p)
+       =⟪ idp ⟫
       ap (λ X → θ (s , X ∘ t)) (λ= p)
        =⟪ idp ⟫
       ap ((λ X → θ (s , X)) ∘ (λ X → X ∘ t)) (λ= p)
