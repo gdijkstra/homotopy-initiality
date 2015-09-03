@@ -35,3 +35,23 @@ module Desc where
       (ρ₀ *¹) (⟦ F₀ * ⟧₁ f (r ‼ x))
         =⟪idp⟫
       (ρ₀ *¹) (r ‼ ⟦ F₁ ⟧₁ f x) ∎∎
+
+    module _ {X : Type0} {θ₀ : ⟦ F₀ ⟧₀ X → X} (x : ⟦ F₁ ⟧₀ X) (p : G₁₀ X θ₀ x) where
+      G₁₁-id : G₁₁ (idf X) (λ _ → idp) x p == p
+      G₁₁-id = ↯
+        G₁₁ (idf X) (λ _ → idp) x p
+         =⟪ {!!} ⟫
+        ActionMorphisms.comm* F₀ θ₀ θ₀ (idf X) (λ x₁ → idp) (l ‼ x) ∙ ap (idf X) p ∙ ! (ActionMorphisms.comm* F₀ θ₀ θ₀ (idf X) (λ x₁ → idp) (r ‼ x))
+         =⟪ ap
+              (λ q →
+                 q ∙
+                 ap (idf X) p ∙
+                 ! (ActionMorphisms.comm* F₀ θ₀ θ₀ (idf X) (λ x₁ → idp) (r ‼ x)))
+              {!!} ⟫
+        ap (idf X) p ∙ ! (ActionMorphisms.comm* F₀ θ₀ θ₀ (idf X) (λ x₁ → idp) (r ‼ x))
+         =⟪ ap (λ q → ap (idf X) p ∙ ! q) {!!} ⟫
+        ap (idf X) p ∙ idp
+         =⟪ ∙-unit-r (ap (idf X) p) ⟫
+        ap (idf X) p
+         =⟪ ap-idf p ⟫
+        p ∎∎

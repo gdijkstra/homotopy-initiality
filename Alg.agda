@@ -4,16 +4,12 @@ open import Desc
 
 open import lib.Basics
 
-lemma-2-11-4' : ∀ {i j}
-    (A : Type i) (B : Type j) (f g : A → B) {a a' : A} (p : a == a') (q : f a == g a)
-  → transport (λ x → f x == g x) p q == ! (ap f p) ∙ q ∙ (ap g p)
-lemma-2-11-4' A B₁ f₁ g idp q = ! (∙-unit-r q)
-
 module Alg (hit : Desc) where
   open import lib.types.PathSeq
   open import Container
   open import FreeMonad
   open Desc.Desc hit
+  open import Utils
 
   -- G₀ : Type -> Type is the identity functor.
   -- G₁ : ∫ Type F₁ -> Type is something more involved.
@@ -60,26 +56,6 @@ module Alg (hit : Desc) where
      → morph-f == morph-g
     mk-alg-morph-eq = {!!}
   
-  -- module _ {a b : Alg} {morph-f morph-g : Alg-morph a b} where
-  --   open Alg a
-  --   open Alg b renaming (X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
-  --   open Alg-morph morph-f
-  --   open Alg-morph morph-g renaming (f to g ; f₀ to g₀ ; f₁ to g₁)
-      
-  --   mk-alg-morph-eq' :
-  --      (p : f == g)
-  --      (q : ! (ap (λ X₁ → X₁ ∘ θ₀) p) ∙ f₀ ∙ ap (λ X₁ → ρ₀ ∘ ⟦ F₀ ⟧₁ X₁) p == g₀)
-  --      (r : {!!})
-  --    → morph-f == morph-g
-  --   mk-alg-morph-eq' p q r =
-  --     mk-alg-morph-eq p
-  --                     ((lemma-2-11-4' (X → Y)
-  --                                     (⟦ F₀ ⟧₀ X → Y)
-  --                                     (λ X₁ → X₁ ∘ θ₀)
-  --                                     (λ X₁ → ρ₀ ∘ ⟦ F₀ ⟧₁ X₁) p f₀)
-  --                     ∙ q)
-  --                     {!!}
-    
   module _ {a b : Alg} (f' g' : Alg-morph a b) where
     open Alg a
     open Alg b renaming (X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
@@ -98,7 +74,7 @@ module Alg (hit : Desc) where
      where
 
       p₀' : (x : ⟦ F₀ ⟧₀ X) → transport (λ A → A (θ₀ x) == ρ₀ (⟦ F₀ ⟧₁ A x)) p (f₀ x) == g₀ x
-      p₀' x = lemma-2-11-4' (X → Y) Y (λ A → A (θ₀ x)) (λ A → ρ₀ (⟦ F₀ ⟧₁ A x)) p (f₀ x) ∙ p₀ x
+      p₀' x = transport-id-nondep (X → Y) Y (λ A → A (θ₀ x)) (λ A → ρ₀ (⟦ F₀ ⟧₁ A x)) p (f₀ x) ∙ p₀ x
 
       p₀'' : transport (λ A → (x₁ : ⟦ F₀ ⟧₀ X) → A (θ₀ x₁) == ρ₀ (⟦ F₀ ⟧₁ A x₁)) p f₀ == g₀
       p₀'' = {!!}
@@ -127,3 +103,20 @@ module Alg (hit : Desc) where
       -- We should be able to get rid of the path over stuff.
       totaal : G₁₁ {X} {Y} {θ₀} {ρ₀} g g₀ x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ g x) [ (λ { (A , B) → G₁₀ Y ρ₀ (⟦ F₁ ⟧₁ A x) }) ↓ ! p,p₀ ∙ p,p₀ ]
       totaal = !ᵈ links ∙ᵈ midden ∙ᵈ rechts
+
+  id-morph : (X : Alg) → Alg-morph X X
+  id-morph (mk-alg X θ₀ θ₁) = mk-alg-morph (idf X) (λ x → idp) (λ x → ↯
+    G₁₁ (idf X) (λ x₁ → idp) x (θ₁ x)
+      =⟪ {!!} ⟫
+    θ₁ x ∎∎)
+  
+  -- _∘-morph_ : {X Y Z : Alg} → Alg-morph Y Z → Alg-morph X Y → Alg-morph X Z
+  -- _∘-morph_ {mk-alg X θ} {mk-alg Y ρ} {mk-alg Z ζ} (mk-alg-morph g g₀) (mk-alg-morph f f₀) =
+  --   mk-alg-morph (g ∘ f) (λ x → ↯
+  --     g (f (θ x))
+  --      =⟪ ap g (f₀ x) ⟫
+  --     g (ρ (⟦ F ⟧₁ f x))
+  --      =⟪ g₀ (⟦ F ⟧₁ f x) ⟫
+  --     ζ (⟦ F ⟧₁ g (⟦ F ⟧₁ f x))
+  --      =⟪idp⟫ -- containers satisfy functor laws strictly
+  --     ζ (⟦ F ⟧₁ (g ∘ f) x) ∎∎)

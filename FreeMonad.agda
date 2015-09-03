@@ -102,6 +102,19 @@ module ActionMorphisms (F : Container)
  comm*-ext : (ρ *¹) ∘ ⟦ F * ⟧₁ f == f ∘ (θ *¹)
  comm*-ext = λ= comm*
 
+-- Functor laws for *
+module _ (F : Container) {X : Type0} (θ : ⟦ F ⟧₀ X → X) where
+  open import lib.types.PathSeq
+
+
+  comm*-id : (x : ⟦ F * ⟧₀ X) → ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) x == idp
+  comm*-id = ind* F X (λ x → ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) x == idp)
+              (λ x → idp)
+              (λ s t g → ↯
+               ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) (c* F (s , t))
+                =⟪ {!!} ⟫
+               idp ∎∎)
+
 -- Lift dependent algebras to dependent monad algebras.
 module LiftDepAlg
   (F : Container) 

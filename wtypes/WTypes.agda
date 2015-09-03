@@ -2,14 +2,13 @@
 
 open import Container
 
-module WTypes (F : Container) where
+module wtypes.WTypes (F : Container) where
 
 open import lib.Base hiding (S)
 open import lib.PathGroupoid
 open import lib.PathFunctor
 open import lib.types.PathSeq
 open import lib.Funext using (λ= ; app=-β ; λ=-η ; app=)
-
 open Container.Container F renaming (Shapes to S ; Positions to P)
 
 record HasInductionPrinciple (T : Type0) : Type1 where
@@ -75,9 +74,9 @@ module Induction⇒Initiality
       ap (λ X → θ (s , X ∘ t)) (λ= p) == ap (λ X → θ (s , X)) (λ= (p ∘ t))
     lemma s t = ↯
       ap (λ X → θ (⟦ F ⟧₁ X (s , t))) (λ= p)
-       =⟪ idp ⟫
+       =⟪idp⟫
       ap (λ X → θ (s , X ∘ t)) (λ= p)
-       =⟪ idp ⟫
+       =⟪idp⟫
       ap ((λ X → θ (s , X)) ∘ (λ X → X ∘ t)) (λ= p)
        =⟪ ap-∘ _ _ (λ= p) ⟫
       ap (λ X → θ (s , X)) (ap (λ X → X ∘ t) (λ= p))
@@ -122,7 +121,7 @@ module Induction⇒Initiality
       rec-β₀ s t ∙ ap (λ t' → θ (s , t')) (λ= (p ∘ t)) ∙ ! (ap (λ X → θ (⟦ F ⟧₁ X (s , t))) (λ= p))
        =⟪ ap (λ E → rec-β₀ s t ∙ ap (λ t' → θ (s , t')) (λ= (p ∘ t)) ∙ E) (!-ap _ _) ⟫
       rec-β₀ s t ∙ ap (λ t' → θ (s , t')) (λ= (p ∘ t)) ∙ ap (λ X → θ (⟦ F ⟧₁ X (s , t))) (! (λ= p))
-        =⟪ idp ⟫
+        =⟪idp⟫
       rec-β₀ s t ∙ ap (λ t' → θ (s , t')) (λ= (p ∘ t)) ∙ idp ∙ ap (λ X → θ (⟦ F ⟧₁ X (s , t))) (! (λ= p))
        =⟪ ap (λ E → rec-β₀ s t ∙ ap (λ t' → θ (s , t')) (λ= (p ∘ t)) ∙ E ∙ ap (λ X → θ (⟦ F ⟧₁ X (s , t))) (! (λ= p)))
              (! (!-inv-l (rec'-β₀ s t))) ⟫

@@ -70,15 +70,16 @@ all (Sh ◁ Pos) A (s , t) = (x : Pos s) → A (t x)
 
 □ = all
 
+-- We can lift sections of a family B : A → Type to □ B : FA → Type.
 module _ (F : Container) {A : Type0} {B : A → Type0} (f : (x : A) → B x) where
-  dep-map : (x : ⟦ F ⟧₀ A) → all F B x
-  dep-map (s , t) = f ∘ t
+  □-lift : (x : ⟦ F ⟧₀ A) → □ F B x
+  □-lift (s , t) = f ∘ t
 
   f~ : A → Σ A B
   f~ x = (x , f x)
 
-  dep-map=sndFf~ : (x : ⟦ F ⟧₀ A) → snd ∘ snd (⟦ F ⟧₁ f~ x) == dep-map x
-  dep-map=sndFf~ x = idp
+  □-lift=sndFf~ : (x : ⟦ F ⟧₀ A) → snd ∘ snd (⟦ F ⟧₁ f~ x) == □-lift x
+  □-lift=sndFf~ x = idp
 
 -- Containers preserve Σ-types in the following sense.
 module Σ-all (A : Type0) (B : A → Type0) (F : Container)  where

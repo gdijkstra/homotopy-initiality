@@ -2,23 +2,18 @@
 
 open import Container
 
-module PointfulWTypes (F : Container) where
+module wtypes.PointfulWTypes (F : Container) where
 
 open import lib.Base hiding (S)
 open import lib.PathGroupoid
 open import lib.PathFunctor
 open import lib.types.PathSeq
 open import lib.Funext using (λ= ; app=-β ; λ=-η ; app=)
-
 open Container.Container F renaming (Shapes to S ; Positions to P)
+open import Utils
 
 ⟦F⟧₁= : {X Y : Type0} {f g : X → Y} (p : (x : X) → f x == g x) → (x : ⟦ F ⟧₀ X) → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
 ⟦F⟧₁= p (s , t) = ap (λ x' → s , x') (λ= (p ∘ t))
-
-lemma-2-11-4' : ∀ {i j}
-    (A : Type i) (B : Type j) (f g : A → B) {a a' : A} (p : a == a') (q : f a == g a)
-  → transport (λ x → f x == g x) p q == ! (ap f p) ∙ q ∙ (ap g p)
-lemma-2-11-4' A B₁ f₁ g idp q = ! (∙-unit-r q)
 
 record Alg : Type1 where
   constructor mk-alg
