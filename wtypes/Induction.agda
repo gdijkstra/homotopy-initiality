@@ -8,16 +8,15 @@ open import wtypes.Alg F
 module _ (T' : Alg) where
   open Alg T' renaming (X to T ; θ to c)
 
-  record InductionPrinciple
-    (B : T → Type0)
-    (m : (x : ⟦ F ⟧₀ T) → □ F B x → B (c x)) : Type1
-    where
-    constructor mk-ind
-    
-    field
-      ind    : (x : T) → B x
-      ind-β₀ : (x : ⟦ F ⟧₀ T)
-             → ind (c x) == m x (□-lift F ind x)
+  record InductionPrinciple : Type1 where
+      constructor mk-ind
+      
+      field
+        ind    : (B : T → Type0) (m : (x : ⟦ F ⟧₀ T) → □ F B x → B (c x))
+               → (x : T) → B x
+        ind-β₀ : (B : T → Type0) (m : (x : ⟦ F ⟧₀ T) → □ F B x → B (c x))
+               → (x : ⟦ F ⟧₀ T)
+               → ind B m (c x) == m x (□-lift F (ind B m) x)
   
   record SectionInductionPrinciple
     (X' : Alg)
@@ -36,7 +35,7 @@ module _ (T' : Alg) where
     field
       σ-is-section : (x : T) → f (σ x) == x
 
-module _ (T' : Alg) where
+module SectionInduction⇔Induction (T' : Alg) where
   open Alg T' renaming (X to T ; θ to c)
 
   -- Section induction implies induction
@@ -55,16 +54,16 @@ module _ (T' : Alg) where
     f' : Alg-morph X' T'
     f' = mk-alg-morph fst (λ x → idp)
 
-    SectionInduction⇒Induction : SectionInductionPrinciple T' X' f' → InductionPrinciple T' B m
-    SectionInduction⇒Induction (mk-section-ind (mk-alg-morph σ σ₀)  σ-is-section) =
-      mk-ind (λ x → transport B (σ-is-section x) (snd (σ x)))
-             (λ x → transport B (σ-is-section (c x)) (snd (σ (c x)))
-                     =⟨ {!!} ⟩
-                    transport B {!!} (snd (θ (⟦ F ⟧₁ σ x)))
-                     =⟨ {!!} ⟩
-                    m x
-                    (□-lift F (λ x₁ → transport B (σ-is-section x₁) (snd (σ x₁))) x)
-                      ∎)
+    -- SectionInduction⇒Induction : SectionInductionPrinciple T' X' f' → InductionPrinciple T' B m
+    -- SectionInduction⇒Induction (mk-section-ind (mk-alg-morph σ σ₀)  σ-is-section) =
+    --   mk-ind (λ x → transport B (σ-is-section x) (snd (σ x)))
+    --          (λ x → transport B (σ-is-section (c x)) (snd (σ (c x)))
+    --                  =⟨ {!!} ⟩
+    --                 transport B {!!} (snd (θ (⟦ F ⟧₁ σ x)))
+    --                  =⟨ {!!} ⟩
+    --                 m x
+    --                 (□-lift F (λ x₁ → transport B (σ-is-section x₁) (snd (σ x₁))) x)
+    --                   ∎)
 
   -- Induction implies section induction
   module _ (X' : Alg)
@@ -73,11 +72,11 @@ module _ (T' : Alg) where
     open Alg X'
     open Alg-morph f'
 
-    B : T → Type0
-    B = hfiber f
+    -- B : T → Type0
+    -- B = hfiber f
 
-    m : (x : ⟦ F ⟧₀ T) → □ F B x → B (c x)
-    m x u = {!⟦ F ⟧₁ f !}
+    -- m : (x : ⟦ F ⟧₀ T) → □ F B x → B (c x)
+    -- m x u = {!⟦ F ⟧₁ f !}
 
     -- Goal:
     -- (x : X) × f x == c x'
