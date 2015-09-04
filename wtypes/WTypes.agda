@@ -151,3 +151,20 @@ module Induction⇒Initiality
 
       f'=g' : f' == g'
       f'=g' = mk-alg-morph-eq' f=g f₀=g₀
+
+module Initiality⇒SectionInduction
+  (T' : Alg)
+  (rec : (X' : Alg) → Alg-morph T' X')
+  (rec-unique : (X' : Alg) (f : Alg-morph T' X') → rec X' == f)
+  (X' : Alg) (f' : Alg-morph X' T')
+  where
+    is-section : f' ∘-morph rec X' == id-morph T'
+    is-section = ↯
+      f' ∘-morph rec X'
+       =⟪ ! (rec-unique T' _) ⟫
+      rec T'
+       =⟪ rec-unique T' _ ⟫ 
+      id-morph T' ∎∎ 
+
+    sectioninduction : SectionInductionPrinciple T' X' f' 
+    sectioninduction = mk-section-ind (rec X') (app= (ap Alg-morph.f is-section))
