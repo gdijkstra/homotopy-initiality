@@ -58,3 +58,8 @@ coe-β-λ= e = λ= (coe-β e)
 coe!-β-λ= : ∀ {i} {A B : Type i} (e : A ≃ B)
   → coe! (ua e) == <– e
 coe!-β-λ= e = λ= (coe!-β e)
+
+module _ {i} {X : Type i} where
+  p=q→!p∙q=idp : {x y : X} (p q : x == y)
+               → p == q → ! p ∙ q == idp
+  p=q→!p∙q=idp p .p idp = !-inv-l p
