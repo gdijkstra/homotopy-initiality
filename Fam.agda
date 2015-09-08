@@ -103,38 +103,38 @@ module Equivalence₀ where
   Fam≃Arr₀ = equiv to from to-from from-to
 
 -- Equivalence at the morphism level
-module Equivalence₁ where
-  to : {X Y : Fam} → Fam-hom X Y → Arr-hom (Fam⇒Arr₀ X) (Fam⇒Arr₀ Y)
-  to = Fam⇒Arr₁
+-- module Equivalence₁ where
+--   to : {X Y : Fam} → Fam-hom X Y → Arr-hom (Fam⇒Arr₀ X) (Fam⇒Arr₀ Y)
+--   to = Fam⇒Arr₁
 
-  from : {X Y : Arr} → Arr-hom X Y → Fam-hom (Arr⇒Fam₀ X) (Arr⇒Fam₀ Y)
-  from = Arr⇒Fam₁
+--   from : {X Y : Arr} → Arr-hom X Y → Fam-hom (Arr⇒Fam₀ X) (Arr⇒Fam₀ Y)
+--   from = Arr⇒Fam₁
 
-  module _ (X X' Y Y' : Type0) (f₀ : X → Y) (f₁ : X' → Y') where
-    f₀' : Arr
-    f₀' = (X , Y , f₀)
+--   module _ (X X' Y Y' : Type0) (f₀ : X → Y) (f₁ : X' → Y') where
+--     f₀' : Arr
+--     f₀' = (X , Y , f₀)
 
-    f₁' : Arr
-    f₁' = (X' , Y' , f₁)
-    -- to (from x) : Arr-hom (Fam⇒Arr₀ (Arr⇒Fam₀ f₀')) (Fam⇒Arr₀ (Arr⇒Fam₀ f₁'))
+--     f₁' : Arr
+--     f₁' = (X' , Y' , f₁)
+--     -- to (from x) : Arr-hom (Fam⇒Arr₀ (Arr⇒Fam₀ f₀')) (Fam⇒Arr₀ (Arr⇒Fam₀ f₁'))
 
-    -- We have to compute the coe of that value along our previous
-    -- equivalence of objects.
-    to-from : (x : Arr-hom f₀' f₁') → to (from x) == x [ uncurry Arr-hom ↓ pair×= (Equivalence₀.to-from f₀') (Equivalence₀.to-from f₁') ]
-    to-from (g , h , p) = {!!}
+--     -- We have to compute the coe of that value along our previous
+--     -- equivalence of objects.
+--     to-from : (x : Arr-hom f₀' f₁') → to (from x) == x [ uncurry Arr-hom ↓ pair×= (Equivalence₀.to-from f₀') (Equivalence₀.to-from f₁') ]
+--     to-from (g , h , p) = {!!}
 
 
-    -- to (from (g , h, p))
-    --  = { def. of from }
-    -- to (h , some proof)
-    --  = { def. of to }
-    -- (
-  module _ (A A' : Type0) (B : A → Type0) (B' : A' → Type0) where
-    T₀ : Fam
-    T₀ = (A , B)
+--     -- to (from (g , h, p))
+--     --  = { def. of from }
+--     -- to (h , some proof)
+--     --  = { def. of to }
+--     -- (
+--   module _ (A A' : Type0) (B : A → Type0) (B' : A' → Type0) where
+--     T₀ : Fam
+--     T₀ = (A , B)
 
-    T₁ : Fam
-    T₁ = (A' , B')
+--     T₁ : Fam
+--     T₁ = (A' , B')
 
-    from-to : (x : Fam-hom T₀ T₁) → from (to x) == x [ uncurry Fam-hom ↓ pair×= (Equivalence₀.from-to T₀) (Equivalence₀.from-to T₁) ]
-    from-to (f , g) = {!!}
+--     from-to : (x : Fam-hom T₀ T₁) → from (to x) == x [ uncurry Fam-hom ↓ pair×= (Equivalence₀.from-to T₀) (Equivalence₀.from-to T₁) ]
+--     from-to (f , g) = {!!}
