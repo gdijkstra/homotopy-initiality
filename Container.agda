@@ -82,25 +82,25 @@ module _ (F : Container) {A : Type0} {B : A → Type0} (f : (x : A) → B x) whe
   □-lift=sndFf~ x = idp
 
 -- Containers preserve Σ-types in the following sense.
-module Σ-all (A : Type0) (B : A → Type0) (F : Container)  where
-  to-Σ-all : ⟦ F ⟧₀ (Σ A B) → Σ (⟦ F ⟧₀ A) (all F B)
-  to-Σ-all (s , t) = (s , (λ x → fst (t x))) , (λ x → snd (t x))
+module Σ-□ (A : Type0) (B : A → Type0) (F : Container)  where
+  to-Σ-□ : ⟦ F ⟧₀ (Σ A B) → Σ (⟦ F ⟧₀ A) (□ F B)
+  to-Σ-□ (s , t) = (s , (λ x → fst (t x))) , (λ x → snd (t x))
 
-  from-Σ-all : Σ (⟦ F ⟧₀ A) (all F B) → ⟦ F ⟧₀ (Σ A B)
-  from-Σ-all ((s , t) , a) = s , (λ z → t z , a z)
+  from-Σ-□ : Σ (⟦ F ⟧₀ A) (□ F B) → ⟦ F ⟧₀ (Σ A B)
+  from-Σ-□ ((s , t) , a) = s , (λ z → t z , a z)
 
-  from-to-Σ-all : (x : ⟦ F ⟧₀ (Σ A B)) → from-Σ-all (to-Σ-all x) == x
-  from-to-Σ-all _ = idp
+  from-to-Σ-□ : (x : ⟦ F ⟧₀ (Σ A B)) → from-Σ-□ (to-Σ-□ x) == x
+  from-to-Σ-□ _ = idp
 
-  to-from-Σ-all : (x : Σ (⟦ F ⟧₀ A) (all F B)) → (to-Σ-all (from-Σ-all x)) == x
-  to-from-Σ-all _ = idp
+  to-from-Σ-□ : (x : Σ (⟦ F ⟧₀ A) (□ F B)) → (to-Σ-□ (from-Σ-□ x)) == x
+  to-from-Σ-□ _ = idp
 
-open Σ-all
+open Σ-□
 
 module _ (F G : Container) (α : ContainerMorphism F G) (A : Type0) (B : A → Type0) where
   open ContainerMorphism F G α
 
-  all-base-change : (x : ⟦ F ⟧₀ A) → all F B x → all G B (apply α A x)
-  all-base-change (s , t) a p = a (g s p)
+  □-base-change : (x : ⟦ F ⟧₀ A) → □ F B x → □ G B (apply α A x)
+  □-base-change (s , t) a p = a (g s p)
 
   -- ⟦ F ⟧₀ (Σ A B) → ⟦ G ⟧₀ (Σ A B)
