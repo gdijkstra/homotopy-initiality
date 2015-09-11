@@ -63,3 +63,22 @@ module _ {i} {X : Type i} where
   p=q→!p∙q=idp : {x y : X} (p q : x == y)
                → p == q → ! p ∙ q == idp
   p=q→!p∙q=idp p .p idp = !-inv-l p
+
+module _
+  {i j}
+  {A : Type i} (B : A → Type j)
+  {x y : A} (p q : x == y)
+  (u : B x) (v : B y) where
+  PathOver-transport : p == q → u == v [ B ↓ p ] → u == v [ B ↓ q ]
+  PathOver-transport = transport (λ s → u == v [ B ↓ s ])
+
+module _
+  {i j}
+  {A : Type i} (B B' : A → Type j)  where
+  transportB→B' :
+    {a a' : A}
+    (p : a == a')
+    (f : B a → B' a)
+    (x : B a') → transport (λ x' → B x' → B' x') p f x == transport B' p (f (transport B (! p) x))
+  transportB→B' idp f x = idp
+

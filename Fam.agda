@@ -138,3 +138,23 @@ module Equivalence₀ where
 
 --     from-to : (x : Fam-hom T₀ T₁) → from (to x) == x [ uncurry Fam-hom ↓ pair×= (Equivalence₀.from-to T₀) (Equivalence₀.from-to T₁) ]
 --     from-to (f , g) = {!!}
+
+module Sections where
+  module _ (A : Type0) (B : A → Type0) where
+    to : ((x : A) → B x) → Σ (A → Σ A B) (λ g → (x : A) → fst (g x) == x)
+    to f = (λ x → x , f x) , (λ x → idp)
+
+    from : Σ (A → Σ A B) (λ g → (x : A) → fst (g x) == x) → ((x : A) → B x)
+    from (g , g-is-section) = λ x → transport B (g-is-section x) (snd (g x))
+
+    from-to : (f : (x : A) → B x) (x : A) → from (to f) x == f x
+    from-to f x = idp
+
+    lemma : (g : A → Σ A B) (x : A) (gx : Σ A B) (q : gx == g x) (p : fst gx == x)
+          →  transport B (! p) (transport B p (snd gx)) == snd gx
+    lemma g .(fst gx) gx q idp = idp
+
+    to-from : (g' : Σ (A → Σ A B) (λ g → (x : A) → fst (g x) == x))
+            → to (from g') == g'
+    to-from (g , g-is-section) = pair= (λ= (λ x → pair= (! (g-is-section x)) (from-transp B (! (g-is-section x)) (lemma g x (g x) idp (g-is-section x))))) {!!}
+
