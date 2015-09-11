@@ -106,14 +106,13 @@ module ActionMorphisms (F : Container)
 module _ (F : Container) {X : Type0} (θ : ⟦ F ⟧₀ X → X) where
   open import lib.types.PathSeq
 
-
-  comm*-id : (x : ⟦ F * ⟧₀ X) → ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) x == idp
-  comm*-id = ind* F X (λ x → ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) x == idp)
-              (λ x → idp)
-              (λ s t g → ↯
-               ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) (c* F (s , t))
-                =⟪ {!!} ⟫
-               idp ∎∎)
+  -- comm*-id : (x : ⟦ F * ⟧₀ X) → ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) x == idp
+  -- comm*-id = ind* F X (λ x → ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) x == idp)
+  --             (λ x → idp)
+  --             (λ s t g → ↯
+  --              ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) (c* F (s , t))
+  --               =⟪ {!!} ⟫
+  --              idp ∎∎)
 
 -- Lift dependent algebras to dependent monad algebras.
 module LiftDepAlg
@@ -124,10 +123,10 @@ module LiftDepAlg
   (ρ : (x : Σ (⟦ F ⟧₀ A) (all F B)) → B (θ (fst x)))
   where
 
-  open Σ-all A B
+  open Σ-□ A B
 
   ρ~ : ⟦ F ⟧₀ (Σ A B) → Σ A B
-  ρ~ x = θ (fst (to-Σ-all F x)) , (ρ (to-Σ-all F x))
+  ρ~ x = θ (fst (to-Σ-□ F x)) , (ρ (to-Σ-□ F x))
 
   fst-alg-morph : (x : ⟦ F ⟧₀ (Σ A B)) → θ (⟦ F ⟧₁ fst x) == fst (ρ~ x)
   fst-alg-morph x = idp
@@ -135,8 +134,8 @@ module LiftDepAlg
   open import lib.PathGroupoid
   open ActionMorphisms F ρ~ θ fst fst-alg-morph
 
-  ρ* : (x : Σ (⟦ F * ⟧₀ A) (all (F *) B)) → B ((θ *¹) (fst x))
+  ρ* : (x : Σ (⟦ F * ⟧₀ A) (□ (F *) B)) → B ((θ *¹) (fst x))
   ρ* x = 
     transport B 
-      (! (comm*     (from-Σ-all (F *) x))) 
-      (snd ((ρ~ *¹) (from-Σ-all (F *) x)))
+      (! (comm*     (from-Σ-□ (F *) x))) 
+      (snd ((ρ~ *¹) (from-Σ-□ (F *) x)))
