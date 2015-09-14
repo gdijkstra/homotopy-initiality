@@ -5,6 +5,7 @@ open import Container
 module FreeMonad where
 open import lib.Base
 open import lib.types.Unit
+open import lib.types.PathSeq
 
 module _ (F : Container) where
   open Container.Container F
@@ -48,19 +49,22 @@ module _ (F : Container) where
 
   open Container.Container F renaming (Shapes to Sh ; Positions to Pos)
 
-  module _
-    (X : Type0) (Y : ⟦ F * ⟧₀ X → Set)
+  module Ind
+    (X : Type0) (Y : ⟦ F * ⟧₀ X → Type0)
     (m-η : (x : X) → Y (η* x))
-    (m-c : (s : Sh) (t : Pos s → ⟦ F * ⟧₀ X)
-                    (f : (p : Pos s) → Y (t p))
-                  → Y (c* (s , t)))
+    (m-c : (x : ⟦ F ⟧₀ (⟦ F * ⟧₀ X)) → □ F Y x → Y (c* x))
+
     where
     -- TODO: Maybe work on the type of m-c to make it more readable:
     -- perhaps by defining the "all" modality for containers?
     {-# NO_TERMINATION_CHECK #-}
     ind* : (x : ⟦ F * ⟧₀ X) → Y x
     ind* (η x       , t) = m-η (t unit)
-    ind* (c (s , u) , t) = m-c s (λ z → u z , (λ x → t (z , x))) (λ p → ind* ((u p) , (λ z → t (p , z))))
+    ind* (c (s , u) , t) = m-c x (□-lift F ind* x)
+      where x = (s , (λ z → u z , (λ x → t (z , x))))
+
+    ind*-β : (x : ⟦ F ⟧₀ (⟦ F * ⟧₀ X)) → ind* (c* x) == m-c x (□-lift F ind* x)
+    ind*-β x = idp
 
 -- TODO: Maybe make this bind more tightly so we need less brackets.
 -- Lifting of functor algebras to monad algebras
@@ -78,41 +82,61 @@ module ActionMorphisms (F : Container)
  open import lib.Funext using (λ=)
 
  open Container.Container F renaming (Shapes to Sh ; Positions to Pos)
+ open Ind
 
  -- TODO: Make sense of this.
  comm* : (x : ⟦ F * ⟧₀ X) → (ρ *¹) (⟦ F * ⟧₁ f x) == f ((θ *¹) x)
  comm* = ind* F X (λ x → (ρ *¹) (⟦ F * ⟧₁ f x) == f ((θ *¹) x)) 
               (λ x → idp) 
-              (λ s t g → 
+              (λ { (s , t) g → ↯
    (ρ *¹) (⟦ F * ⟧₁ f (c* F (s , t))) 
-    =⟨ idp ⟩
+    =⟪idp⟫
    ρ
      (s ,
      (λ x →
             rec* F Y Y (idf Y) ρ
             (fst (t x) , (λ z → f (snd (t x) z)))))
-    =⟨ ap (λ h → ρ (s , h)) (λ= g) ⟩
+    =⟪ ap (λ h → ρ (s , h)) (λ= g) ⟫
    ρ
      (s ,
      (λ p →
             f (rec* F X X (idf X) θ (t p))))
-    =⟨ comm (s , (λ z → rec* F X X (λ z₁ → z₁) θ (t z)) ) ⟩
-   f ((θ *¹) (c* F (s , t))) ∎)
+    =⟪ comm (s , (λ z → rec* F X X (λ z₁ → z₁) θ (t z)) ) ⟫
+   f ((θ *¹) (c* F (s , t))) ∎∎ })
 
  comm*-ext : (ρ *¹) ∘ ⟦ F * ⟧₁ f == f ∘ (θ *¹)
  comm*-ext = λ= comm*
 
 -- Functor laws for *
+-- Preserves id
 module _ (F : Container) {X : Type0} (θ : ⟦ F ⟧₀ X → X) where
+  open import lib.Funext using (λ=)
   open import lib.types.PathSeq
+  open import lib.PathFunctor
+  open import lib.PathGroupoid
 
-  -- comm*-id : (x : ⟦ F * ⟧₀ X) → ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) x == idp
-  -- comm*-id = ind* F X (λ x → ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) x == idp)
-  --             (λ x → idp)
-  --             (λ s t g → ↯
-  --              ActionMorphisms.comm* F θ θ (idf X) (λ _ → idp) (c* F (s , t))
-  --               =⟪ {!!} ⟫
-  --              idp ∎∎)
+  -- TODO: This is also in Funext.agda but not exported properly.
+  postulate
+    λ=-idp : ∀ {i} {A : Type i} {j} {B : A → Type j} {f : (x : A) → B x}
+      → idp {a = f} == λ= (λ x → idp)
+
+  open Ind
+  open ActionMorphisms F θ θ (idf X) (λ _ → idp)
+  comm*-id : (x : ⟦ F * ⟧₀ X) → comm* x == idp
+  comm*-id = ind* F X (λ x → comm* x == idp) (λ x → idp) (λ { (s , t) g → ↯
+    comm* (c* F (s , t))
+     =⟪idp⟫ -- computation rule
+    ap (λ h → θ (s , h)) (λ= (λ p → comm* (t p))) ∙ idp
+     =⟪ ap (λ p' → ap (λ h → θ (s , h)) p' ∙ idp) (↯
+        λ= (λ p → comm* (t p))
+         =⟪ ap λ= (λ= g) ⟫
+        λ= (λ p → idp)
+         =⟪ ! λ=-idp ⟫
+         idp ∎∎)
+      ⟫
+    ap (λ h → θ (s , h)) idp ∙ idp
+     =⟪idp⟫
+    idp ∎∎ })
 
 -- Lift dependent algebras to dependent monad algebras.
 module LiftDepAlg
