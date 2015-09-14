@@ -82,3 +82,14 @@ module _
     (x : B a') → transport (λ x' → B x' → B' x') p f x == transport B' p (f (transport B (! p) x))
   transportB→B' idp f x = idp
 
+module _
+  {i j k}
+  {A : Type i} {B : Type j}
+  (C : B → Type k)
+  (f : A → B) where
+  Σ-∘ : Σ A (C ∘ f) → Σ B C
+  Σ-∘ (a , cf) = (f a) , cf
+
+--  ∘-Σ : A → Σ B C → Σ A (C ∘ f)
+--  ∘-Σ a (b , c) = a , {!!}
+

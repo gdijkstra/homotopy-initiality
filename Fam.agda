@@ -154,7 +154,8 @@ module Sections where
           →  transport B (! p) (transport B p (snd gx)) == snd gx
     lemma g .(fst gx) gx q idp = idp
 
-    to-from : (g' : Σ (A → Σ A B) (λ g → (x : A) → fst (g x) == x))
-            → to (from g') == g'
-    to-from (g , g-is-section) = pair= (λ= (λ x → pair= (! (g-is-section x)) (from-transp B (! (g-is-section x)) (lemma g x (g x) idp (g-is-section x))))) {!!}
+    to-from₀ : (g' : Σ (A → Σ A B) (λ g → (x : A) → fst (g x) == x))
+            → fst (to (from g')) == fst g'
+    to-from₀ (g , g-is-section) = λ= (λ x → pair= (! (g-is-section x)) (from-transp B (! (g-is-section x)) (lemma g x (g x) idp (g-is-section x))))
 
+    -- TODO: Second part of to-from. Probably doesn't hold?
