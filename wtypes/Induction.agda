@@ -6,6 +6,7 @@ open import lib.Basics
 open import wtypes.Alg F
 open import lib.types.PathSeq
 open import lib.types.Sigma
+open import Utils
 
 module _ (T' : Alg) where
   open Alg T' renaming (X to T ; θ to c)
@@ -68,59 +69,41 @@ module SectionInduction⇔Induction (T' : Alg) where
     θ=m : (x : ⟦ F ⟧₀ T) (y : □ F B x) → snd (fst m-arr-hom (x , y)) == m x y
     θ=m x y = idp
 
-    module _
-      (σ : T → Σ T B)
-      (σ-is-section : (x' : T) → fst (σ x') == x')
-      (σ₀ : (x' : ⟦ F ⟧₀ T) → σ (c x') == (fst m-arr-hom ∘ Σ-□.to-Σ-□ T B F) (⟦ F ⟧₁ σ x')) where
-
-      fstσcx=cFσx : (x : ⟦ F ⟧₀ T) → fst (σ (c x)) == c (⟦ F ⟧₁ (fst ∘ σ) x)
-      fstσcx=cFσx x = ↯
-        fst (σ (c x))
-         =⟪ ap fst (σ₀ x) ⟫
-        fst ((fst m-arr-hom ∘ Σ-□.to-Σ-□ T B F) (⟦ F ⟧₁ σ x))
-         =⟪idp⟫
-        c (⟦ F ⟧₁ (fst ∘ σ) x) ∎∎
-
-      sigma-0 : (x : ⟦ F ⟧₀ T)
-       → snd (σ (c x)) == snd ((fst m-arr-hom ∘ Σ-□.to-Σ-□ T B F) (⟦ F ⟧₁ σ x)) [ B ↓ ap fst (σ₀ x) ]
-      sigma-0 x = snd= (σ₀ x)  
-
-      step : (x : ⟦ F ⟧₀ T)
-       → snd ((fst m-arr-hom ∘ Σ-□.to-Σ-□ T B F) (⟦ F ⟧₁ σ x)) == snd (fst m-arr-hom (x , □-lift F (λ x' → transport B (σ-is-section x') (snd (σ x'))) x)) [ B ↓ ! (ap fst (σ₀ x)) ∙ σ-is-section (c x) ]
-      step x = {!!} 
-
-      simple-step : (x : ⟦ F ⟧₀ T)
-       → snd (fst m-arr-hom (x , □-lift F (λ x' → transport B (σ-is-section x') (snd (σ x'))) x)) == m x (□-lift F (λ x' → transport B (σ-is-section x') (snd (σ x'))) x)
-      simple-step x = idp
-
-      goal : (x : ⟦ F ⟧₀ T)
-       → snd (σ (c x)) == m x (□-lift F (λ x' → transport B (σ-is-section x') (snd (σ x'))) x) [ B ↓ σ-is-section (c x) ]
-      goal x = {!sigma-0 x ∙ᵈ step x ∙ᵈ simple-step x!}
-
     f' : Alg-morph X' T'
     f' = mk-alg-morph (arr X-Arr) (λ x → idp)
   
+    open Σ-□ T B F
+
+    m' : ⟦ F ⟧₀ (Σ T B) → Σ T B
+    m' = Σ-∘ B (c ∘ fst)
+         ∘ fst (Sections.to (Σ (⟦ F ⟧₀ T) (□ F B)) (B ∘ c ∘ fst) (uncurry m))
+         ∘ to-Σ-□
+
+    m=m'-ty : (x : ⟦ F ⟧₀ T) (y : □ F B x) → Type0
+    m=m'-ty (s , t) f = m (s , t) f == snd (m' (from-Σ-□ ((s , t) , f)))
+
+    m=m' : (x : ⟦ F ⟧₀ T) (y : □ F B x) → m=m'-ty x y
+    m=m' x y = idp
+
+    module _
+      (σ : T → Σ T B)
+      (σ-is-section : (x' : T) → fst (σ x') == x')
+      (σ₀ : (x' : ⟦ F ⟧₀ T) → σ (c x') == m' (⟦ F ⟧₁ σ x')) where
+
+      -- ind' : (x : T) → B x
+      -- ind' x = Sections.from T B (σ , σ-is-section) x
+
+      -- ind'₀ : (x : ⟦ F ⟧₀ T) → ind' (c x) == m x (□-lift F ind' x)
+      -- ind'₀ x = ?
+
     module _ (princ : SectionInductionPrinciple T' X' f') where
       open SectionInductionPrinciple T' princ
       open Alg-morph σ' renaming (f to σ ; f₀ to σ₀)
 
-    lemma :
-      (x : ⟦ F ⟧₀ T)
-      (σ : T → Σ T B)
-      (σ-is-section : (x' : T) → fst (σ x') == x')
-      (σ₀ : (x' : ⟦ F ⟧₀ T) → σ (c x') == (fst m-arr-hom ∘ Σ-□.to-Σ-□ T B F) (⟦ F ⟧₁ σ x'))
-      → transport B (σ-is-section (c x)) (snd (σ (c x))) == m x (□-lift F (λ x' → transport B (σ-is-section x') (snd (σ x'))) x)
-    lemma (s , t) σ σ-is-section σ₀ = ↯
-      transport B (σ-is-section (c (s , t))) (snd (σ (c (s , t))))
-       =⟪ {!!}  ⟫
-      snd (fst m-arr-hom ((s , t) , (□-lift F (λ x' → transport B (σ-is-section x') (snd (σ x'))) (s , t))))
-       =⟪idp⟫
-      m (s , t) (□-lift F (λ x' → transport B (σ-is-section x') (snd (σ x'))) (s , t)) ∎∎
-
-    SectionInduction⇒Induction :
-      SectionInductionPrinciple T' X' f' → InductionPrinciple T' B m
-    SectionInduction⇒Induction (mk-section-ind (mk-alg-morph σ σ₀) σ-is-section) =
-      mk-ind (λ x → transport B (σ-is-section x) (snd (σ x))) (λ x → lemma x σ σ-is-section σ₀)
+--    SectionInduction⇒Induction :
+--      SectionInductionPrinciple T' X' f' → InductionPrinciple T' B m
+--    SectionInduction⇒Induction (mk-section-ind (mk-alg-morph σ σ₀) σ-is-section) =
+--      mk-ind (λ x → transport B (σ-is-section x) (snd (σ x))) ?
 
   -- Induction implies section induction
   module _ (X' : Alg)
