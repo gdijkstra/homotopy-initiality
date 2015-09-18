@@ -32,6 +32,15 @@ module _ {a b : Alg} where
   open Alg b renaming (X to Y ; θ to ρ)
   open Alg-morph
 
+  mk-alg-morph-eq-orig :
+     {morph-f morph-g : Alg-morph a b}
+     (p : f morph-f == f morph-g)
+     (p₀ : 
+           transport (λ f' → (x : ⟦ F ⟧₀ X) → f' (θ x)
+        == ρ (⟦ F ⟧₁ f' x)) p (f₀ morph-f) == (f₀ morph-g))
+   → morph-f == morph-g
+  mk-alg-morph-eq-orig {mk-alg-morph f f₀} {mk-alg-morph .f f₁} idp p₀ = ap (mk-alg-morph f) p₀
+
   mk-alg-morph-eq :
      {morph-f morph-g : Alg-morph a b}
      (p : f morph-f == f morph-g)
@@ -121,3 +130,6 @@ open import lib.PathFunctor
 
 ∘-unit-r : {X Y : Alg} (f : Alg-morph X Y) → f ∘-morph id-morph X == f
 ∘-unit-r f = idp
+
+is-initial : Alg → Type1
+is-initial θ = (ρ : Alg) → is-contr (Alg-morph θ ρ)

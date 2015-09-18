@@ -30,6 +30,9 @@ arr = snd ∘ snd
 Fam-hom : Fam → Fam → Type0
 Fam-hom (A , B) (A' , B') = Σ (A → A') (λ f → (a : A) → B a → B' (f a))
 
+Fam-id : (X : Fam) → Fam-hom X X
+Fam-id (A , B) = idf A , (λ _ x → x)
+
 -- X --f--> Y
 -- |        |
 -- g        h

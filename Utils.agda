@@ -3,6 +3,7 @@
 module Utils where
 
 open import lib.Basics
+open import lib.types.Paths
 
 transport-id-nondep : ∀ {i j}
     (A : Type i) (B : Type j) (f g : A → B) {a a' : A} (p : a == a') (q : f a == g a)
@@ -93,3 +94,33 @@ module _
 --  ∘-Σ : A → Σ B C → Σ A (C ∘ f)
 --  ∘-Σ a (b , c) = a , {!!}
 
+-- These things are needed for equality of algebra morphisms.
+transport-Π :
+ ∀ {i j k}
+ {A : Type i}
+ {A' : Type j}
+ {B : A → A' → Type k}
+ {y y' : A'}
+ (p : y == y')
+ (f : (x : A) → B x y)
+ (g : (x : A) → B x y')
+ → transport (λ z → (x : A) → B x z) p f == (λ x → transport (λ z → B x z) p (f x))
+transport-Π idp f g = idp
+
+transport-Π' :
+  ∀ {i j k}
+  {A : Type i}
+  {A' : Type j}
+  {B : A → A' → Type k}
+  {y y' : A'}
+  (p : y == y')
+  (f : (x : A) → B x y)
+  (g : (x : A) → B x y')
+  → ((x : A) → transport (λ z → B x z) p (f x) == (g x))
+  ≃ (transport (λ z → (x : A) → B x z) p f == g)
+transport-Π' {A = A} {B = B} p f g =
+  ((x : A) → transport (λ z → B x z) p (f x) == g x)
+   ≃⟨ λ=-equiv ⟩
+  (λ x → transport (λ z → B x z) p (f x)) == g
+   ≃⟨ pre∙-equiv {z = g} (transport-Π p f g) ⟩
+  transport (λ z → (x : A) → B x z) p f == g ≃∎

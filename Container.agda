@@ -97,6 +97,14 @@ module Σ-□ (A : Type0) (B : A → Type0) (F : Container)  where
 
 open Σ-□
 
+-- TODO: Come up with good name for this
+module _ (F : Container) {A B : Type0} (f g : A → B) where
+  open import lib.Funext using (λ=)
+
+  lift-func-eq : (x : ⟦ F ⟧₀ A) (y : □ F (λ x' → f x' == g x') x)
+               → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
+  lift-func-eq (s , t) h = ap (λ p → s , p) (λ= h)
+
 module _ (F G : Container) (α : ContainerMorphism F G) (A : Type0) (B : A → Type0) where
   open ContainerMorphism F G α
 

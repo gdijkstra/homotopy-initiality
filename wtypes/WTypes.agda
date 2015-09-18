@@ -24,8 +24,8 @@ module Induction⇒Initiality (T' : Alg) where
     f-m : (x : ⟦ F ⟧₀ T) → □ F f-B x → X
     f-m (s , _) u = θ (s , u)
 
-    module _ (rec-def : InductionPrinciple T' f-B f-m) where
-      open InductionPrinciple T' rec-def renaming (ind to f ; ind-β₀ to f₀)
+    module _ (ind-def : InductionPrinciple T' f-B f-m) where
+      open InductionPrinciple T' ind-def renaming (ind to f ; ind-β₀ to f₀)
 
 --      f : T → X
 --      f₀ : (x : ⟦ F ⟧₀ T) → f (c x) == θ (⟦ F ⟧₁ f x)
@@ -147,6 +147,10 @@ module Induction⇒Initiality (T' : Alg) where
     
           f'=g' : f' == g'
           f'=g' = mk-alg-morph-eq' f=g f₀=g₀
+
+-- TODO: Refactor some things so we can write this down
+--  T-is-initial : is-initial T'
+--  T-is-initial = λ ρ → {!!} , {!!}
   
 module Initiality⇒SectionInduction
   (T' : Alg)

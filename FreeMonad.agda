@@ -24,7 +24,7 @@ module _ (F : Container) where
 _* : (F : Container) → Container
 F * = S* F ◁ P* F
 
-module _ (F : Container) where
+module _ {F : Container} where
   η* : {X : Type0} → X → ⟦ F * ⟧₀ X
   η* x = (η tt) , cst x
 
@@ -41,11 +41,13 @@ module _ (F : Container) where
     (m-c : ⟦ F ⟧₀ Y → Y) 
     where
     {-# NO_TERMINATION_CHECK #-}
-    -- TODO: Write this in the usual form with fmap, as it doesn't
-    -- terminate anyway by inlining things.
     rec* : ⟦ F * ⟧₀ X → Y
     rec* (η x       , t) = m-η (t unit)
-    rec* (c (s , u) , t) = m-c (s , (λ x → rec* ((u x) , (λ z → t (x , z))))) 
+    rec* (c (s , u) , t) = m-c (⟦ F ⟧₁ rec* x)
+      where x = (s , (λ z → u z , (λ x → t (z , x))))
+
+    rec*-β : (x : ⟦ F ⟧₀ (⟦ F * ⟧₀ X)) → rec* (c* x) == m-c (⟦ F ⟧₁ rec* x)
+    rec*-β x = idp
 
   open Container.Container F renaming (Shapes to Sh ; Positions to Pos)
 
@@ -66,85 +68,77 @@ module _ (F : Container) where
     ind*-β : (x : ⟦ F ⟧₀ (⟦ F * ⟧₀ X)) → ind* (c* x) == m-c x (□-lift F ind* x)
     ind*-β x = idp
 
--- TODO: Maybe make this bind more tightly so we need less brackets.
 -- Lifting of functor algebras to monad algebras
-module _ {F : Container} {X : Type0} where
-  _*¹ : (⟦ F ⟧₀ X → X) → ⟦ F * ⟧₀ X → X
-  θ *¹ = rec* F X X (idf X) θ
+module LiftAlg {F : Container} where
+  _*¹ : {X : Type0} → (⟦ F ⟧₀ X → X) → ⟦ F * ⟧₀ X → X
+  _*¹ {X} θ = rec* X X (idf X) θ
 
--- Functorial action on morphisms
-module ActionMorphisms (F : Container) 
-         {X : Type0} (θ : ⟦ F ⟧₀ X → X) 
-         {Y : Type0} (ρ : ⟦ F ⟧₀ Y → Y) 
-         (f : X → Y)
-         (comm : (x : ⟦ F ⟧₀ X) → ρ (⟦ F ⟧₁ f x) == f (θ x))
-  where
- open import lib.Funext using (λ=)
+  -- Functorial action on morphisms
+  module Morphisms
+           {X : Type0} (θ : ⟦ F ⟧₀ X → X) 
+           {Y : Type0} (ρ : ⟦ F ⟧₀ Y → Y) 
+           (f : X → Y)
+           (comm : (x : ⟦ F ⟧₀ X) → ρ (⟦ F ⟧₁ f x) == f (θ x))
+    where
+   open import lib.Funext using (λ=)
+   open Ind
 
- open Container.Container F renaming (Shapes to Sh ; Positions to Pos)
- open Ind
+   comm* : (x : ⟦ F * ⟧₀ X) → (ρ *¹) (⟦ F * ⟧₁ f x) == f ((θ *¹) x)
+   comm* = ind* X (λ x → (ρ *¹) (⟦ F * ⟧₁ f x) == f ((θ *¹) x)) 
+                (λ x → idp) 
+                (λ x g → ↯
+                  (ρ *¹) (⟦ F * ⟧₁ f (c* x))
+                   =⟪idp⟫ -- comp. rule for ⟦ F * ⟧₁
+                  (ρ *¹) (c* (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
+                   =⟪idp⟫ -- comp. rule for ρ *¹
+                  ρ (⟦ F ⟧₁ (ρ *¹) (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
+                   =⟪idp⟫ -- functoriality of F
+                  ρ (⟦ F ⟧₁ ((ρ *¹) ∘ (⟦ F * ⟧₁ f)) x)
+                   =⟪ ap ρ (lift-func-eq F ((ρ *¹) ∘ ⟦ F * ⟧₁ f) (f ∘ (θ *¹)) x g) ⟫ -- ind. hyp.
+                  ρ (⟦ F ⟧₁ (f ∘ (θ *¹)) x)
+                   =⟪idp⟫ -- functoriality of F
+                  ρ (⟦ F ⟧₁ f (⟦ F ⟧₁ (θ *¹) x))
+                   =⟪ comm (⟦ F ⟧₁ (θ *¹) x) ⟫
+                  f (θ (⟦ F ⟧₁ (θ *¹) x))
+                   =⟪idp⟫ -- comp. rule for θ *¹
+                  f ((θ *¹) (c* x)) ∎∎)
+  
+   comm*-ext : (ρ *¹) ∘ ⟦ F * ⟧₁ f == f ∘ (θ *¹)
+   comm*-ext = λ= comm*
+  
+  -- Functor laws for *
+  -- Preserves id
+  module _ {X : Type0} (θ : ⟦ F ⟧₀ X → X) where
+    open import lib.Funext using (λ=)
+    open import lib.types.PathSeq
+    open import lib.PathFunctor
+    open import lib.PathGroupoid
+  
+    -- TODO: This is also in Funext.agda but not exported properly.
+    postulate
+      λ=-idp : ∀ {i} {A : Type i} {j} {B : A → Type j} {f : (x : A) → B x}
+        → idp {a = f} == λ= (λ x → idp)
+  
+    open Ind
+    open Morphisms θ θ (idf X) (λ _ → idp)
 
- -- TODO: Make sense of this.
- comm* : (x : ⟦ F * ⟧₀ X) → (ρ *¹) (⟦ F * ⟧₁ f x) == f ((θ *¹) x)
- comm* = ind* F X (λ x → (ρ *¹) (⟦ F * ⟧₁ f x) == f ((θ *¹) x)) 
-              (λ x → idp) 
-              (λ { (s , t) g → ↯
-   (ρ *¹) (⟦ F * ⟧₁ f (c* F (s , t))) 
-    =⟪idp⟫
-   ρ
-     (s ,
-     (λ x →
-            rec* F Y Y (idf Y) ρ
-            (fst (t x) , (λ z → f (snd (t x) z)))))
-    =⟪ ap (λ h → ρ (s , h)) (λ= g) ⟫
-   ρ
-     (s ,
-     (λ p →
-            f (rec* F X X (idf X) θ (t p))))
-    =⟪ comm (s , (λ z → rec* F X X (λ z₁ → z₁) θ (t z)) ) ⟫
-   f ((θ *¹) (c* F (s , t))) ∎∎ })
-
- comm*-ext : (ρ *¹) ∘ ⟦ F * ⟧₁ f == f ∘ (θ *¹)
- comm*-ext = λ= comm*
-
--- Functor laws for *
--- Preserves id
-module _ (F : Container) {X : Type0} (θ : ⟦ F ⟧₀ X → X) where
-  open import lib.Funext using (λ=)
-  open import lib.types.PathSeq
-  open import lib.PathFunctor
-  open import lib.PathGroupoid
-
-  -- TODO: This is also in Funext.agda but not exported properly.
-  postulate
-    λ=-idp : ∀ {i} {A : Type i} {j} {B : A → Type j} {f : (x : A) → B x}
-      → idp {a = f} == λ= (λ x → idp)
-
-  open Ind
-  open ActionMorphisms F θ θ (idf X) (λ _ → idp)
-  comm*-id : (x : ⟦ F * ⟧₀ X) → comm* x == idp
-  comm*-id = ind* F X (λ x → comm* x == idp) (λ x → idp) (λ { (s , t) g → ↯
-    comm* (c* F (s , t))
-     =⟪idp⟫ -- computation rule
-    ap (λ h → θ (s , h)) (λ= (λ p → comm* (t p))) ∙ idp
-     =⟪ ap (λ p' → ap (λ h → θ (s , h)) p' ∙ idp) (↯
-        λ= (λ p → comm* (t p))
-         =⟪ ap λ= (λ= g) ⟫
-        λ= (λ p → idp)
-         =⟪ ! λ=-idp ⟫
-         idp ∎∎)
-      ⟫
-    ap (λ h → θ (s , h)) idp ∙ idp
-     =⟪idp⟫
-    idp ∎∎ })
-
+    comm*-id : (x : ⟦ F * ⟧₀ X) → comm* x == idp
+    comm*-id = ind* X (λ x → comm* x == idp) (λ x → idp) (λ { x g → ↯
+      comm* (c* x)
+       =⟪idp⟫ -- comp. rule for comm*
+      ap θ (lift-func-eq F (θ *¹) (θ *¹) x (□-lift F comm* x)) ∙ idp
+       =⟪ ap (λ p → ap θ (lift-func-eq F (θ *¹) (θ *¹) x p) ∙ idp) (λ= g) ⟫
+      ap θ (lift-func-eq F (θ *¹) (θ *¹) x (λ x' → idp)) ∙ idp
+       =⟪ ap (λ p' → ap θ (ap (λ p → fst x , p) p') ∙ idp) (! λ=-idp) ⟫ 
+      idp ∎∎ })
+  
 -- Lift dependent algebras to dependent monad algebras.
 module LiftDepAlg
   (F : Container) 
   (A : Type0)
   (B : A → Type0) 
   (θ : ⟦ F ⟧₀ A → A)
-  (ρ : (x : Σ (⟦ F ⟧₀ A) (all F B)) → B (θ (fst x)))
+  (ρ : (x : Σ (⟦ F ⟧₀ A) (□ F B)) → B (θ (fst x)))
   where
 
   open Σ-□ A B
