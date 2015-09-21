@@ -134,26 +134,39 @@ module LiftAlg {F : Container} where
   
 -- Lift dependent algebras to dependent monad algebras.
 module LiftDepAlg
-  (F : Container) 
-  (A : Type0)
-  (B : A → Type0) 
+  {F : Container}
+  {A : Type0}
   (θ : ⟦ F ⟧₀ A → A)
-  (ρ : (x : Σ (⟦ F ⟧₀ A) (□ F B)) → B (θ (fst x)))
-  where
-
+  {B : A → Type0} where
+  open LiftAlg
   open Σ-□ A B
 
-  ρ~ : ⟦ F ⟧₀ (Σ A B) → Σ A B
-  ρ~ x = θ (fst (to-Σ-□ F x)) , (ρ (to-Σ-□ F x))
+  -- We can lift ρ to an algebra on Σ A B.
+  _~ : (ρ : (x : ⟦ F ⟧₀ A) → □ F B x → B (θ x))
+     → ⟦ F ⟧₀ (Σ A B) → Σ A B
+  _~ ρ x = (θ ∘ fst ∘ to-Σ-□ F) x , (uncurry ρ ∘ to-Σ-□ F) x
 
-  fst-alg-morph : (x : ⟦ F ⟧₀ (Σ A B)) → θ (⟦ F ⟧₁ fst x) == fst (ρ~ x)
-  fst-alg-morph x = idp
+  -- We can show that fst : (Σ A B , ρ) -> (A , θ) 
 
+  fst₀ : (ρ : (x : ⟦ F ⟧₀ A) → □ F B x → B (θ x))
+       → (x : ⟦ F ⟧₀ (Σ A B)) → θ (⟦ F ⟧₁ fst x) == fst ((ρ ~) x)
+  fst₀ ρ x = idp
+
+  open Morphisms
   open import lib.PathGroupoid
-  open ActionMorphisms F ρ~ θ fst fst-alg-morph
 
-  ρ* : (x : Σ (⟦ F * ⟧₀ A) (□ (F *) B)) → B ((θ *¹) (fst x))
-  ρ* x = 
-    transport B 
-      (! (comm*     (from-Σ-□ (F *) x))) 
-      (snd ((ρ~ *¹) (from-Σ-□ (F *) x)))
+  _~* : (ρ : (x : ⟦ F ⟧₀ A) → □ F B x → B (θ x))
+      → ⟦ F * ⟧₀ (Σ A B) → Σ A B
+  _~* ρ = (ρ ~) *¹
+
+  _~*-comm : (ρ : (x : ⟦ F ⟧₀ A) → □ F B x → B (θ x))
+        (x : ⟦ F * ⟧₀ (Σ A B))
+      → fst ((ρ ~*) x) == (θ *¹) (⟦ F * ⟧₁ fst x)
+  _~*-comm ρ x = ! (comm* (ρ ~) θ fst (fst₀ ρ) x)
+
+  _*ᵈ : (ρ : (x : ⟦ F ⟧₀ A) → □ F B x → B (θ x))
+      → (x : ⟦ F * ⟧₀ A) → □ (F *) B x → B ((θ *¹) x)
+  _*ᵈ ρ x y = transport B
+                ((ρ ~*-comm) (from-Σ-□ (F *) (x , y)))
+                (snd ((ρ ~*) (from-Σ-□ (F *) (x , y))))
+  -- TODO: _*ᵈ-comm

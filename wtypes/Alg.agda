@@ -12,10 +12,6 @@ record Alg : Type1 where
     X : Type0
     θ : ⟦ F ⟧₀ X → X
 
-module _ (a b : Alg) where
-  open Alg a 
-  open Alg b renaming (X to Y ; θ to ρ)
-
 record Alg-morph (a b : Alg) : Type0 where
   constructor mk-alg-morph
 
@@ -35,11 +31,9 @@ module _ {a b : Alg} where
   mk-alg-morph-eq-orig :
      {morph-f morph-g : Alg-morph a b}
      (p : f morph-f == f morph-g)
-     (p₀ : 
-           transport (λ f' → (x : ⟦ F ⟧₀ X) → f' (θ x)
-        == ρ (⟦ F ⟧₁ f' x)) p (f₀ morph-f) == (f₀ morph-g))
+     (p₀ : f₀ morph-f == f₀ morph-g [ (λ f' → (x : ⟦ F ⟧₀ X) → f' (θ x) == ρ (⟦ F ⟧₁ f' x)) ↓ p ])
    → morph-f == morph-g
-  mk-alg-morph-eq-orig {mk-alg-morph f f₀} {mk-alg-morph .f f₁} idp p₀ = ap (mk-alg-morph f) p₀
+  mk-alg-morph-eq-orig {mk-alg-morph f f₀} {mk-alg-morph .f g₀} idp = ap (mk-alg-morph f)
 
   mk-alg-morph-eq :
      {morph-f morph-g : Alg-morph a b}
