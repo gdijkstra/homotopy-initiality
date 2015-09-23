@@ -1,122 +1,131 @@
 {-# OPTIONS --without-K #-}
 
-open import Desc
+open import Container
+
+module Alg (F : Container) where
 
 open import lib.Basics
+open import lib.types.PathSeq
+open import Utils
 
-module Alg (hit : Desc) where
-  open import lib.types.PathSeq
-  open import Container
-  open import FreeMonad
-  open Desc.Desc hit
-  open import Utils
+record Alg : Type1 where
+  constructor mk-alg
+  field
+    X : Type0
+    θ : ⟦ F ⟧₀ X → X
 
-  -- G₀ : Type -> Type is the identity functor.
-  -- G₁ : ∫ Type F₁ -> Type is something more involved.
-  record Alg : Type1 where
-    constructor mk-alg
-    field
-      X : Type0
-      θ₀ : ⟦ F₀ ⟧₀ X → X
-      θ₁ : (x : ⟦ F₁ ⟧₀ X) → G₁₀ X θ₀ x
+record Alg-morph (a b : Alg) : Type0 where
+  constructor mk-alg-morph
 
-  module _ (a b : Alg) where
-    open Alg a 
-    open Alg b renaming (X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
+  open Alg a 
+  open Alg b renaming (X to Y ; θ to ρ)
 
-  record Alg-morph (a b : Alg) : Type0 where
-    constructor mk-alg-morph
+  field
+    f : X → Y
+    f₀ : (x : ⟦ F ⟧₀ X) → f (θ x) == ρ (⟦ F ⟧₁ f x)
 
-    open Alg a 
-    open Alg b renaming (X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
+-- Equality of algebra morphisms
+module _ {a b : Alg} where
+  open Alg a
+  open Alg b renaming (X to Y ; θ to ρ)
+  open Alg-morph
 
-    field
-      f : X → Y
-      f₀ : (x : ⟦ F₀ ⟧₀ X) → f (θ₀ x) == ρ₀ (⟦ F₀ ⟧₁ f x)
-      f₁ : (x : ⟦ F₁ ⟧₀ X) → G₁₁ f f₀ x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ f x)
+  mk-alg-morph-eq-orig :
+     {morph-f morph-g : Alg-morph a b}
+     (p : f morph-f == f morph-g)
+     (p₀ : f₀ morph-f == f₀ morph-g [ (λ f' → (x : ⟦ F ⟧₀ X) → f' (θ x) == ρ (⟦ F ⟧₁ f' x)) ↓ p ])
+   → morph-f == morph-g
+  mk-alg-morph-eq-orig {mk-alg-morph f f₀} {mk-alg-morph .f g₀} idp = ap (mk-alg-morph f)
 
-  module _ {a b : Alg} where
-    open Alg a
-    open Alg b renaming (X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
-    open Alg-morph
-  
-    mk-alg-morph-eq :
-       {morph-f morph-g : Alg-morph a b}
-       (p : f morph-f == f morph-g)
-       (p₀ : (x : ⟦ F₀ ⟧₀ X)
-         →  
-            ! (ap (λ X₁ → X₁ (θ₀ x)) p)
-            ∙ f₀ morph-f x
-            ∙ ap (λ X₁ → ρ₀ (⟦ F₀ ⟧₁ X₁ x)) p
-           == f₀ morph-g x)
-       (p₁ : (x : ⟦ F₁ ⟧₀ X)
-         →  
-            {!apd (λ { (X' , X₀') → G₁₁ X' X₀' x (θ₁ x) }) (pair= p (from-transp _ p p₀))!}
-           == f₁ morph-g x)
-     → morph-f == morph-g
-    mk-alg-morph-eq = {!!}
-  
-  module _ {a b : Alg} (f' g' : Alg-morph a b) where
-    open Alg a
-    open Alg b renaming (X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
-    open Alg-morph f'
-    open Alg-morph g' renaming (f to g ; f₀ to g₀ ; f₁ to g₁)
-  
-    module _
+  mk-alg-morph-eq :
+     {morph-f morph-g : Alg-morph a b}
+     (p : f morph-f == f morph-g)
+     (p₀ : (x : ⟦ F ⟧₀ X)
+         → transport (λ f' → f' (θ x)
+        == ρ (⟦ F ⟧₁ f' x)) p (f₀ morph-f x) == f₀ morph-g x)
+   → morph-f == morph-g
+  mk-alg-morph-eq {mk-alg-morph f f₀} {mk-alg-morph .f f₁} idp p₀ = ap (mk-alg-morph f) (λ= p₀)
+
+module _ {a b : Alg} {morph-f morph-g : Alg-morph a b} where
+  open Alg a
+  open Alg b renaming (X to Y ; θ to ρ)
+  open Alg-morph morph-f
+  open Alg-morph morph-g renaming (f to g ; f₀ to g₀)
+    
+  mk-alg-morph-eq' :
      (p : f == g)
-     (p₀ : (x : ⟦ F₀ ⟧₀ X)
-         →  
-            ! (ap (λ X₁ → X₁ (θ₀ x)) p)
-            ∙ f₀ x
-            ∙ ap (λ X₁ → ρ₀ (⟦ F₀ ⟧₁ X₁ x)) p
-           == g₀ x)
-     (x : ⟦ F₁ ⟧₀ X)
-     where
+     (q : (x : ⟦ F ⟧₀ X)
+        → ! (ap (λ f' → f' (θ x)) p) -- app= p (θ x)
+          ∙ f₀ x
+          ∙ ap (λ f' → ρ (⟦ F ⟧₁ f' x)) p
+       == g₀ x)
+   → morph-f == morph-g
+  mk-alg-morph-eq' p p₀ =
+    mk-alg-morph-eq p
+                    (λ x → (transport-id-nondep (X → Y)
+                                                Y
+                                                (λ f' → f' (θ x))
+                                                (λ f' → ρ (⟦ F ⟧₁ f' x)) p (f₀ x))
+                    ∙ p₀ x)
 
-      p₀' : (x : ⟦ F₀ ⟧₀ X) → transport (λ A → A (θ₀ x) == ρ₀ (⟦ F₀ ⟧₁ A x)) p (f₀ x) == g₀ x
-      p₀' x = transport-id-nondep (X → Y) Y (λ A → A (θ₀ x)) (λ A → ρ₀ (⟦ F₀ ⟧₁ A x)) p (f₀ x) ∙ p₀ x
+-- Category structure of algebras
+id-morph : (X : Alg) → Alg-morph X X
+id-morph X = mk-alg-morph (λ x → x) (λ _ → idp)
 
-      p₀'' : transport (λ A → (x₁ : ⟦ F₀ ⟧₀ X) → A (θ₀ x₁) == ρ₀ (⟦ F₀ ⟧₁ A x₁)) p f₀ == g₀
-      p₀'' = {!!}
+_∘-morph_ : {X Y Z : Alg} → Alg-morph Y Z → Alg-morph X Y → Alg-morph X Z
+_∘-morph_ {mk-alg X θ} {mk-alg Y ρ} {mk-alg Z ζ} (mk-alg-morph g g₀) (mk-alg-morph f f₀) =
+  mk-alg-morph (g ∘ f) (λ x → ↯
+    g (f (θ x))
+     =⟪ ap g (f₀ x) ⟫
+    g (ρ (⟦ F ⟧₁ f x))
+     =⟪ g₀ (⟦ F ⟧₁ f x) ⟫
+    ζ (⟦ F ⟧₁ g (⟦ F ⟧₁ f x))
+     =⟪idp⟫ -- containers satisfy functor laws strictly
+    ζ (⟦ F ⟧₁ (g ∘ f) x) ∎∎)
 
-      p,p₀ : (f , f₀) == (g , g₀)
-      p,p₀ = pair= p (from-transp _ p p₀'')
+infixr 80 _∘-morph_
 
-      links :
-           G₁₁ {X} {Y} {θ₀} {ρ₀} f f₀ x (θ₁ x)
-        == G₁₁ {X} {Y} {θ₀} {ρ₀} g g₀ x (θ₁ x)
-           [ (λ { (A , B) → G₁₀ Y ρ₀ (⟦ F₁ ⟧₁ A x) }) ↓ p,p₀ ]
-      links = apd (λ { (A , B) → G₁₁ {X} {Y} {θ₀} {ρ₀} A B x (θ₁ x) }) (p,p₀)
+open import lib.PathFunctor
 
-      midden : G₁₁ {X} {Y} {θ₀} {ρ₀} f f₀ x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ f x)
-      midden = f₁ x
+∘-assoc :
+    {X Y Z W : Alg}
+    (h : Alg-morph Z W)
+    (g : Alg-morph Y Z)
+    (f : Alg-morph X Y)
+  → h ∘-morph (g ∘-morph f) == (h ∘-morph g) ∘-morph f
+∘-assoc
+ {mk-alg X θ}
+ {mk-alg Y ρ}
+ {mk-alg Z ζ}
+ {mk-alg W ω}
+ (mk-alg-morph h h₀)
+ (mk-alg-morph g g₀)
+ (mk-alg-morph f f₀)
+  = mk-alg-morph-eq idp (λ x → ↯
+    ap h (g₀∘f₀ x) ∙ h₀ (⟦ F ⟧₁ (g ∘ f) x)
+     =⟪idp⟫
+    ap h (ap g (f₀ x) ∙ g₀ (⟦ F ⟧₁ f x)) ∙ h₀ (⟦ F ⟧₁ (g ∘ f) x)
+     =⟪ ap (λ p → p ∙ h₀ (⟦ F ⟧₁ (g ∘ f) x)) (ap-∙ h (ap g (f₀ x)) (g₀ (⟦ F ⟧₁ f x))) ⟫
+    (ap h (ap g (f₀ x)) ∙ ap h (g₀ (⟦ F ⟧₁ f x))) ∙ h₀ (⟦ F ⟧₁ (g ∘ f) x)
+     =⟪ ∙-assoc (ap h (ap g (f₀ x))) (ap h (g₀ (⟦ F ⟧₁ f x))) (h₀ (⟦ F ⟧₁ (g ∘ f) x)) ⟫
+    ap h (ap g (f₀ x)) ∙ ap h (g₀ (⟦ F ⟧₁ f x)) ∙ h₀ (⟦ F ⟧₁ (g ∘ f) x)
+     =⟪ ap (λ p → p ∙ ap h (g₀ (⟦ F ⟧₁ f x)) ∙ h₀ (⟦ F ⟧₁ (g ∘ f) x)) (∘-ap h g (f₀ x)) ⟫
+    ap (h ∘ g) (f₀ x) ∙ ap h (g₀ (⟦ F ⟧₁ f x)) ∙ h₀ (⟦ F ⟧₁ (g ∘ f) x)
+     =⟪idp⟫
+    ap (h ∘ g) (f₀ x) ∙ h₀∘g₀ (⟦ F ⟧₁ f x) ∎∎)
+  where
+    g₀∘f₀ : (x : ⟦ F ⟧₀ X) → g (f (θ x)) == ζ (⟦ F ⟧₁ (g ∘ f) x)
+    g₀∘f₀ x = ap g (f₀ x) ∙ g₀ (⟦ F ⟧₁ f x)
 
-      rechts :
-           ρ₁ (⟦ F₁ ⟧₁ f x)
-        == ρ₁ (⟦ F₁ ⟧₁ g x)
-           [ (λ { (A , B) → G₁₀ Y ρ₀ (⟦ F₁ ⟧₁ A x) }) ↓ p,p₀ ]
-      rechts = apd (λ { (A , B) → ρ₁ (⟦ F₁ ⟧₁ A x) }) (p,p₀)
+    h₀∘g₀ : (x : ⟦ F ⟧₀ Y) → h (g (ρ x)) == ω (⟦ F ⟧₁ (h ∘ g) x)
+    h₀∘g₀ x = ap h (g₀ x) ∙ h₀ (⟦ F ⟧₁ g x)
 
-      resultaat : G₁₁ {X} {Y} {θ₀} {ρ₀} g g₀ x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ g x)
-      resultaat = g₁ x
+∘-unit-l : {X Y : Alg} (f : Alg-morph X Y) → id-morph Y ∘-morph f == f
+∘-unit-l {mk-alg X θ} {mk-alg Y ρ} (mk-alg-morph f f₀)
+  = mk-alg-morph-eq idp (λ x → ∙-unit-r (ap (idf Y) (f₀ x)) ∙ ap-idf (f₀ x))
 
-      -- We should be able to get rid of the path over stuff.
-      totaal : G₁₁ {X} {Y} {θ₀} {ρ₀} g g₀ x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ g x) [ (λ { (A , B) → G₁₀ Y ρ₀ (⟦ F₁ ⟧₁ A x) }) ↓ ! p,p₀ ∙ p,p₀ ]
-      totaal = !ᵈ links ∙ᵈ midden ∙ᵈ rechts
+∘-unit-r : {X Y : Alg} (f : Alg-morph X Y) → f ∘-morph id-morph X == f
+∘-unit-r f = idp
 
-  id-morph : (X : Alg) → Alg-morph X X
-  id-morph (mk-alg X θ₀ θ₁) = mk-alg-morph (idf X) (λ x → idp) (λ x → ↯
-    G₁₁ (idf X) (λ x₁ → idp) x (θ₁ x)
-      =⟪ {!!} ⟫
-    θ₁ x ∎∎)
-  
-  -- _∘-morph_ : {X Y Z : Alg} → Alg-morph Y Z → Alg-morph X Y → Alg-morph X Z
-  -- _∘-morph_ {mk-alg X θ} {mk-alg Y ρ} {mk-alg Z ζ} (mk-alg-morph g g₀) (mk-alg-morph f f₀) =
-  --   mk-alg-morph (g ∘ f) (λ x → ↯
-  --     g (f (θ x))
-  --      =⟪ ap g (f₀ x) ⟫
-  --     g (ρ (⟦ F ⟧₁ f x))
-  --      =⟪ g₀ (⟦ F ⟧₁ f x) ⟫
-  --     ζ (⟦ F ⟧₁ g (⟦ F ⟧₁ f x))
-  --      =⟪idp⟫ -- containers satisfy functor laws strictly
-  --     ζ (⟦ F ⟧₁ (g ∘ f) x) ∎∎)
+is-initial : Alg → Type1
+is-initial θ = (ρ : Alg) → is-contr (Alg-morph θ ρ)

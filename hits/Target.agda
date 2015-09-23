@@ -11,14 +11,14 @@ module hits.Target (desc : Desc) where
   open import lib.types.PathSeq
 
   open Desc desc
-  open import wtypes.Alg renaming (Alg to Alg₀)
+  open import Alg renaming (Alg to Alg₀)
 
   -- We want to implement the following target functor:
   --
   -- G : ∫ (F₀-alg) F₁ → Type
   -- G (X , θ₀) x :≡ (l (X , θ₀) x = r (X , θ₀) x)
 
-  open FreeMonad.LiftAlg
+  open import FreeMonadAlg
 
   U : Alg₀ F₀ → Type0
   U (mk-alg X _) = X
@@ -35,8 +35,8 @@ module hits.Target (desc : Desc) where
     rᵈ (s , t) u p* = u (ContainerMorphism.g r s p*)
 
   -- Lifting of predicates
-  □-G : {X : Alg₀ F₀} {x : ⟦ F₁ ⟧₀ (U X)} → (U X → Type0) → G₀ X x → Type0
-  □-G {mk-alg X θ₀} {x} B p = {!!} == {!!} [ B ↓ p ]
+--  □-G : {X : Alg₀ F₀} {x : ⟦ F₁ ⟧₀ (U X)} → (U X → Type0) → G₀ X x → Type0
+--  □-G {mk-alg X θ₀} {x} B p = {!!} == {!!} [ B ↓ p ]
 
   -- Action on morphisms
   module _
@@ -45,10 +45,10 @@ module hits.Target (desc : Desc) where
     (f' : Alg-morph F₀ X Y)
     where
     open Alg-morph F₀ f'
-    open Alg F₀ X renaming (X to X ; θ to θ₀)
-    open Alg F₀ Y renaming (X to Y ; θ to ρ₀)
+    open Alg.Alg F₀ X renaming (X to X ; θ to θ₀)
+    open Alg.Alg F₀ Y renaming (X to Y ; θ to ρ₀)
 
-    open FreeMonad.LiftAlg.Morphisms θ₀ ρ₀ f (! ∘ f₀)
+    open FreeMonadAlg.Morphisms θ₀ ρ₀ f (! ∘ f₀)
 
     G₁ : G₀ X x → G₀ Y (⟦ F₁ ⟧₁ f x)
     G₁ p = ↯
@@ -69,9 +69,9 @@ module hits.Target (desc : Desc) where
   module _
     (X : Alg₀ F₀) (x : ⟦ F₁ ⟧₀ (U X))
     where
-    open Alg F₀ X renaming (X to X ; θ to θ₀)
+    open Alg.Alg F₀ X renaming (X to X ; θ to θ₀)
 
-    open FreeMonad.LiftAlg.Morphisms θ₀ θ₀ (idf (U X)) (λ _ → idp)
+    open FreeMonadAlg.Morphisms θ₀ θ₀ (idf (U X)) (λ _ → idp)
 
     G₁-id : (p : G₀ X x) → G₁ x (id-morph F₀ X) p == p
     G₁-id p = ↯

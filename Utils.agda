@@ -28,7 +28,7 @@ triple= {a = a} idp {b = b} idp r = ap (λ x → a , b , x) r
   → (f : A → C)
   → (g : B → D)
   → (coe q ∘ f ∘ coe! p == g)
-  → f == g [ (λ z → fst z → snd z) ↓ pair= p (↓-cst-in q) ]
+  → f == g [ (λ z → fst z → snd z) ↓ pair×= p q ]
 →-path-over idp idp f g p = p
 
 Im : ∀ {i j} {X : Type i} {Y : Type j} (f : X → Y) → Type (lmax i j)

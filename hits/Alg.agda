@@ -6,7 +6,7 @@ module hits.Alg (desc : Desc) where
 open import lib.Basics
 open import Container
 open import FreeMonad
-open import wtypes.Alg renaming (Alg to Alg₀)
+open import Alg renaming (Alg to Alg₀)
 open import hits.Target desc
 
 open Desc desc
