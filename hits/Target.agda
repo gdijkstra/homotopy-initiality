@@ -38,31 +38,33 @@ module hits.Target (desc : Desc) where
 --  □-G : {X : Alg₀ F₀} {x : ⟦ F₁ ⟧₀ (U X)} → (U X → Type0) → G₀ X x → Type0
 --  □-G {mk-alg X θ₀} {x} B p = {!!} == {!!} [ B ↓ p ]
 
-  -- Action on morphisms
+  -- Action on homisms
   module _
     {X : Alg₀ F₀} (x : ⟦ F₁ ⟧₀ (U X))
     {Y : Alg₀ F₀} -- (⟦ F₁ ⟧₁ (U f) x : ⟦ F₁ ⟧₀ (U Y))
-    (f' : Alg-morph F₀ X Y)
+    (f' : Alg-hom F₀ X Y)
     where
-    open Alg-morph F₀ f'
+    open Alg-hom F₀ f'
     open Alg.Alg F₀ X renaming (X to X ; θ to θ₀)
     open Alg.Alg F₀ Y renaming (X to Y ; θ to ρ₀)
 
-    open FreeMonadAlg.Morphisms θ₀ ρ₀ f (! ∘ f₀)
+    open FreeMonad.FreeMonad (F₀ *)
+    open FreeMonadAlg.Morphisms X Y
 
     G₁ : G₀ X x → G₀ Y (⟦ F₁ ⟧₁ f x)
     G₁ p = ↯
       (ρ₀ *¹) (l ‼ ⟦ F₁ ⟧₁ f x)
        =⟪idp⟫
       (ρ₀ *¹) (⟦ F₀ * ⟧₁ f (l ‼ x))
-       =⟪ comm* (l ‼ x) ⟫
+       =⟪ ! (comm* (l ‼ x)) ⟫
       f ((θ₀ *¹) (l ‼ x))
        =⟪ ap f p ⟫
       f ((θ₀ *¹) (r ‼ x))
-       =⟪ ! (comm* (r ‼ x)) ⟫
+       =⟪ comm* (r ‼ x) ⟫
       (ρ₀ *¹) (⟦ F₀ * ⟧₁ f (r ‼ x))
        =⟪idp⟫
       (ρ₀ *¹) (r ‼ ⟦ F₁ ⟧₁ f x) ∎∎
+      where comm* = Alg-hom.f₀ (f' *-alg₁)
 
   -- Functor laws
   -- Preserves id
@@ -71,16 +73,19 @@ module hits.Target (desc : Desc) where
     where
     open Alg.Alg F₀ X renaming (X to X ; θ to θ₀)
 
-    open FreeMonadAlg.Morphisms θ₀ θ₀ (idf (U X)) (λ _ → idp)
+    open FreeMonadAlg.Morphisms X X
+    open FreeMonadAlg.MorphismsId
 
-    G₁-id : (p : G₀ X x) → G₁ x (id-morph F₀ X) p == p
+    G₁-id : (p : G₀ X x) → G₁ x (id-hom F₀ X) p == p
     G₁-id p = ↯
-      comm* (l ‼ x) ∙ ap (idf (U X)) p ∙ ! (comm* (r ‼ x))
-       =⟪ ap (λ p' → comm* (l ‼ x) ∙ p' ∙ ! (comm* (r ‼ x))) (ap-idf p) ⟫
-      comm* (l ‼ x) ∙ p ∙ ! (comm* (r ‼ x))
-       =⟪ ap (λ p' → p' ∙ p ∙ ! (comm* (r ‼ x))) (comm*-id θ₀ (l ‼ x)) ⟫
-      p ∙ ! (comm* (r ‼ x))
-       =⟪ ap (λ p' → p ∙ ! p') (comm*-id θ₀ (r ‼ x)) ⟫
+      ! (comm* (l ‼ x)) ∙ ap (idf (U X)) p ∙ (comm* (r ‼ x))
+       =⟪ ap (λ p' → ! (comm* (l ‼ x)) ∙ p' ∙ comm* (r ‼ x)) (ap-idf p) ⟫
+      ! (comm* (l ‼ x)) ∙ p ∙ comm* (r ‼ x)
+       =⟪ ap (λ p' → ! p' ∙ p ∙ comm* (r ‼ x)) (comm*-id X (l ‼ x)) ⟫
+      p ∙ comm* (r ‼ x)
+       =⟪ ap (λ p' → p ∙ p') (comm*-id X (r ‼ x)) ⟫
       p ∙ idp
        =⟪ ∙-unit-r p ⟫
       p ∎∎
+      where comm* = Alg-hom.f₀ (id-hom F₀ X *-alg₁)
+

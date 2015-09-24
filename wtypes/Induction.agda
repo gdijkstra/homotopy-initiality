@@ -25,17 +25,17 @@ module _ (T' : Alg) where
   
   record SectionInductionPrinciple
     (X' : Alg)
-    (f' : Alg-morph X' T') : Type1
+    (f' : Alg-hom X' T') : Type1
     where
     constructor mk-section-ind
 
     open Alg X'
-    open Alg-morph f'
+    open Alg-hom f'
   
     field
-      σ' : Alg-morph T' X'
+      σ' : Alg-hom T' X'
 
-    open Alg-morph σ' renaming (f to σ ; f₀ to σ₀)
+    open Alg-hom σ' renaming (f to σ ; f₀ to σ₀)
 
     field
       σ-is-section : (x : T) → f (σ x) == x
@@ -53,10 +53,10 @@ module SectionInduction⇔Induction (T' : Alg) where
 
   -- Induction implies section induction
   module _ (X' : Alg)
-           (f' : Alg-morph X' T')
+           (f' : Alg-hom X' T')
            where
     open Alg X'
-    open Alg-morph f'
+    open Alg-hom f'
 
     open import Utils
     open import fam.Fam
@@ -108,4 +108,4 @@ module SectionInduction⇔Induction (T' : Alg) where
 
     Induction⇒SectionInduction : InductionPrinciple T' B m → SectionInductionPrinciple T' X' f'
     Induction⇒SectionInduction (mk-ind ind ind-β₀) =
-      mk-section-ind (mk-alg-morph (fst ∘ ind) (fst= ∘ ind-β₀)) (snd ∘ ind)
+      mk-section-ind (mk-alg-hom (fst ∘ ind) (fst= ∘ ind-β₀)) (snd ∘ ind)

@@ -8,6 +8,7 @@ open import Container
 open import fam.Fam
 open import lib.types.PathSeq
 open import lib.Funext using (λ=)
+open import Utils
 
 ⟦_⟧-Fam₀ : Container → Fam → Fam
 ⟦_⟧-Fam₀ F (mk-fam A B) = mk-fam (⟦ F ⟧₀ A) (□ F B)
@@ -30,13 +31,8 @@ open import lib.Funext using (λ=)
       =⟪ ap (λ z → ⟦ F ⟧₁ z x) (λ= i) ⟫
      ⟦ F ⟧₁ (h ∘ f) x ∎∎)
 
--- -- TODO: This is also in Funext.agda but not exported properly.
--- postulate
---   λ=-idp : ∀ {i} {A : Type i} {j} {B : A → Type j} {f : (x : A) → B x}
---          → idp {a = f} == λ= (λ x → idp)
-
 -- ⟦_⟧-Arr₁-id : {X : Arr} (F : Container) → ⟦_⟧-Arr₁ {X} {X} F (Arr-id X) == Arr-id (⟦ F ⟧-Arr₀ X)
--- ⟦_⟧-Arr₁-id {A , B , f} F =
+-- ⟦_⟧-Arr₁-id {mk-arr A B f} F =
 --   ap (λ z → (λ x → x) , (λ x → x) , z) (λ= (λ { (s , t) → ↯ 
 --     ap (λ z → s , z ∘ t) (λ= (λ x → idp))
 --      =⟪ ap (λ p → ap (λ z → s , z ∘ t) p) λ=-idp ⟫ -- λ= (cst idp) == idp

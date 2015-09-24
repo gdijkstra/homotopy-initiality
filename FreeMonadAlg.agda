@@ -5,69 +5,66 @@ open import Container
 -- Lifting of functor algebras to monad algebras
 module FreeMonadAlg {F : Container} where
 
+open import Alg
 open import FreeMonad
-open import lib.Base
+open Ind
+open import lib.Basics
 open import lib.types.PathSeq
+open import Utils
 
 _*¹ : {X : Type0} → (⟦ F ⟧₀ X → X) → ⟦ F * ⟧₀ X → X
 _*¹ {X} θ = rec* X X (idf X) θ
 
+_*-alg : Alg F → Alg (F *)
+(mk-alg X θ) *-alg = mk-alg X (θ *¹)
+
 -- Functorial action on morphisms
 module Morphisms
-         {X : Type0} (θ : ⟦ F ⟧₀ X → X) 
-         {Y : Type0} (ρ : ⟦ F ⟧₀ Y → Y) 
-         (f : X → Y)
-         (comm : (x : ⟦ F ⟧₀ X) → ρ (⟦ F ⟧₁ f x) == f (θ x))
+  (X' Y' : Alg F)
   where
- open import lib.Funext using (λ=)
- open Ind
+ open Alg.Alg F X'
+ open Alg.Alg F Y' renaming (X to Y ; θ to ρ)
 
- comm* : (x : ⟦ F * ⟧₀ X) → (ρ *¹) (⟦ F * ⟧₁ f x) == f ((θ *¹) x)
- comm* = ind* X (λ x → (ρ *¹) (⟦ F * ⟧₁ f x) == f ((θ *¹) x)) 
-              (λ x → idp) 
-              (λ x g → ↯
-                (ρ *¹) (⟦ F * ⟧₁ f (c* x))
-                 =⟪idp⟫ -- comp. rule for ⟦ F * ⟧₁
-                (ρ *¹) (c* (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
-                 =⟪idp⟫ -- comp. rule for ρ *¹
-                ρ (⟦ F ⟧₁ (ρ *¹) (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
-                 =⟪idp⟫ -- functoriality of F
-                ρ (⟦ F ⟧₁ ((ρ *¹) ∘ (⟦ F * ⟧₁ f)) x)
-                 =⟪ ap ρ (lift-func-eq F ((ρ *¹) ∘ ⟦ F * ⟧₁ f) (f ∘ (θ *¹)) x g) ⟫ -- ind. hyp.
-                ρ (⟦ F ⟧₁ (f ∘ (θ *¹)) x)
-                 =⟪idp⟫ -- functoriality of F
-                ρ (⟦ F ⟧₁ f (⟦ F ⟧₁ (θ *¹) x))
-                 =⟪ comm (⟦ F ⟧₁ (θ *¹) x) ⟫
-                f (θ (⟦ F ⟧₁ (θ *¹) x))
+ _*-alg₁ : Alg-hom F X' Y' → Alg-hom (F *) (X' *-alg) (Y' *-alg)
+ (mk-alg-hom f comm) *-alg₁ =
+   mk-alg-hom f (ind* X (λ x → f ((θ *¹) x) == (ρ *¹) (⟦ F * ⟧₁ f x))
+                        (λ x → idp)
+                        (λ x g → ↯ 
+                f ((θ *¹) (c* x))
                  =⟪idp⟫ -- comp. rule for θ *¹
-                f ((θ *¹) (c* x)) ∎∎)
-
- comm*-ext : (ρ *¹) ∘ ⟦ F * ⟧₁ f == f ∘ (θ *¹)
- comm*-ext = λ= comm*
+                f (θ (⟦ F ⟧₁ (θ *¹) x))
+                 =⟪ comm (⟦ F ⟧₁ (θ *¹) x) ⟫
+                ρ (⟦ F ⟧₁ f (⟦ F ⟧₁ (θ *¹) x))
+                 =⟪idp⟫ -- functoriality of F
+                ρ (⟦ F ⟧₁ (f ∘ (θ *¹)) x)
+                 =⟪ ap ρ (lift-func-eq F (f ∘ (θ *¹)) ((ρ *¹) ∘ ⟦ F * ⟧₁ f) x g) ⟫
+                ρ (⟦ F ⟧₁ ((ρ *¹) ∘ (⟦ F * ⟧₁ f)) x)
+                 =⟪idp⟫ -- functoriality of F
+                ρ (⟦ F ⟧₁ (ρ *¹) (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
+                 =⟪idp⟫ -- comp. rule for ρ *¹
+                (ρ *¹) (c* (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
+                 =⟪idp⟫ -- comp. rule for ⟦ F * ⟧₁
+                (ρ *¹) (⟦ F * ⟧₁ f (c* x)) ∎∎))
 
 -- Functor laws for *
 -- Preserves id
-module _ {X : Type0} (θ : ⟦ F ⟧₀ X → X) where
-  open import lib.Funext using (λ=)
-  open import lib.types.PathSeq
-  open import lib.PathFunctor
-  open import lib.PathGroupoid
+module MorphismsId (X : Alg F) where
+  open Morphisms X X 
+  open Alg.Alg F X
 
-  -- TODO: This is also in Funext.agda but not exported properly.
-  postulate
-    λ=-idp : ∀ {i} {A : Type i} {j} {B : A → Type j} {f : (x : A) → B x}
-      → idp {a = f} == λ= (λ x → idp)
+  comm*-id : (x : ⟦ F * ⟧₀ (Alg.X X)) → Alg-hom.f₀ (id-hom F X *-alg₁) x == idp
+  comm*-id = ind* (Alg.X X)
+          (λ x → comm* x == idp)
+          (λ x → idp)
+          (λ x g → ↯ (
+           comm* (c* x)
+            =⟪idp⟫ -- comp. rule for comm*
+           ap θ (lift-func-eq F (θ *¹) (θ *¹) x (□-lift F comm* x))
+            =⟪ ap (λ p → ap θ (lift-func-eq F (θ *¹) (θ *¹) x p)) (λ= g) ⟫
+           ap θ (lift-func-eq F (θ *¹) (θ *¹) x (λ x' → idp))
+            =⟪ ap (λ p' → ap θ (ap (λ p → fst x , p) p')) (! λ=-idp) ⟫ 
+           idp ∎∎))
+    where comm* = Alg-hom.f₀ (id-hom F X *-alg₁)
 
-  open Ind
-  open Morphisms θ θ (idf X) (λ _ → idp)
-
-  comm*-id : (x : ⟦ F * ⟧₀ X) → comm* x == idp
-  comm*-id = ind* X (λ x → comm* x == idp) (λ x → idp) (λ { x g → ↯
-    comm* (c* x)
-     =⟪idp⟫ -- comp. rule for comm*
-    ap θ (lift-func-eq F (θ *¹) (θ *¹) x (□-lift F comm* x)) ∙ idp
-     =⟪ ap (λ p → ap θ (lift-func-eq F (θ *¹) (θ *¹) x p) ∙ idp) (λ= g) ⟫
-    ap θ (lift-func-eq F (θ *¹) (θ *¹) x (λ x' → idp)) ∙ idp
-     =⟪ ap (λ p' → ap θ (ap (λ p → fst x , p) p') ∙ idp) (! λ=-idp) ⟫ 
-    idp ∎∎ })
-  
+  id*-alg₁ : (id-hom F X *-alg₁) == id-hom (F *) (X *-alg)
+  id*-alg₁ = mk-alg-hom-eq (F *) idp comm*-id

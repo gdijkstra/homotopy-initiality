@@ -16,8 +16,8 @@ record FamAlg : Type1 where
     X : Fam
     θ : Fam-hom (⟦ F ⟧-Fam₀ X) X
 
-record FamAlg-morph (a b : FamAlg) : Type0 where
-  constructor mk-fam-alg-morph
+record FamAlg-hom (a b : FamAlg) : Type0 where
+  constructor mk-fam-alg-hom
 
   open FamAlg a 
   open FamAlg b renaming (X to Y ; θ to ρ)
@@ -33,8 +33,8 @@ record ArrAlg : Type1 where
     X : Arr
     θ : Arr-hom (⟦ F ⟧-Arr₀ X) X
 
-record ArrAlg-morph (a b : ArrAlg) : Type0 where
-  constructor mk-arr-alg-morph
+record ArrAlg-hom (a b : ArrAlg) : Type0 where
+  constructor mk-arr-alg-hom
 
   open ArrAlg a 
   open ArrAlg b renaming (X to Y ; θ to ρ)

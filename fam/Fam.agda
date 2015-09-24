@@ -54,16 +54,6 @@ mk-fam-hom-eq : {X Y : Fam}
   → a == b
 mk-fam-hom-eq {mk-fam A B} {mk-fam A₁ B₁} (mk-fam-hom f g) (mk-fam-hom .f g₁) idp = ap (mk-fam-hom f)
 
--- mk-fam-hom-eq : {X X' Y Y' : Fam}
---   → (a : Fam-hom X Y)
---     (a' : Fam-hom X' Y')
---     (pX : X == X')
---     (pY : Y == Y')
---     (pf : Fam-hom.f a == Fam-hom.f a' [ (λ z → fst z → snd z) ↓ pair×= (ap Fam.A pX) (ap Fam.A pY) ])
--- --    (pg : Fam-hom.g a == Fam-hom.g a' [ {!!} ↓ {!!} ])
---   → a == a' [ uncurry Fam-hom ↓ pair×= pX pY ]
--- mk-fam-hom-eq {mk-fam A B} {mk-fam .A .B} {mk-fam A₁ B₁} {mk-fam .A₁ .B₁} (mk-fam-hom f g) (mk-fam-hom .f g₁) idp idp idp = ap (mk-fam-hom f) {!!}
-
 _∘-Fam_ : {X Y Z : Fam} → Fam-hom Y Z → Fam-hom X Y → Fam-hom X Z
 (mk-fam-hom g g') ∘-Fam (mk-fam-hom f f') = mk-fam-hom (g ∘ f) (λ a b → g' (f a) (f' a b)) 
 
@@ -87,16 +77,13 @@ record Arr-hom (a b : Arr) : Type0 where
     h : Y → Y'
     i : (x : X) → f' (g x) == h (f x)
 
--- mk-arr-hom-eq : {X X' Y Y' : Arr}
---   → (a : Arr-hom X Y)
---     (a' : Arr-hom X' Y')
---     (pX : X == X')
---     (pY : Y == Y')
---     (pg : Arr-hom.g a == Arr-hom.g a' [ (λ z → fst z → snd z) ↓ pair×= (ap Arr.dom pX) (ap Arr.dom pY) ])
---     (ph : Arr-hom.h a == Arr-hom.h a' [ (λ z → fst z → snd z) ↓ pair×= (ap Arr.cod pX) (ap Arr.cod pY) ])
---     (pi : Arr-hom.i a == Arr-hom.i a' [ (λ { (X , f , f' , g , h) → (x : X) → f' (g x) == h (f x) }) ↓ pair= (ap Arr.dom pX) {!!} ])
---   → a == a' [ uncurry Arr-hom ↓ pair×= pX pY ]
--- mk-arr-hom-eq a a' pX pY pg ph pi = {!!}
+mk-arr-hom-eq : {X Y : Arr}
+  → (a b : Arr-hom X Y)
+  → (pg : Arr-hom.g a == Arr-hom.g b)
+  → (ph : Arr-hom.h a == Arr-hom.h b)
+  → (pi : Arr-hom.i a == Arr-hom.i b [ (λ z → (x : Arr.dom X) → Arr.arr Y (fst z x) == snd z (Arr.arr X x)) ↓ pair×= pg ph ])
+  → a == b
+mk-arr-hom-eq {mk-arr dom cod arr} {mk-arr dom₁ cod₁ arr₁} (mk-arr-hom g h i) (mk-arr-hom .g .h i₁) idp idp = ap (mk-arr-hom g h) 
 
 infixr 80 _∘-Arr_
 

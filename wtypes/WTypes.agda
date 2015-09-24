@@ -8,7 +8,7 @@ open import lib.Basics hiding (S)
 open import lib.Funext using (λ= ; app=-β ; λ=-η ; app=)
 open Container.Container F renaming (Shapes to S ; Positions to P)
 open import wtypes.Induction F
-open import wtypes.Alg F
+open import Alg F
 open import lib.types.PathSeq
 open import Utils
 
@@ -30,11 +30,11 @@ module Induction⇒Initiality (T' : Alg) where
 --      f : T → X
 --      f₀ : (x : ⟦ F ⟧₀ T) → f (c x) == θ (⟦ F ⟧₁ f x)
   
-      f' : Alg-morph T' X'
-      f' = mk-alg-morph f f₀
+      f' : Alg-hom T' X'
+      f' = mk-alg-hom f f₀
       
-      module Uniqueness (g' : Alg-morph T' X') where
-        open Alg-morph g' renaming (f to g ; f₀ to g₀)
+      module Uniqueness (g' : Alg-hom T' X') where
+        open Alg-hom g' renaming (f to g ; f₀ to g₀)
   
         f=g-B : T → Type0
         f=g-B x = f x == g x
@@ -146,7 +146,7 @@ module Induction⇒Initiality (T' : Alg) where
                  ap (λ f'' → θ (⟦ F ⟧₁ f'' (s , t))) f=g ∎∎)
     
           f'=g' : f' == g'
-          f'=g' = mk-alg-morph-eq' f=g f₀=g₀
+          f'=g' = mk-alg-hom-eq' f=g f₀=g₀
 
 -- TODO: Refactor some things so we can write this down
 --  T-is-initial : is-initial T'
@@ -154,17 +154,17 @@ module Induction⇒Initiality (T' : Alg) where
   
 module Initiality⇒SectionInduction
   (T' : Alg)
-  (rec : (X' : Alg) → Alg-morph T' X')
-  (rec-unique : (X' : Alg) (f : Alg-morph T' X') → rec X' == f)
-  (X' : Alg) (f' : Alg-morph X' T')
+  (rec : (X' : Alg) → Alg-hom T' X')
+  (rec-unique : (X' : Alg) (f : Alg-hom T' X') → rec X' == f)
+  (X' : Alg) (f' : Alg-hom X' T')
   where
-    is-section : f' ∘-morph rec X' == id-morph T'
+    is-section : f' ∘-hom rec X' == id-hom T'
     is-section = ↯
-      f' ∘-morph rec X'
+      f' ∘-hom rec X'
        =⟪ ! (rec-unique T' _) ⟫
       rec T'
        =⟪ rec-unique T' _ ⟫ 
-      id-morph T' ∎∎ 
+      id-hom T' ∎∎ 
 
     sectioninduction : SectionInductionPrinciple T' X' f' 
-    sectioninduction = mk-section-ind (rec X') (app= (ap Alg-morph.f is-section))
+    sectioninduction = mk-section-ind (rec X') (app= (ap Alg-hom.f is-section))

@@ -124,3 +124,9 @@ transport-Π' {A = A} {B = B} p f g =
   (λ x → transport (λ z → B x z) p (f x)) == g
    ≃⟨ pre∙-equiv {z = g} (transport-Π p f g) ⟩
   transport (λ z → (x : A) → B x z) p f == g ≃∎
+
+-- TODO: This is also in Funext.agda but not exported properly.
+postulate
+  λ=-idp : ∀ {i} {A : Type i} {j} {B : A → Type j} {f : (x : A) → B x}
+    → idp {a = f} == λ= (λ x → idp)
+
