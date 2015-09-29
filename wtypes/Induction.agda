@@ -40,8 +40,8 @@ module _ (T' : Alg) where
     field
       σ-is-section : (x : T) → f (σ x) == x
 
-module SectionInduction⇔Induction (T' : Alg) where
-  open Alg T' renaming (X to T ; θ to c)
+module SectionInduction⇔Induction (T,c : Alg) where
+  open Alg T,c renaming (X to T ; θ to c)
 
   -- Section induction implies induction
   module SectionInduction⇒Induction
@@ -49,11 +49,67 @@ module SectionInduction⇔Induction (T' : Alg) where
            (m : (x : ⟦ F ⟧₀ T) → □ F B x → B (c x))
            where
     open import fam.Fam
+    open import fam.Alg
+    -- Induction data is the same as having a fam morphism F (T , B) -> (T , B)
+    c,m : FamAlg F
+    c,m = mk-fam-alg (mk-fam T B) (mk-fam-hom c m)
+
+    -- So we get
+    toθ : ArrAlg F
+    toθ = FamAlg⇒ArrAlg₀ F c,m
+
+    open ArrAlg F toθ renaming (X to arr-f ; θ to θ,c)
+    open Arr-hom θ,c renaming (g to θ ; h to c? ; i to f₀)
+    open Arr arr-f renaming (dom to X ; cod to T? ; arr to f)
+
+    T?=T : T? == T
+    T?=T = idp
+
+    c?=c : c? == c
+    c?=c = idp
+
+    new-X : Alg
+    new-X = mk-alg X θ
+
+    new-f : Alg-hom new-X T,c
+    new-f = mk-alg-hom f f₀
+    
+    module _ (sectioninduction : SectionInductionPrinciple T,c new-X new-f) where
+      open SectionInductionPrinciple T,c sectioninduction
+      open Alg-hom σ' renaming (f to σ ; f₀ to σ₀)
+      open import fam.Section
+
+      T,B : Fam
+      T,B = mk-fam T B
+
+      c' : FamAlg F
+      c' = mk-fam-alg (π-Fam₀ T,B) (mk-fam-hom c (λ a x → unit))
+
+      σ-ArrAlg : ArrAlg F
+      σ-ArrAlg = mk-arr-alg (mk-arr T X σ) (mk-arr-hom c θ σ₀)
+
+      σ-FamAlg : FamAlg F
+      σ-FamAlg = ArrAlg⇒FamAlg₀ F σ-ArrAlg
+
+      open FamAlg F σ-FamAlg renaming (X to T,B? ; θ to c,m?)
+
+      -- T,B?=T,B : T,B? == T,B
+      -- T,B?=T,B = {!!}
+
+      -- c,m?=c,m : c,m? == {!FamAlg.θ c,m!}
+      -- c,m?=c,m = {!!}
+
+      -- ind : Fam-hom (π-Fam₀ T,B) T,B
+      -- ind = {!!}
+
+      -- goal : InductionPrinciple T,c B m
+      -- goal = mk-ind {!!} {!!}
+
   -- TODO: do this
 
   -- Induction implies section induction
   module _ (X' : Alg)
-           (f' : Alg-hom X' T')
+           (f' : Alg-hom X' T,c)
            where
     open Alg X'
     open Alg-hom f'
@@ -106,6 +162,6 @@ module SectionInduction⇔Induction (T' : Alg) where
 
     open import lib.types.Sigma
 
-    Induction⇒SectionInduction : InductionPrinciple T' B m → SectionInductionPrinciple T' X' f'
+    Induction⇒SectionInduction : InductionPrinciple T,c B m → SectionInductionPrinciple T,c X' f'
     Induction⇒SectionInduction (mk-ind ind ind-β₀) =
       mk-section-ind (mk-alg-hom (fst ∘ ind) (fst= ∘ ind-β₀)) (snd ∘ ind)

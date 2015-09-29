@@ -40,3 +40,25 @@ open import Utils
 --      =⟪idp⟫
 --     idp ∎∎ }))
 
+apply-Fam :
+ {F G : Container}
+ (α : ContainerMorphism F G)
+ (X : Fam)
+ → Fam-hom (⟦ F ⟧-Fam₀ X) (⟦ G ⟧-Fam₀ X)
+apply-Fam (mk-cont-morphism f g) (mk-fam A B) = mk-fam-hom (apply α A) (λ { (s , _) t → t ∘ g s })
+  where α = mk-cont-morphism f g
+
+module _ {F G : Container} (α : ContainerMorphism F G) where
+  apply-Fam-natural : {X Y : Fam} (f : Fam-hom X Y) → (apply-Fam α Y ∘-Fam ⟦ F ⟧-Fam₁ f) == (⟦ G ⟧-Fam₁ f ∘-Fam apply-Fam α X)
+  apply-Fam-natural f = idp
+
+apply-Arr :
+ {F G : Container}
+ (α : ContainerMorphism F G)
+ (X : Arr)
+ → Arr-hom (⟦ F ⟧-Arr₀ X) (⟦ G ⟧-Arr₀ X)
+apply-Arr α (mk-arr X Y f) = mk-arr-hom (apply α X) (apply α Y) (λ x → idp)
+
+-- module _ {F G : Container} (α : ContainerMorphism F G) where
+--   apply-Arr-natural : {X Y : Arr} (f : Arr-hom X Y) → (apply-Arr α Y ∘-Arr ⟦ F ⟧-Arr₁ f) == (⟦ G ⟧-Arr₁ f ∘-Arr apply-Arr α X)
+--   apply-Arr-natural f = {!!}

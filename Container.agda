@@ -65,21 +65,13 @@ open import lib.types.Empty
 Const : Type0 → Container
 Const X = X ◁ cst ⊥
 
-all : (F : Container) {X : Type0} (A : X → Type0) → ⟦ F ⟧₀ X → Type0
-all (Sh ◁ Pos) A (s , t) = (x : Pos s) → A (t x)
-
-□ = all
+□ : (F : Container) {X : Type0} (A : X → Type0) → ⟦ F ⟧₀ X → Type0
+□ (Sh ◁ Pos) A (s , t) = (x : Pos s) → A (t x)
 
 -- We can lift sections of a family B : A → Type to □ B : FA → Type.
 module _ (F : Container) {A : Type0} {B : A → Type0} (f : (x : A) → B x) where
   □-lift : (x : ⟦ F ⟧₀ A) → □ F B x
   □-lift (s , t) = f ∘ t
-
-  f~ : A → Σ A B
-  f~ x = (x , f x)
-
-  □-lift=sndFf~ : (x : ⟦ F ⟧₀ A) → snd ∘ snd (⟦ F ⟧₁ f~ x) == □-lift x
-  □-lift=sndFf~ x = idp
 
 -- Containers preserve Σ-types in the following sense.
 module Σ-□ (A : Type0) (B : A → Type0) (F : Container)  where
@@ -104,11 +96,3 @@ module _ (F : Container) {A B : Type0} (f g : A → B) where
   lift-func-eq : (x : ⟦ F ⟧₀ A) (y : □ F (λ x' → f x' == g x') x)
                → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
   lift-func-eq (s , t) h = ap (λ p → s , p) (λ= h)
-
-module _ (F G : Container) (α : ContainerMorphism F G) (A : Type0) (B : A → Type0) where
-  open ContainerMorphism F G α
-
-  □-base-change : (x : ⟦ F ⟧₀ A) → □ F B x → □ G B (apply α A x)
-  □-base-change (s , t) a p = a (g s p)
-
-  -- ⟦ F ⟧₀ (Σ A B) → ⟦ G ⟧₀ (Σ A B)
