@@ -23,9 +23,37 @@ record FamAlg-hom (a b : FamAlg) : Type0 where
   open FamAlg b renaming (X to Y ; θ to ρ)
 
   field
-    f : Fam-hom X Y
-    f₀ : (_∘-Fam_ {⟦ F ⟧-Fam₀ X} {X} {Y} f θ)
-      == (_∘-Fam_ {⟦ F ⟧-Fam₀ X} {⟦ F ⟧-Fam₀ Y} {Y} ρ (⟦_⟧-Fam₁ {X} {Y} F f))
+    f  : Fam-hom X Y
+    f₀ : (f ∘-Fam θ)
+      == (ρ ∘-Fam (⟦ F ⟧-Fam₁ f))
+
+mk-fam-alg' :
+  (A : Type0)
+  (B : A → Type0)
+  (θ-f : ⟦ F ⟧₀ A → A)
+  (θ-g : (a : ⟦ F ⟧₀ A) → □ F B a → B (θ-f a))
+  → FamAlg
+mk-fam-alg' A B θ-f θ-g = mk-fam-alg (mk-fam A B) (mk-fam-hom θ-f θ-g)
+  
+mk-fam-alg-hom' :
+  (A : Type0)
+  (B : A → Type0)
+  (θ-f : ⟦ F ⟧₀ A → A)
+  (θ-g : (a : ⟦ F ⟧₀ A) → □ F B a → B (θ-f a))
+  (C : Type0)
+  (D : C → Type0)
+  (ρ-f : ⟦ F ⟧₀ C → C)
+  (ρ-g : (a : ⟦ F ⟧₀ C) → □ F D a → D (ρ-f a))
+  (f-f : A → C)
+  (f-g : (a : A) → B a → D (f-f a))
+  (β-f : f-f ∘ θ-f == ρ-f ∘ ⟦ F ⟧₁ f-f)
+  (β-g : (λ a b → f-g (θ-f a) (θ-g a b)) == (λ a b → ρ-g (⟦ F ⟧₁ f-f a) (λ p' → f-g (snd a p') (b p'))) [ (λ f → (x : ⟦ F ⟧₀ A) → □ F B x → D (f x)) ↓ β-f ])
+  → FamAlg-hom (mk-fam-alg' A B θ-f θ-g) (mk-fam-alg' C D ρ-f ρ-g)
+mk-fam-alg-hom' A B θ-f θ-g C D ρ-f ρ-g f-f f-g β-f β-g = 
+ mk-fam-alg-hom (mk-fam-hom f-f f-g) (mk-fam-hom-eq (f ∘-Fam θ) (ρ ∘-Fam ⟦ F ⟧-Fam₁ f) β-f β-g)
+ where f = mk-fam-hom f-f f-g
+       θ = mk-fam-hom θ-f θ-g
+       ρ = mk-fam-hom ρ-f ρ-g
 
 record ArrAlg : Type1 where
   constructor mk-arr-alg
@@ -41,9 +69,8 @@ record ArrAlg-hom (a b : ArrAlg) : Type0 where
 
   field
     f : Arr-hom X Y
-    f₀ : (_∘-Arr_ {⟦ F ⟧-Arr₀ X} {X} {Y} f θ)
-      == (_∘-Arr_ {⟦ F ⟧-Arr₀ X} {⟦ F ⟧-Arr₀ Y} {Y} ρ (⟦_⟧-Arr₁ {X} {Y} F f))
-
+    f₀ : (f ∘-Arr θ)
+      == (ρ ∘-Arr (⟦ F ⟧-Arr₁ f))
 open Σ-□ 
 
 to : (X : Fam) → Arr-hom (Fam⇒Arr₀ (⟦ F ⟧-Fam₀ X)) (⟦ F ⟧-Arr₀ (Fam⇒Arr₀ X))
