@@ -67,32 +67,32 @@ module Induction⇒Initiality (𝓣 : Alg) where
           f=g = λ= fx=gx 
     
           f₀=g₀ : (x : ⟦ F ⟧₀ T)
-                → ! (ap (λ 𝓯 → 𝓯 (c x)) f=g) -- app= f=g (c x)
+                → ! (ap (λ h → h (c x)) f=g) -- app= f=g (c x)
                   ∙ f₀ x
-                  ∙ ap (λ 𝓯 → θ (⟦ F ⟧₁ 𝓯 x)) f=g
+                  ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
                == g₀ x
           f₀=g₀ x = ↯
-            ! (ap (λ 𝓯' → 𝓯' (c x)) f=g) ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+            ! (ap (λ h → h (c x)) f=g) ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
              =⟪idp⟫ -- def. of app=
-            ! (app= f=g (c x)) ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+            ! (app= f=g (c x)) ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
              =⟪ step-0 ⟫ -- app=-β
-            ! (fx=gx (c x)) ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+            ! (fx=gx (c x)) ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
              =⟪ step-1 ⟫ -- fx=gx-β₀
-            ! (f₀ x ∙ ap θ (f=g-ind-hyp x (□-lift F fx=gx x)) ∙ ! (g₀ x)) ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+            ! (f₀ x ∙ ap θ (f=g-ind-hyp x (□-lift F fx=gx x)) ∙ ! (g₀ x)) ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
              =⟪ step-2 ⟫ -- ! rules
-            (g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x)) ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+            (g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x)) ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
              =⟪ step-3 ⟫ -- assoc
-            g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x) ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+            g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x) ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
              =⟪ step-4 ⟫ -- ! rules
-            g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+            g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
              =⟪ step-5 ⟫ -- ap magic
             g₀ x ∎∎
            where
-             step-0 = ap (λ p → ! p ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g) (app=-β fx=gx (c x))
+             step-0 = ap (λ p → ! p ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g) (app=-β fx=gx (c x))
     
-             step-1 = ap (λ p → ! p ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g) (fx=gx-β₀ x)
+             step-1 = ap (λ p → ! p ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g) (fx=gx-β₀ x)
     
-             step-2 = ap (λ p → p ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g) (↯
+             step-2 = ap (λ p → p ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g) (↯
                ! (f₀ x ∙ ap θ (f=g-ind-hyp x (□-lift F fx=gx x)) ∙ ! (g₀ x))
                 =⟪ !-∙ (f₀ x) _ ⟫
                ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x)) ∙ ! (g₀ x)) ∙ ! (f₀ x)
@@ -104,33 +104,33 @@ module Induction⇒Initiality (𝓣 : Alg) where
                g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x) ∎∎)
     
              step-3 = ↯
-               (g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x)) ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+               (g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x)) ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
                 =⟪ ∙-assoc (g₀ x) (! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x)) _ ⟫
-               g₀ x ∙ (! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x)) ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+               g₀ x ∙ (! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x)) ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
                 =⟪ ap (λ p → g₀ x ∙ p) (∙-assoc (! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x)))) (! (f₀ x)) _) ⟫
-               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x) ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g ∎∎
+               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x) ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g ∎∎
     
              step-4 = ↯
-               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x) ∙ f₀ x ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ! (f₀ x) ∙ f₀ x ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
                 =⟪ ap (λ p → g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ p) (! (∙-assoc (! (f₀ x)) (f₀ x) _)) ⟫
-               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ (! (f₀ x) ∙ f₀ x) ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
-                =⟪ ap (λ p → g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ p ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g) (!-inv-l (f₀ x)) ⟫
-               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ idp ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ (! (f₀ x) ∙ f₀ x) ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
+                =⟪ ap (λ p → g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ p ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g) (!-inv-l (f₀ x)) ⟫
+               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ idp ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
                 =⟪ idp ⟫
-               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g ∎∎
+               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g ∎∎
     
              step-5 = ↯
-               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g
+               g₀ x ∙ ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g
                 =⟪ ap (λ p → g₀ x ∙ p) (step-5a x) ⟫
                g₀ x ∙ idp
                 =⟪ ∙-unit-r (g₀ x) ⟫
                g₀ x ∎∎
               where
                step-5a : (x : ⟦ F ⟧₀ T)
-                 → ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' x)) f=g == idp
+                 → ! (ap θ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ ap (λ h → θ (⟦ F ⟧₁ h x)) f=g == idp
                step-5a (s , t) = p=q→!p∙q=idp
                  (ap θ (f=g-ind-hyp (s , t) (□-lift F fx=gx (s , t))))
-                 (ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' (s , t))) f=g) (↯
+                 (ap (λ h → θ (⟦ F ⟧₁ h (s , t))) f=g) (↯
                  ap θ (f=g-ind-hyp (s , t) (□-lift F fx=gx (s , t)))
                   =⟪idp⟫ -- def. f=g=ind-hyp and □-lift
                  ap θ (ap (λ t' → s , t') (λ= (fx=gx ∘ t)))
@@ -139,15 +139,15 @@ module Induction⇒Initiality (𝓣 : Alg) where
                   =⟪ ap (λ p → ap (λ t' → θ (s , t')) p) (↯
                       λ= (fx=gx ∘ t)
                        =⟪ ap λ= (λ= (λ x' → ! (app=-β fx=gx (t x')))) ⟫
-                      λ= (λ x' → ap (λ 𝓯' → 𝓯' (t x')) (λ= fx=gx))
+                      λ= (λ x' → ap (λ h → h (t x')) (λ= fx=gx))
                        =⟪ ap λ= (λ= (λ x' → ap-∘ _ _ _)) ⟫
-                      λ= (λ x' → ap (λ u → u x') (ap (λ 𝓯' → 𝓯' ∘ t) (λ= fx=gx)))
-                       =⟪ ! (λ=-η (ap (λ 𝓯' → 𝓯' ∘ t) (λ= fx=gx))) ⟫
-                      ap (λ 𝓯' → 𝓯' ∘ t) (λ= fx=gx) ∎∎)
+                      λ= (λ x' → ap (λ u → u x') (ap (λ h → h ∘ t) (λ= fx=gx)))
+                       =⟪ ! (λ=-η (ap (λ h → h ∘ t) (λ= fx=gx))) ⟫
+                      ap (λ h → h ∘ t) (λ= fx=gx) ∎∎)
                    ⟫
-                 ap (λ t' → θ (s , t')) (ap (λ 𝓯' → 𝓯' ∘ t) (λ= fx=gx))
+                 ap (λ t' → θ (s , t')) (ap (λ h → h ∘ t) (λ= fx=gx))
                   =⟪ ∘-ap _ _ (λ= fx=gx) ⟫
-                 ap (λ 𝓯' → θ (⟦ F ⟧₁ 𝓯' (s , t))) f=g ∎∎)
+                 ap (λ h → θ (⟦ F ⟧₁ h (s , t))) f=g ∎∎)
     
           𝓯=𝓰 : 𝓯 == 𝓰
           𝓯=𝓰 = mk-alg-hom-eq' f=g f₀=g₀
