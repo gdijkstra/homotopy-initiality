@@ -20,12 +20,12 @@ _*-alg : Alg F → Alg (F *)
 
 -- Functorial action on morphisms
 module Morphisms
-  (X' Y' : Alg F)
+  (𝓧 𝓨 : Alg F)
   where
- open Alg.Alg F X'
- open Alg.Alg F Y' renaming (X to Y ; θ to ρ)
+ open Alg.Alg F 𝓧
+ open Alg.Alg F 𝓨 renaming (X to Y ; θ to ρ)
 
- _*-alg₁ : Alg-hom F X' Y' → Alg-hom (F *) (X' *-alg) (Y' *-alg)
+ _*-alg₁ : Alg-hom F 𝓧 𝓨 → Alg-hom (F *) (𝓧 *-alg) (𝓨 *-alg)
  (mk-alg-hom f comm) *-alg₁ =
    mk-alg-hom f (ind* X (λ x → f ((θ *¹) x) == (ρ *¹) (⟦ F * ⟧₁ f x))
                         (λ x → idp)
@@ -48,12 +48,12 @@ module Morphisms
 
 -- Functor laws for *
 -- Preserves id
-module MorphismsId (X : Alg F) where
-  open Morphisms X X 
-  open Alg.Alg F X
+module MorphismsId (𝓧 : Alg F) where
+  open Morphisms 𝓧 𝓧 
+  open Alg.Alg F 𝓧
 
-  comm*-id : (x : ⟦ F * ⟧₀ (Alg.X X)) → Alg-hom.f₀ (id-hom F X *-alg₁) x == idp
-  comm*-id = ind* (Alg.X X)
+  comm*-id : (x : ⟦ F * ⟧₀ X) → Alg-hom.f₀ (id-hom F 𝓧 *-alg₁) x == idp
+  comm*-id = ind* X
           (λ x → comm* x == idp)
           (λ x → idp)
           (λ x g → ↯ (
@@ -64,7 +64,7 @@ module MorphismsId (X : Alg F) where
            ap θ (lift-func-eq F (θ *¹) (θ *¹) x (λ x' → idp))
             =⟪ ap (λ p' → ap θ (ap (λ p → fst x , p) p')) (! λ=-idp) ⟫ 
            idp ∎∎))
-    where comm* = Alg-hom.f₀ (id-hom F X *-alg₁)
+    where comm* = Alg-hom.f₀ (id-hom F 𝓧 *-alg₁)
 
-  id*-alg₁ : (id-hom F X *-alg₁) == id-hom (F *) (X *-alg)
+  id*-alg₁ : (id-hom F 𝓧 *-alg₁) == id-hom (F *) (𝓧 *-alg)
   id*-alg₁ = mk-alg-hom-eq (F *) idp comm*-id

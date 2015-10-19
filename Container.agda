@@ -96,3 +96,15 @@ module _ (F : Container) {A B : Type0} (f g : A → B) where
   lift-func-eq : (x : ⟦ F ⟧₀ A) (y : □ F (λ x' → f x' == g x') x)
                → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
   lift-func-eq (s , t) h = ap (λ p → s , p) (λ= h)
+
+-- Action on paths
+open import lib.Funext
+
+⟦_⟧⁼ :
+  (F : Container)
+  {X Y : Type0}
+  {f g : X → Y}
+  (p : (x : X) → f x == g x)
+  (x : ⟦ F ⟧₀ X)
+  → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
+⟦_⟧⁼ F p (s , t) = ap (λ t' → s , t') (λ= (p ∘ t))

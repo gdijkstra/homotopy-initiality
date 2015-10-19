@@ -14,43 +14,42 @@ record Alg : Type1 where
     X : Type0
     θ : ⟦ F ⟧₀ X → X
 
-record Alg-hom (a b : Alg) : Type0 where
+record Alg-hom (𝓧 𝓨 : Alg) : Type0 where
   constructor mk-alg-hom
-
-  open Alg a 
-  open Alg b renaming (X to Y ; θ to ρ)
+  open Alg 𝓧
+  open Alg 𝓨 renaming (X to Y ; θ to ρ)
 
   field
     f : X → Y
     f₀ : (x : ⟦ F ⟧₀ X) → f (θ x) == ρ (⟦ F ⟧₁ f x)
 
 -- Equality of algebra homisms
-module _ {a b : Alg} where
-  open Alg a
-  open Alg b renaming (X to Y ; θ to ρ)
+module _ {𝓧 𝓨 : Alg} where
+  open Alg 𝓧
+  open Alg 𝓨 renaming (X to Y ; θ to ρ)
   open Alg-hom
 
   mk-alg-hom-eq-orig :
-     {hom-f hom-g : Alg-hom a b}
-     (p : f hom-f == f hom-g)
-     (p₀ : f₀ hom-f == f₀ hom-g [ (λ f' → (x : ⟦ F ⟧₀ X) → f' (θ x) == ρ (⟦ F ⟧₁ f' x)) ↓ p ])
-   → hom-f == hom-g
+     {𝓯 𝓰 : Alg-hom 𝓧 𝓨}
+     (p : f 𝓯 == f 𝓰)
+     (p₀ : f₀ 𝓯 == f₀ 𝓰 [ (λ h → (x : ⟦ F ⟧₀ X) → h (θ x) == ρ (⟦ F ⟧₁ h x)) ↓ p ])
+   → 𝓯 == 𝓰
   mk-alg-hom-eq-orig {mk-alg-hom f f₀} {mk-alg-hom .f g₀} idp = ap (mk-alg-hom f)
 
   mk-alg-hom-eq :
-     {hom-f hom-g : Alg-hom a b}
-     (p : f hom-f == f hom-g)
+     {𝓯 𝓰 : Alg-hom 𝓧 𝓨}
+     (p : f 𝓯 == f 𝓰)
      (p₀ : (x : ⟦ F ⟧₀ X)
          → transport (λ f' → f' (θ x)
-        == ρ (⟦ F ⟧₁ f' x)) p (f₀ hom-f x) == f₀ hom-g x)
-   → hom-f == hom-g
+        == ρ (⟦ F ⟧₁ f' x)) p (f₀ 𝓯 x) == f₀ 𝓰 x)
+   → 𝓯 == 𝓰
   mk-alg-hom-eq {mk-alg-hom f f₀} {mk-alg-hom .f f₁} idp p₀ = ap (mk-alg-hom f) (λ= p₀)
 
-module _ {a b : Alg} {hom-f hom-g : Alg-hom a b} where
-  open Alg a
-  open Alg b renaming (X to Y ; θ to ρ)
-  open Alg-hom hom-f
-  open Alg-hom hom-g renaming (f to g ; f₀ to g₀)
+module _ {𝓧 𝓨 : Alg} {𝓯 𝓰 : Alg-hom 𝓧 𝓨} where
+  open Alg 𝓧
+  open Alg 𝓨 renaming (X to Y ; θ to ρ)
+  open Alg-hom 𝓯
+  open Alg-hom 𝓰 renaming (f to g ; f₀ to g₀)
     
   mk-alg-hom-eq' :
      (p : f == g)
@@ -59,20 +58,20 @@ module _ {a b : Alg} {hom-f hom-g : Alg-hom a b} where
           ∙ f₀ x
           ∙ ap (λ f' → ρ (⟦ F ⟧₁ f' x)) p
        == g₀ x)
-   → hom-f == hom-g
+   → 𝓯 == 𝓰
   mk-alg-hom-eq' p p₀ =
     mk-alg-hom-eq p
                     (λ x → (transport-id-nondep (X → Y)
                                                 Y
-                                                (λ f' → f' (θ x))
-                                                (λ f' → ρ (⟦ F ⟧₁ f' x)) p (f₀ x))
+                                                (λ h → h (θ x))
+                                                (λ h → ρ (⟦ F ⟧₁ h x)) p (f₀ x))
                     ∙ p₀ x)
 
 -- Category structure of algebras
-id-hom : (X : Alg) → Alg-hom X X
-id-hom X = mk-alg-hom (λ x → x) (λ _ → idp)
+id-hom : (𝓧 : Alg) → Alg-hom 𝓧 𝓧
+id-hom 𝓧 = mk-alg-hom (λ x → x) (λ _ → idp)
 
-_∘-hom_ : {X Y Z : Alg} → Alg-hom Y Z → Alg-hom X Y → Alg-hom X Z
+_∘-hom_ : {𝓧 𝓨 𝓩 : Alg} → Alg-hom 𝓨 𝓩 → Alg-hom 𝓧 𝓨 → Alg-hom 𝓧 𝓩
 _∘-hom_ {mk-alg X θ} {mk-alg Y ρ} {mk-alg Z ζ} (mk-alg-hom g g₀) (mk-alg-hom f f₀) =
   mk-alg-hom (g ∘ f) (λ x → ↯
     g (f (θ x))
@@ -129,3 +128,21 @@ open import lib.PathFunctor
 
 is-initial : Alg → Type1
 is-initial θ = (ρ : Alg) → is-contr (Alg-hom θ ρ)
+
+_is-section-of_ : {X Y : Alg} → Alg-hom X Y → Alg-hom Y X → Type0
+_is-section-of_ {X} s p = p ∘-hom s == id-hom X
+
+module _
+  {𝓧 𝓨 : Alg}
+  (𝓼 : Alg-hom 𝓧 𝓨)
+  (𝓹 : Alg-hom 𝓨 𝓧)
+  where
+
+  open Alg 𝓧
+  open Alg 𝓨 renaming (X to Y ; θ to ρ)
+
+  open Alg-hom 𝓼 renaming (f to s ; f₀ to s₀)
+  open Alg-hom 𝓹 renaming (f to p ; f₀ to p₀)
+
+--  mk-is-section-of : (e : (x : X) → p (s x) == x) → s' is-section-of p'
+--  mk-is-section-of e = mk-alg-hom-eq' (λ= e) (λ x → {!!})

@@ -10,8 +10,8 @@ open import lib.types.PathSeq
 open import lib.types.Sigma
 open import Utils
 
-module _ (T' : Alg) where
-  open Alg T' renaming (X to T ; θ to c)
+module _ (𝓣 : Alg) where
+  open Alg 𝓣 renaming (X to T ; θ to c)
 
   record InductionPrinciple
     (B : T → Type0)
@@ -24,101 +24,100 @@ module _ (T' : Alg) where
                → ind (c x) == m x (□-lift F ind x)
   
   record SectionInductionPrinciple
-    (X' : Alg)
-    (f' : Alg-hom X' T') : Type1
+    (𝓧 : Alg)
+    (𝓯 : Alg-hom 𝓧 𝓣) : Type1
     where
     constructor mk-section-ind
 
-    open Alg X'
-    open Alg-hom f'
+    open Alg 𝓧
+    open Alg-hom 𝓯
   
     field
-      σ' : Alg-hom T' X'
+      𝓼 : Alg-hom 𝓣 𝓧
 
-    open Alg-hom σ' renaming (f to σ ; f₀ to σ₀)
+    open Alg-hom 𝓼 renaming (f to s ; f₀ to s₀)
 
     field
-      σ-is-section : (x : T) → f (σ x) == x
+      s-is-section : 𝓯 ∘-hom 𝓼 == id-hom 𝓣
+
 
 module SectionInduction⇔Induction (T,c : Alg) where
   open Alg T,c renaming (X to T ; θ to c)
 
-  -- Section induction implies induction
-  module SectionInduction⇒Induction
-           (B : T → Type0)
-           (m : (x : ⟦ F ⟧₀ T) → □ F B x → B (c x))
-           where
-    open import fam.Fam
-    open import fam.Alg
-    -- Induction data is the same as having a fam morphism F (T , B) -> (T , B)
-    c,m : FamAlg F
-    c,m = mk-fam-alg (mk-fam T B) (mk-fam-hom c m)
+--   -- Section induction implies induction
+--   module SectionInduction⇒Induction
+--            (B : T → Type0)
+--            (m : (x : ⟦ F ⟧₀ T) → □ F B x → B (c x))
+--            where
+--     open import fam.Fam
+--     open import fam.Alg
+--     -- Induction data is the same as having a fam morphism F (T , B) -> (T , B)
+--     c,m : FamAlg F
+--     c,m = mk-fam-alg (mk-fam T B) (mk-fam-hom c m)
 
-    -- So we get
-    toθ : ArrAlg F
-    toθ = FamAlg⇒ArrAlg₀ F c,m
+--     -- So we get
+--     toθ : ArrAlg F
+--     toθ = FamAlg⇒ArrAlg₀ F c,m
 
-    open ArrAlg F toθ renaming (X to arr-f ; θ to θ,c)
-    open Arr-hom θ,c renaming (g to θ ; h to c? ; i to f₀)
-    open Arr arr-f renaming (dom to X ; cod to T? ; arr to f)
+--     open ArrAlg F toθ renaming (X to arr-f ; θ to θ,c)
+--     open Arr-hom θ,c renaming (g to θ ; h to c? ; i to f₀)
+--     open Arr arr-f renaming (dom to X ; cod to T? ; arr to f)
 
-    T?=T : T? == T
-    T?=T = idp
+--     T?=T : T? == T
+--     T?=T = idp
 
-    c?=c : c? == c
-    c?=c = idp
+--     c?=c : c? == c
+--     c?=c = idp
 
-    new-X : Alg
-    new-X = mk-alg X θ
+--     new-X : Alg
+--     new-X = mk-alg X θ
 
-    new-f : Alg-hom new-X T,c
-    new-f = mk-alg-hom f f₀
+--     new-f : Alg-hom new-X T,c
+--     new-f = mk-alg-hom f f₀
     
-    module _ (sectioninduction : SectionInductionPrinciple T,c new-X new-f) where
-      open SectionInductionPrinciple T,c sectioninduction
-      open Alg-hom σ' renaming (f to σ ; f₀ to σ₀)
-      open import fam.Section
+--     module _ (sectioninduction : SectionInductionPrinciple T,c new-X new-f) where
+--       open SectionInductionPrinciple T,c sectioninduction
+--       open Alg-hom 𝓼 renaming (f to s ; f₀ to s₀)
+--       open import fam.Section
 
-      T,B : Fam
-      T,B = mk-fam T B
+--       T,B : Fam
+--       T,B = mk-fam T B
 
-      c' : FamAlg F
-      c' = mk-fam-alg (π-Fam₀ T,B) (mk-fam-hom c (λ a x → unit))
+--       c' : FamAlg F
+--       c' = mk-fam-alg (π-Fam₀ T,B) (mk-fam-hom c (λ a x → unit))
 
-      σ-ArrAlg : ArrAlg F
-      σ-ArrAlg = mk-arr-alg (mk-arr T X σ) (mk-arr-hom c θ σ₀)
+--       s-ArrAlg : ArrAlg F
+--       s-ArrAlg = mk-arr-alg (mk-arr T X s) (mk-arr-hom c θ s₀)
 
-      σ-FamAlg : FamAlg F
-      σ-FamAlg = ArrAlg⇒FamAlg₀ F σ-ArrAlg
+--       s-FamAlg : FamAlg F
+--       s-FamAlg = ArrAlg⇒FamAlg₀ F s-ArrAlg
 
-      open FamAlg F σ-FamAlg renaming (X to T,B? ; θ to c,m?)
+--       open FamAlg F s-FamAlg renaming (X to T,B? ; θ to c,m?)
 
-      -- T,B?=T,B : T,B? == T,B
-      -- T,B?=T,B = {!!}
+--       -- T,B?=T,B : T,B? == T,B
+--       -- T,B?=T,B = {!!}
 
-      -- c,m?=c,m : c,m? == {!FamAlg.θ c,m!}
-      -- c,m?=c,m = {!!}
+--       -- c,m?=c,m : c,m? == {!FamAlg.θ c,m!}
+--       -- c,m?=c,m = {!!}
 
-      -- ind : Fam-hom (π-Fam₀ T,B) T,B
-      -- ind = {!!}
+--       -- ind : Fam-hom (π-Fam₀ T,B) T,B
+--       -- ind = {!!}
 
-      -- goal : InductionPrinciple T,c B m
-      -- goal = mk-ind {!!} {!!}
+--       -- goal : InductionPrinciple T,c B m
+--       -- goal = mk-ind {!!} {!!}
 
-  -- TODO: do this
+--   -- TODO: do this
 
   -- Induction implies section induction
-  module _ (X' : Alg)
-           (f' : Alg-hom X' T,c)
+  module _ (𝓧 : Alg)
+           (𝓯 : Alg-hom 𝓧 T,c)
            where
-    open Alg X'
-    open Alg-hom f'
+    open Alg 𝓧
+    open Alg-hom 𝓯
 
     open import Utils
     open import fam.Fam
     open import fam.Container
-
-  -- TODO: this should be refactored using the new fam.Alg stuff
 
     f-Arr : Arr
     f-Arr = mk-arr X T f
@@ -162,6 +161,6 @@ module SectionInduction⇔Induction (T,c : Alg) where
 
     open import lib.types.Sigma
 
-    Induction⇒SectionInduction : InductionPrinciple T,c B m → SectionInductionPrinciple T,c X' f'
-    Induction⇒SectionInduction (mk-ind ind ind-β₀) =
-      mk-section-ind (mk-alg-hom (fst ∘ ind) (fst= ∘ ind-β₀)) (snd ∘ ind)
+--    Induction⇒SectionInduction : InductionPrinciple T,c B m → SectionInductionPrinciple T,c 𝓧 𝓯
+--    Induction⇒SectionInduction (mk-ind ind ind-β₀) =
+--      mk-section-ind (mk-alg-hom (fst ∘ ind) (fst= ∘ ind-β₀)) (mk-alg-hom-eq (λ= (snd ∘ ind)) (λ x → {!!})) --(snd ∘ ind)

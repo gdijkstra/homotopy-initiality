@@ -43,7 +43,7 @@ record Alg₁-hom (a b : Alg₁) : Type0 where
   field
     f₁ : (x : ⟦ F₁ ⟧₀ X) → G₁ x f,f₀ (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ f x)
 
--- Equality of algebra homisms
+-- Equality of algebra morphisms
 module _ {a b : Alg₁} where
   open Alg₁ a
   open Alg₁ b renaming (X,θ to Y,ρ ; X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
@@ -59,3 +59,23 @@ module _ {a b : Alg₁} where
   mk-alg₁-hom-eq-orig {mk-alg-hom (mk-alg-hom f f₀) f₁} {mk-alg-hom (mk-alg-hom .f .f₀) g₁} idp idp = ap (mk-alg-hom (mk-alg-hom f f₀))
 
   -- TODO: Make more useful variants of this.
+
+module _ {a b : Alg₁} {hom-f hom-g : Alg₁-hom a b} where
+  open Alg₁ a
+  open Alg₁ b renaming (X,θ to Y,ρ ; X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
+  open Alg-hom renaming (f to f') hiding (f₀)
+  open Alg₁-hom hom-f
+  open Alg₁-hom hom-g renaming (f to g ; f₀ to g₀ ; f₁ to g₁)
+
+  -- test :
+  --   (p : (x : X) → f x == g x)
+  --   (x : ⟦ F₀ ⟧₀ X)
+  --   → ap (λ h → (⟦ F₀ ⟧₁ h x)) (λ= p) == {!ap λ= (□-lift F₀ p x)!}
+  -- test p x = {!!} -- ap-∘ ρ₀ (λ h → ⟦ F₀ ⟧₁ h x) p ∙ ?
+
+  -- mk-alg₁-hom-eq :
+  --   (p : f == g)
+  --   (p₀ : (x : ⟦ F₀ ⟧₀ X) → f₀ x ∙ ap (λ h → ρ₀ (⟦ F₀ ⟧₁ h x)) p == ap (λ h → h (θ₀ x)) p ∙ g₀ x)
+  --   (p₁ : (x : ⟦ F₁ ⟧₀ X) → f₁ x ∙ apd (λ { (h , h₀) → ρ₁ (⟦ F₁ ⟧₁ h x) }) (pair×= {!p!} {!p₀!}) == apd (λ { (h , h₀) → G₁ x {!!} (θ₁ x) }) {!!} ∙ g₁ x)
+  --  → hom-f == hom-g
+  -- mk-alg₁-hom-eq p p₀ p₁ = {!!}
