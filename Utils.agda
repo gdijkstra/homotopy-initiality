@@ -5,10 +5,19 @@ module Utils where
 open import lib.Basics
 open import lib.types.Paths
 
+apdt : ∀ {i j} {A : Type i} {B : A → Type j} (f : (a : A) → B a) {x y : A}
+  → (p : x == y) → transport B p (f x) == f y
+apdt f p = to-transp (apd f p)
+
 transport-id-nondep : ∀ {i j}
     (A : Type i) (B : Type j) (f g : A → B) {a a' : A} (p : a == a') (q : f a == g a)
   → transport (λ x → f x == g x) p q == ! (ap f p) ∙ q ∙ (ap g p)
 transport-id-nondep A B₁ f₁ g idp q = ! (∙-unit-r q)
+
+transport-id-dep : ∀ {i j}
+    (A : Type i) (B : A → Type j) (f g : (x : A) → B x) {a a' : A} (p : a == a') (q : f a == g a)
+  → transport (λ x → f x == g x) p q == ! (apdt f p) ∙ ap (transport B p) q ∙ apdt g p
+transport-id-dep A B₁ f₁ g idp q = ! (ap-idf q) ∙ ! (∙-unit-r _)
 
 triple= : ∀ {i j k} {A : Type i} {B : A → Type j} {C : Σ A B → Type k}
   {a a' : A}
@@ -138,3 +147,9 @@ postulate
   λ=-idp : ∀ {i} {A : Type i} {j} {B : A → Type j} {f : (x : A) → B x}
     → idp {a = f} == λ= (λ x → idp)
 
+open import lib.types.PathSeq
+
+infix 80 _∙∙_
+_∙∙_ : {A : Type0} {a a' a'' : A} (s : PathSeq a a') (p : a' == a'') → PathSeq a a''
+(a ∎∎) ∙∙ p = a =⟪ p ⟫ _ ∎∎
+(a =⟪ p ⟫ s) ∙∙ p' = a =⟪ p ⟫ s ∙∙ p'

@@ -67,4 +67,4 @@ module MorphismsId (𝓧 : Alg F) where
     where comm* = Alg-hom.f₀ (id-hom F 𝓧 *-alg₁)
 
   id*-alg₁ : (id-hom F 𝓧 *-alg₁) == id-hom (F *) (𝓧 *-alg)
-  id*-alg₁ = mk-alg-hom-eq (F *) idp comm*-id
+  id*-alg₁ = mk-alg-hom-eq-1 (F *) idp comm*-id
