@@ -65,6 +65,14 @@ module _ {i} {X : Type i} where
                → p == q → ! p ∙ q == idp
   p=q→!p∙q=idp p .p idp = !-inv-l p
 
+  p=q∙r→!p∙q=r :
+    {x y z : X}
+    (p : x == y)
+    (q : x == z)
+    (r : y == z)
+    → q == p ∙ r → ! p ∙ q == r
+  p=q∙r→!p∙q=r idp q r x = x
+
 module _
   {i j}
   {A : Type i} (B : A → Type j)
