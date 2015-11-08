@@ -58,8 +58,6 @@ module _ {F : Container} where
     (m-c : (x : ⟦ F ⟧₀ (⟦ F * ⟧₀ X)) → □ F Y x → Y (c* x))
 
     where
-    -- TODO: Maybe work on the type of m-c to make it more readable:
-    -- perhaps by defining the "all" modality for containers?
     {-# NO_TERMINATION_CHECK #-}
     ind* : (x : ⟦ F * ⟧₀ X) → Y x
     ind* (η x       , t) = m-η (t unit)

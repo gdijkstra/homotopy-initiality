@@ -19,27 +19,6 @@ open import Utils
 ⟦_⟧-Fam₁-id : {X : Fam} (F : Container) → ⟦_⟧-Fam₁ {X} {X} F (Fam-id X) == Fam-id (⟦ F ⟧-Fam₀ X)
 ⟦_⟧-Fam₁-id F = idp
 
-⟦_⟧-Arr₀ : Container → Arr → Arr
-⟦_⟧-Arr₀ F (mk-arr A B f) = mk-arr (⟦ F ⟧₀ A) (⟦ F ⟧₀ B) (⟦ F ⟧₁ f)
-
-⟦_⟧-Arr₁ : {X Y : Arr} (F : Container) → Arr-hom X Y → Arr-hom (⟦ F ⟧-Arr₀ X) (⟦ F ⟧-Arr₀ Y)
-⟦_⟧-Arr₁ {mk-arr A B f} {mk-arr A' B' f'} F (mk-arr-hom g h i) = mk-arr-hom
-   (⟦ F ⟧₁ g)
-   (⟦ F ⟧₁ h)
-   (λ x → ↯
-     ⟦ F ⟧₁ (f' ∘ g) x
-      =⟪ ap (λ z → ⟦ F ⟧₁ z x) (λ= i) ⟫
-     ⟦ F ⟧₁ (h ∘ f) x ∎∎)
-
--- ⟦_⟧-Arr₁-id : {X : Arr} (F : Container) → ⟦_⟧-Arr₁ {X} {X} F (Arr-id X) == Arr-id (⟦ F ⟧-Arr₀ X)
--- ⟦_⟧-Arr₁-id {mk-arr A B f} F =
---   ap (λ z → (λ x → x) , (λ x → x) , z) (λ= (λ { (s , t) → ↯ 
---     ap (λ z → s , z ∘ t) (λ= (λ x → idp))
---      =⟪ ap (λ p → ap (λ z → s , z ∘ t) p) λ=-idp ⟫ -- λ= (cst idp) == idp
---     ap (λ z → s , z ∘ t) idp
---      =⟪idp⟫
---     idp ∎∎ }))
-
 apply-Fam :
  {F G : Container}
  (α : ContainerMorphism F G)
@@ -51,6 +30,18 @@ apply-Fam (mk-cont-morphism f g) (mk-fam A B) = mk-fam-hom (apply α A) (λ { (s
 module _ {F G : Container} (α : ContainerMorphism F G) where
   apply-Fam-natural : {X Y : Fam} (f : Fam-hom X Y) → (apply-Fam α Y ∘-Fam ⟦ F ⟧-Fam₁ f) == (⟦ G ⟧-Fam₁ f ∘-Fam apply-Fam α X)
   apply-Fam-natural f = idp
+
+⟦_⟧-Arr₀ : Container → Arr → Arr
+⟦_⟧-Arr₀ F (mk-arr A B f) = mk-arr (⟦ F ⟧₀ A) (⟦ F ⟧₀ B) (⟦ F ⟧₁ f)
+
+⟦_⟧-Arr₁ : {X Y : Arr} (F : Container) → Arr-hom X Y → Arr-hom (⟦ F ⟧-Arr₀ X) (⟦ F ⟧-Arr₀ Y)
+⟦_⟧-Arr₁ {mk-arr A B f} {mk-arr A' B' f'} F (mk-arr-hom g h i) = mk-arr-hom
+   (⟦ F ⟧₁ g)
+   (⟦ F ⟧₁ h)
+   (λ x → ↯
+     ⟦ F ⟧₁ (f' ∘ g) x
+      =⟪ ap (λ z → ⟦ F ⟧₁ z x) (λ= i) ⟫
+     ⟦ F ⟧₁ (h ∘ f) x ∎∎)
 
 apply-Arr :
  {F G : Container}

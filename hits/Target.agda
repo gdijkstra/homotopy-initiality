@@ -27,12 +27,12 @@ module hits.Target (desc : Desc) where
   G₀ : (𝓧 : Alg₀ F₀) (x : ⟦ F₁ ⟧₀ (U 𝓧)) → Type0
   G₀ (mk-alg 𝓧 θ₀) x = (θ₀ *¹) (l ‼ x) == (θ₀ *¹) (r ‼ x)
 
-  module _ (𝓧 : Alg₀ F₀) (B : U 𝓧 → Type0) where
-    lᵈ : (x : ⟦ F₁ ⟧₀ (U 𝓧)) → □ F₁ B x → □ (F₀ *) B (l ‼ x)
-    lᵈ (s , t) u p* = u (ContainerMorphism.g l s p*)
+  -- module _ (𝓧 : Alg₀ F₀) (B : U 𝓧 → Type0) where
+  --   lᵈ : (x : ⟦ F₁ ⟧₀ (U 𝓧)) → □ F₁ B x → □ (F₀ *) B (l ‼ x)
+  --   lᵈ (s , t) u p* = u (ContainerMorphism.g l s p*)
       
-    rᵈ : (x : ⟦ F₁ ⟧₀ (U 𝓧)) → □ F₁ B x → □ (F₀ *) B (r ‼ x)
-    rᵈ (s , t) u p* = u (ContainerMorphism.g r s p*)
+  --   rᵈ : (x : ⟦ F₁ ⟧₀ (U 𝓧)) → □ F₁ B x → □ (F₀ *) B (r ‼ x)
+  --   rᵈ (s , t) u p* = u (ContainerMorphism.g r s p*)
 
   -- Lifting of predicates
 --  □-G : {𝓧 : Alg₀ F₀} {x : ⟦ F₁ ⟧₀ (U 𝓧)} → (U 𝓧 → Type0) → G₀ 𝓧 x → Type0
