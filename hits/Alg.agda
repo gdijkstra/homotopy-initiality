@@ -87,16 +87,22 @@ module _ {𝓧 𝓨 : Alg₁} where
        =⟨ ∙'-unit-l (g₁ x) ⟩
       g₁ x ∎))
 
-  -- Things can be simplified further, unfolding how the equalities are proven.
-  -- mk-alg₁-hom-eq-3 :
-  --   {𝓯 𝓰 : Alg₁-hom 𝓧 𝓨}
-  --   (p : Alg₁-hom.f 𝓯 == Alg₁-hom.f 𝓰)
-  --   (p₀ : (x : ⟦ F₀ ⟧₀ X)
-  --       → f₀ 𝓯 x ∙ ap (λ h → ρ₀ (⟦ F₀ ⟧₁ h x)) p
-  --       == ap (λ h → h (θ₀ x)) p ∙ f₀ 𝓰 x)
-  --   (p₁ : (x : ⟦ F₁ ⟧₀ X)
-  --       → f₁ 𝓯 x ∙ᵈ apd (λ h → ρ₁ (⟦ F₁ ⟧₁ h x)) p
-  --      == apd (λ h → G₁ x h (θ₁ x)) (mk-alg-hom-eq-2 F₀ p p₀) ∙'ᵈ f₁ 𝓰 x
-  --   )
-  --  → 𝓯 == 𝓰
-  -- mk-alg₁-hom-eq-3 = {!!}
+  open import lib.cubical.Square
+  open import lib.cubical.SquareOver
+
+  mk-alg₁-hom-eq-square : 
+    {𝓯 𝓰 : Alg₁-hom 𝓧 𝓨}
+    (p : 𝓯₀ 𝓯 == 𝓯₀ 𝓰)
+    (p₁ : (x : ⟦ F₁ ⟧₀ X) → SquareOver _ vid-square (f₁ 𝓯 x) (apd (λ h → G₁ x h (θ₁ x)) p) (apd (λ h → ρ₁ (⟦ F₁ ⟧₁ (Alg-hom.f h) x)) p) (f₁ 𝓰 x))
+    → 𝓯 == 𝓰
+  mk-alg₁-hom-eq-square idp p₁ = mk-alg₁-hom-eq-0 idp (λ= (horiz-degen-path ∘ p₁))
+
+  mk-alg₁-hom-eq-square-1 : 
+    {𝓯 𝓰 : Alg₁-hom 𝓧 𝓨}
+    (p : Alg₁-hom.f 𝓯 == Alg₁-hom.f 𝓰)
+    (p₀ : (x : ⟦ F₀ ⟧₀ X) → Square (f₀ 𝓯 x) (ap (λ h → h (θ₀ x)) p) (ap (λ h → ρ₀ (⟦ F₀ ⟧₁ h x)) p) (f₀ 𝓰 x))
+    (p₁ : (x : ⟦ F₁ ⟧₀ X) → SquareOver _ vid-square (f₁ 𝓯 x) (apd (λ h → G₁ x h (θ₁ x)) (mk-alg-hom-square F₀ p p₀)) (apd (λ h → ρ₁ (⟦ F₁ ⟧₁ (Alg-hom.f h) x)) (mk-alg-hom-square F₀ p p₀)) (f₁ 𝓰 x))
+    → 𝓯 == 𝓰
+  mk-alg₁-hom-eq-square-1 p p₀ = mk-alg₁-hom-eq-square (mk-alg-hom-square F₀ p p₀) 
+
+

@@ -40,6 +40,10 @@ module _ (𝓣 : Alg) where
     field
       s-is-section : 𝓯 ∘-hom 𝓼 == id-hom 𝓣
 
+has-induction-principle : Alg → Type1
+has-induction-principle (mk-alg X θ) =
+  (B : X → Type0)
+  (m : (x : ⟦ F ⟧₀ X) → □ F B x → B (θ x)) → InductionPrinciple (mk-alg X θ) B m
 
 module SectionInduction⇔Induction (T,c : Alg) where
   open Alg T,c renaming (X to T ; θ to c)

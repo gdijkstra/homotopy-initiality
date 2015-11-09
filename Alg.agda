@@ -61,15 +61,32 @@ module _ {𝓧 𝓨 : Alg} where
                                             (g₀ x)
                                             (p₀ x))
 
-  -- mk-alg-hom-eq-3 :
-  --    {𝓯 𝓰 : Alg-hom 𝓧 𝓨}
-  --    (p : (x : X) → f 𝓯 x == f 𝓰 x)
-  --    (p₀ : (x : ⟦ F ⟧₀ X)
-  --        → f₀ 𝓯 x ∙ ap (λ h → ρ (⟦ F ⟧₁ h x)) (λ= p)
-  --       == p (θ x) ∙ f₀ 𝓰 x)
-  --  → 𝓯 == 𝓰
-  -- mk-alg-hom-eq-3 {mk-alg-hom f f₀} {mk-alg-hom g g₀} p p₀ = mk-alg-hom-eq-2 (λ= p)
-  --   {!!}
+  open import lib.cubical.Square
+
+  mk-alg-hom-square :
+     {𝓯 𝓰 : Alg-hom 𝓧 𝓨}
+     (p : f 𝓯 == f 𝓰)
+     (p₀ : (x : ⟦ F ⟧₀ X) →
+           Square (f₀ 𝓯 x) (ap (λ h → h (θ x)) p) (ap (λ h → ρ (⟦ F ⟧₁ h x)) p) (f₀ 𝓰 x))
+   → 𝓯 == 𝓰
+  mk-alg-hom-square idp p₀ = mk-alg-hom-eq-0 idp (λ= (horiz-degen-path ∘ p₀))
+
+  mk-alg-hom-square-0 :
+     {𝓯 𝓰 : Alg-hom 𝓧 𝓨}
+     (p  : (x : X) → f 𝓯 x == f 𝓰 x)
+     (p₀ : (x : ⟦ F ⟧₀ X) →
+           Square (f₀ 𝓯 x) (ap (λ h → h (θ x)) (λ= p)) (ap (λ h → ρ (⟦ F ⟧₁ h x)) (λ= p)) (f₀ 𝓰 x))
+   → 𝓯 == 𝓰
+  mk-alg-hom-square-0 p p₀ = mk-alg-hom-square (λ= p) p₀
+
+  mk-alg-hom-square-1 :
+     {𝓯 𝓰 : Alg-hom 𝓧 𝓨}
+     (p  : (x : X) → f 𝓯 x == f 𝓰 x)
+     (p₀ : (x : ⟦ F ⟧₀ X) →
+           Square (f₀ 𝓯 x) (p (θ x)) (ap (λ h → ρ (⟦ F ⟧₁ h x)) (λ= p)) (f₀ 𝓰 x))
+   → 𝓯 == 𝓰
+  mk-alg-hom-square-1 {𝓯} {𝓰} p p₀ =
+    mk-alg-hom-square (λ= p) (λ x → app=-β p (θ x) ∙v⊡ p₀ x)
 
 
 -- Category structure of algebras

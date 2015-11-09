@@ -11,60 +11,109 @@ open import wtypes.Induction F
 open import Alg F
 open import lib.types.PathSeq
 open import Utils
+open import lib.cubical.Cubical
 
-module Induction⇒Initiality (𝓣 : Alg) where
-  open Alg 𝓣 renaming (X to T ; θ to c)
+module Induction⇒Initiality (𝓧 : Alg) (ip : has-induction-principle 𝓧) where
+  open Alg 𝓧
 
-  module Existence (𝓧 : Alg) where
-    open Alg 𝓧
+  module Existence (𝓨 : Alg) where
+    open Alg 𝓨 renaming (X to Y ; θ to ρ)
 
-    f-B : T → Type0
-    f-B _ = X
+    f-B : X → Type0
+    f-B _ = Y
 
-    f-m : (x : ⟦ F ⟧₀ T) → □ F f-B x → X
-    f-m (s , _) u = θ (s , u)
+    f-m : (x : ⟦ F ⟧₀ X) → □ F f-B x → Y
+    f-m (s , _) u = ρ (s , u)
 
-    module _ (ind-def : InductionPrinciple 𝓣 f-B f-m) where
-      open InductionPrinciple 𝓣
+    ind-def : InductionPrinciple 𝓧 f-B f-m
+    ind-def = ip f-B f-m
 
-      f : T → X
-      f = ind ind-def
-  
-      f₀ : (x : ⟦ F ⟧₀ T) → f (c x) == θ (⟦ F ⟧₁ f x)
-      f₀ x = ind-β₀ ind-def x
-  
-      𝓯 : Alg-hom 𝓣 𝓧
-      𝓯 = mk-alg-hom f f₀
-      
---       module Uniqueness (𝓰 : Alg-hom 𝓣 𝓧) where
---         open Alg-hom 𝓰 renaming (f to g ; f₀ to g₀)
-  
---         f=g-B : T → Type0
---         f=g-B x = f x == g x
-  
---         f=g-ind-hyp : (x : ⟦ F ⟧₀ T) → □ F f=g-B x → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
---         f=g-ind-hyp (s , t) u = ap (λ t' → s , t') (λ= u)
-  
---         f=g-m : (x : ⟦ F ⟧₀ T) → □ F f=g-B x → f=g-B (c x)
---         f=g-m x u = ↯
---           f (c x)
---            =⟪ f₀ x ⟫
---           θ (⟦ F ⟧₁ f x)
---            =⟪ ap θ (f=g-ind-hyp x u) ⟫
---           θ (⟦ F ⟧₁ g x)
---            =⟪ ! (g₀ x) ⟫
---           g (c x) ∎∎
-  
---         module _ (eq-def : InductionPrinciple 𝓣 f=g-B f=g-m) where
-  
---           fx=gx : (x : T) → f x == g x
---           fx=gx = ind eq-def
+    open InductionPrinciple 𝓧
 
---           fx=gx-β₀ : (x : ⟦ F ⟧₀ T) → fx=gx (c x) == f₀ x ∙ ap θ (f=g-ind-hyp x (□-lift F fx=gx x)) ∙ ! (g₀ x)
---           fx=gx-β₀ x = ind-β₀ eq-def x
+    f : X → Y
+    f = ind ind-def
 
---           f=g : f == g
---           f=g = λ= fx=gx 
+    f₀ : (x : ⟦ F ⟧₀ X) → f (θ x) == ρ (⟦ F ⟧₁ f x)
+    f₀ x = ind-β₀ ind-def x
+
+    𝓯 : Alg-hom 𝓧 𝓨
+    𝓯 = mk-alg-hom f f₀
+    
+    module Uniqueness (𝓰 : Alg-hom 𝓧 𝓨) where
+      open Alg-hom 𝓰 renaming (f to g ; f₀ to g₀)
+
+      f=g-B : X → Type0
+      f=g-B x = f x == g x
+
+      f=g-ind-hyp : (x : ⟦ F ⟧₀ X) → □ F f=g-B x → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
+      f=g-ind-hyp (s , t) u = ap (λ t' → s , t') (λ= u)
+
+      f=g-m : (x : ⟦ F ⟧₀ X) → □ F f=g-B x → f=g-B (θ x)
+      f=g-m x u = ↯
+        f (θ x)
+         =⟪ f₀ x ⟫
+        ρ (⟦ F ⟧₁ f x)
+         =⟪ ap ρ (f=g-ind-hyp x u) ⟫
+        ρ (⟦ F ⟧₁ g x)
+         =⟪ ! (g₀ x) ⟫
+        g (θ x) ∎∎
+
+      eq-def : InductionPrinciple 𝓧 f=g-B f=g-m
+      eq-def = ip f=g-B f=g-m
+
+      fx=gx : (x : X) → f x == g x
+      fx=gx = ind eq-def
+
+      fx=gx-β₀ : (x : ⟦ F ⟧₀ X) → fx=gx (θ x) == f₀ x ∙ ap ρ (f=g-ind-hyp x (□-lift F fx=gx x)) ∙ ! (g₀ x)
+      fx=gx-β₀ x = ind-β₀ eq-def x
+
+      fx=gx-β₀-square : (x : ⟦ F ⟧₀ X)
+        → Square (f₀ x) (fx=gx (θ x))  (ap ρ (f=g-ind-hyp x (□-lift F fx=gx x))) (g₀ x)
+      fx=gx-β₀-square x =
+        disc-to-square (f₀ x ∙ ap ρ (f=g-ind-hyp x (□-lift F fx=gx x))
+                         =⟨ ! (∙-unit-r _) ⟩
+                       (f₀ x ∙ ap ρ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ idp
+                         =⟨ ap (λ r → (f₀ x ∙ ap ρ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ r) (! (!-inv-l _)) ⟩
+                       (f₀ x ∙ ap ρ (f=g-ind-hyp x (□-lift F fx=gx x))) ∙ (! (g₀ x) ∙ g₀ x)
+                         =⟨ {!!} ⟩
+                       (f₀ x ∙ ap ρ (f=g-ind-hyp x (□-lift F fx=gx x)) ∙ ! (g₀ x)) ∙ g₀ x
+                         =⟨ ap (λ r → r ∙ g₀ x) (! (fx=gx-β₀ x)) ⟩
+                       fx=gx (θ x) ∙ g₀ x ∎)
+
+      f=g : f == g
+      f=g = λ= fx=gx
+
+      foo : (x : ⟦ F ⟧₀ X)
+          → ap (λ h → ρ (⟦ F ⟧₁ h x)) (f=g) == ap ρ (ap (λ h → ⟦ F ⟧₁ h x) (f=g))
+      foo x = ap-∘ ρ (λ h → ⟦ F ⟧₁ h x) f=g
+
+      oof : (x : ⟦ F ⟧₀ X)
+          → ap (λ h → ⟦ F ⟧₁ h x) (f=g) == f=g-ind-hyp x (□-lift F fx=gx x)
+      oof (s , t) =
+        ap (λ h → ⟦ F ⟧₁ h (s , t)) (f=g)
+         =⟨ idp ⟩
+        ap (λ h → (s , h ∘ t)) (f=g)
+         =⟨ {!!} ⟩
+-- λ= (fx=gx ∘ t)
+--                        =⟪ ap λ= (λ= (λ x' → ! (app=-β fx=gx (t x')))) ⟫
+--                       λ= (λ x' → ap (λ h → h (t x')) (λ= fx=gx))
+--                        =⟪ ap λ= (λ= (λ x' → ap-∘ _ _ _)) ⟫
+--                       λ= (λ x' → ap (λ u → u x') (ap (λ h → h ∘ t) (λ= fx=gx)))
+--                        =⟪ ! (λ=-η (ap (λ h → h ∘ t) (λ= fx=gx))) ⟫
+--                       ap (λ h → h ∘ t) (λ= fx=gx)
+
+        ap (λ t' → s , t') (λ= (fx=gx ∘ t))
+         =⟨ idp ⟩
+        ap (λ t' → s , t') (λ= (□-lift F fx=gx (s , t)))
+         =⟨ idp ⟩
+        f=g-ind-hyp (s , t) (□-lift F fx=gx (s , t)) ∎
+
+      𝓯=𝓰 : 𝓯 == 𝓰
+      𝓯=𝓰 = mk-alg-hom-square-1 fx=gx {!!}
+
+  𝓧-is-initial : has-induction-principle 𝓧 → is-initial 𝓧
+  𝓧-is-initial ind = λ 𝓨 → Existence.𝓯 𝓨 , Existence.Uniqueness.𝓯=𝓰 𝓨
+          
     
 --           f₀=g₀ : (x : ⟦ F ⟧₀ T)
 --                 → ! (ap (λ h → h (c x)) f=g) -- app= f=g (c x)
