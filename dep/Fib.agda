@@ -1,13 +1,10 @@
 {-# OPTIONS --without-K #-}
 
-module IndDefFib where
+module dep.Fib where
 
 open import lib.Basics
-open import lib.types.Sigma
-open import lib.types.Unit
-open import lib.types.Empty
-open import lib.PathGroupoid
-open import IndDefBase
+open import Cat
+open import dep.Base
 
 -- Fibration over a given algebra
 Fib : (s : Spec) → / Alg s / → Type1

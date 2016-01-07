@@ -1,14 +1,11 @@
 {-# OPTIONS --without-K #-}
 
-module IndDefSect where
+module dep.Sect where
 
 open import lib.Basics
-open import lib.types.Sigma
-open import lib.types.Unit
-open import lib.types.Empty
-open import lib.PathGroupoid
-open import IndDefBase
-open import IndDefFib
+open import Cat
+open import dep.Base
+open import dep.Fib
 
 is-section :
   (s : Spec)
@@ -34,6 +31,7 @@ to-is-section :
 to-is-section s F G 𝓧 θ P m 𝓼 𝓼' a
   = pair= a {!!}
 
+-- We want to define Π for algebra fibrations
 Sect :
   (s : Spec)
   (𝓧 : / Alg s /)
@@ -89,5 +87,7 @@ F-bar s F 𝓧 P 𝓼 x
     f' : is-section s 𝓧 P f
     f' = snd (ψ s 𝓧 P 𝓼)
 
-G-bar s F G 𝓧 P x 𝓼 p = {!!}
+G-bar s F G 𝓧 P x 𝓼 p
+  = (G ⋆⋆ (fst (ψ s 𝓧 P 𝓼)) , idp) p
+  , {!!}
 

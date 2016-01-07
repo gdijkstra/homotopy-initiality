@@ -1,14 +1,11 @@
 {-# OPTIONS --without-K #-}
 
-module IndDefFibCorrect where
+module dep.FibCorrect where
 
 open import lib.Basics
-open import lib.types.Sigma
-open import lib.types.Unit
-open import lib.types.Empty
-open import lib.PathGroupoid
-open import IndDefBase
-open import IndDefFib
+open import Cat
+open import dep.Base
+open import dep.Fib
 
 module _
   (s : Spec)
