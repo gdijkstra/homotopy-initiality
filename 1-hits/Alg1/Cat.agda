@@ -30,7 +30,7 @@ module _
       𝓯
       idp
       (λ= (λ x → ∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x)))
-      {!!}
+      (admit _)
   
   Alg₁-right-id :
     {X Y : Alg₁-obj}
