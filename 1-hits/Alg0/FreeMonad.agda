@@ -35,3 +35,14 @@ _,_*-hom {X} {Y} {θ} {ρ} f f₀ =
                 (ρ *¹) (c* (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
                  =⟪idp⟫ -- comp. rule for ⟦ F * ⟧₁
                 (ρ *¹) (⟦ F * ⟧₁ f (c* x)) ∎∎)
+
+-- Note that if f₀ x = idp, then the recursive part becomes idp?
+
+id*-hom : {X : Type0} {θ : has-alg₀ F X}
+  → _,_*-hom {θ = θ} (idf X) (λ _ → idp) == (λ x → idp)
+id*-hom {X} {θ} = λ= 
+  (Ind.ind* X
+           (λ x → _,_*-hom {θ = θ} (idf X) (λ _ → idp) x == idp)
+           (λ _ → idp)
+           (λ x p → {!!}))
+

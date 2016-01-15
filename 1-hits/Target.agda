@@ -1,17 +1,19 @@
 {-# OPTIONS --without-K #-}
 
 open import lib.Basics
+open import lib.PathGroupoid
 open import lib.types.Sigma
-open import Cat
 open import Container
 open import FreeMonad
 open import 1-hits.Alg0.Alg 
 open import Admit
 open import 1-hits.Spec
+open import lib.types.PathSeq
 
 -- Properties of target functor G.
 module 1-hits.Target (s : Spec) where
   open Spec s
+  open import 1-hits.Alg0.FreeMonad F₀
 
   G₁₁-id :
     {X : Type0}
@@ -19,7 +21,17 @@ module 1-hits.Target (s : Spec) where
     (x : ⟦ F₁ ⟧₀ X)
     (y : G₁₀ X θ₀ x)
     → G₁₁ θ₀ θ₀ (idf X) (λ x' → idp) x y == y
-  G₁₁-id θ₀ x y = admit _
+  G₁₁-id {X} θ₀ x y = ↯
+    G₁₁ θ₀ θ₀ (idf X) (λ x' → idp) x y
+     =⟪idp⟫
+    ! ((idf X , (λ x' → idp) *-hom) (l ‼ x)) ∙ ap (idf X) y ∙ (idf X , (λ x' → idp) *-hom) (r ‼ x)
+     =⟪ ap (λ h → ! (h (l ‼ x)) ∙ ap (idf X) y ∙ h (r ‼ x)) {!!} ⟫
+    ap (idf X) y ∙ idp
+     =⟪ ∙-unit-r (ap (idf X) y) ⟫
+    ap (idf X) y
+     =⟪ ap-idf y ⟫
+    y
+    ∎∎
 
   G₁₁-comp :
     {X Y Z : Type0}
@@ -35,7 +47,6 @@ module 1-hits.Target (s : Spec) where
     → G₁₁ θ₀ ζ₀ (g ∘ f) (λ x' → ap g (f₀ x') ∙ g₀ (⟦ F₀ ⟧₁ f x')) x y
       == G₁₁ ρ₀ ζ₀ g g₀ (⟦ F₁ ⟧₁ f x) (G₁₁ θ₀ ρ₀ f f₀ x y)
   G₁₁-comp θ₀ ρ₀ ζ₀ g f g₀ f₀ x y = admit _
-    
 
   -- Target functor preserves products
   module _
@@ -46,21 +57,79 @@ module 1-hits.Target (s : Spec) where
     where
 
     open import 1-hits.Alg0.Limits F₀
-  
-    G₁₀-prod :
+
+    module _
       (p : G₁₀ X θ₀ (⟦ F₁ ⟧₁ fst x))
       (q : G₁₀ Y ρ₀ (⟦ F₁ ⟧₁ snd x))
-      → G₁₀ (X × Y) (_×-alg₀_ θ₀ ρ₀) x
-    G₁₀-prod p q = admit _
-  
-    G₁₀-π₁ :
-      (p : G₁₀ X θ₀ (⟦ F₁ ⟧₁ fst x))
-      (q : G₁₀ Y ρ₀ (⟦ F₁ ⟧₁ snd x))
-      → G₁₁ (θ₀ ×-alg₀ ρ₀) θ₀ fst (λ x₁ → idp) x (G₁₀-prod p q) == p
-    G₁₀-π₁ p q = admit _
-  
-    G₁₀-π₂ :
-      (p : G₁₀ X θ₀ (⟦ F₁ ⟧₁ fst x))
-      (q : G₁₀ Y ρ₀ (⟦ F₁ ⟧₁ snd x))
-      → G₁₁ (θ₀ ×-alg₀ ρ₀) ρ₀ snd (λ x₁ → idp) x (G₁₀-prod p q) == q
-    G₁₀-π₂ p q = admit _
+      where
+
+      prodfst = ↯
+        fst (((θ₀ ×-alg₀ ρ₀) *¹) (l ‼ x))
+         =⟪ (fst , (λ _ → idp) *-hom) (l ‼ x) ⟫
+        (θ₀ *¹) (⟦ F₀ * ⟧₁ fst (l ‼ x))
+         =⟪idp⟫
+        (θ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ fst x))
+         =⟪ p ⟫
+        (θ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ fst x))
+         =⟪ ! ((fst , (λ _ → idp) *-hom) (r ‼ x)) ⟫
+        fst (((θ₀ ×-alg₀ ρ₀) *¹) (r ‼ x)) ∎∎
+
+      prodsnd = ↯
+        snd (((θ₀ ×-alg₀ ρ₀) *¹) (l ‼ x))
+         =⟪ (snd , (λ _ → idp) *-hom) (l ‼ x) ⟫
+        (ρ₀ *¹) (⟦ F₀ * ⟧₁ snd (l ‼ x))
+         =⟪idp⟫
+        (ρ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ snd x))
+         =⟪ q ⟫
+        (ρ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ snd x))
+         =⟪ ! ((snd , (λ _ → idp) *-hom) (r ‼ x)) ⟫
+        snd (((θ₀ ×-alg₀ ρ₀) *¹) (r ‼ x)) ∎∎
+        
+      G₁₀-prod : G₁₀ (X × Y) (θ₀ ×-alg₀ ρ₀) x
+      G₁₀-prod = pair×= prodfst prodsnd
+    
+      -- Straight-forward but verbose path algebra shows that we can
+      -- project out the parts of product as expected.
+      G₁₀-π₁ : G₁₁ (θ₀ ×-alg₀ ρ₀) θ₀ fst (λ x₁ → idp) x G₁₀-prod == p
+      G₁₀-π₁ = ↯
+        G₁₁ (θ₀ ×-alg₀ ρ₀) θ₀ fst (λ x₁ → idp) x G₁₀-prod
+         =⟪idp⟫
+        ! fst₀-l ∙ fst×= G₁₀-prod ∙ fst₀-r
+         =⟪ ap (λ h → ! fst₀-l ∙ h ∙ fst₀-r) (fst×=-β prodfst prodsnd ) ⟫
+        ! fst₀-l ∙ (fst₀-l ∙ p ∙ ! fst₀-r) ∙ fst₀-r
+         =⟪ ! (∙-assoc (! fst₀-l) _ fst₀-r) ⟫
+        (! fst₀-l ∙ (fst₀-l ∙ p ∙ ! fst₀-r)) ∙ fst₀-r
+         =⟪ ap (λ h → h ∙ fst₀-r) (! (∙-assoc (! fst₀-l) fst₀-l (p ∙ ! fst₀-r))) ⟫
+        ((! fst₀-l ∙ fst₀-l) ∙ p ∙ ! fst₀-r) ∙ fst₀-r
+         =⟪ ap (λ h → (h ∙ p ∙ ! fst₀-r) ∙ fst₀-r) (!-inv-l fst₀-l) ⟫
+        (p ∙ ! fst₀-r) ∙ fst₀-r
+         =⟪ ∙-assoc p (! fst₀-r) fst₀-r ⟫
+        p ∙ (! fst₀-r ∙ fst₀-r)
+         =⟪ ap (λ h → p ∙ h) (!-inv-l fst₀-r) ⟫
+        p ∙ idp
+         =⟪ ∙-unit-r p ⟫
+        p ∎∎
+        where fst₀-l = ((fst , (λ _ → idp) *-hom) (l ‼ x))
+              fst₀-r = ((fst , (λ _ → idp) *-hom) (r ‼ x))
+    
+      G₁₀-π₂ : G₁₁ (θ₀ ×-alg₀ ρ₀) ρ₀ snd (λ x₁ → idp) x G₁₀-prod == q
+      G₁₀-π₂ = ↯
+        G₁₁ (θ₀ ×-alg₀ ρ₀) ρ₀ snd (λ x₁ → idp) x G₁₀-prod
+         =⟪idp⟫
+        ! snd₀-l ∙ snd×= G₁₀-prod ∙ snd₀-r
+         =⟪ ap (λ h → ! snd₀-l ∙ h ∙ snd₀-r) (snd×=-β prodfst prodsnd ) ⟫
+        ! snd₀-l ∙ (snd₀-l ∙ q ∙ ! snd₀-r) ∙ snd₀-r
+         =⟪ ! (∙-assoc (! snd₀-l) _ snd₀-r) ⟫
+        (! snd₀-l ∙ (snd₀-l ∙ q ∙ ! snd₀-r)) ∙ snd₀-r
+         =⟪ ap (λ h → h ∙ snd₀-r) (! (∙-assoc (! snd₀-l) snd₀-l (q ∙ ! snd₀-r))) ⟫
+        ((! snd₀-l ∙ snd₀-l) ∙ q ∙ ! snd₀-r) ∙ snd₀-r
+         =⟪ ap (λ h → (h ∙ q ∙ ! snd₀-r) ∙ snd₀-r) (!-inv-l snd₀-l) ⟫
+        (q ∙ ! snd₀-r) ∙ snd₀-r
+         =⟪ ∙-assoc q (! snd₀-r) snd₀-r ⟫
+        q ∙ (! snd₀-r ∙ snd₀-r)
+         =⟪ ap (λ h → q ∙ h) (!-inv-l snd₀-r) ⟫
+        q ∙ idp
+         =⟪ ∙-unit-r q ⟫
+        q ∎∎
+        where snd₀-l = ((snd , (λ _ → idp) *-hom) (l ‼ x))
+              snd₀-r = ((snd , (λ _ → idp) *-hom) (r ‼ x))
