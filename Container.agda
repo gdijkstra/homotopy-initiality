@@ -36,3 +36,17 @@ apply (mk-cont-hom sh ps) X (s , t) = sh s , t ∘ (ps s)
 
 _‼_ : {F G : Container} (α : ContHom F G) {X : Type0} → ⟦ F ⟧₀ X → ⟦ G ⟧₀ X
 _‼_ α {X} = apply α X
+
+□ : (F : Container) {A : Type0} (B : A → Type0) → ⟦ F ⟧₀ A → Type0
+□ (Sh ◁ Ps) B (s , t) = (p : Ps s) → B (t p)
+
+bar : (F : Container) {A : Type0} {B : A → Type0}
+  → ((x : A) → B x) → (x : ⟦ F ⟧₀ A) → □ F B x
+bar F 𝓼 (s , t) = λ p → 𝓼 (t p)
+
+module _ (F : Container) {A B : Type0} (f g : A → B) where
+  open import lib.Funext using (λ=)
+
+  lift-func-eq : (x : ⟦ F ⟧₀ A) (y : □ F (λ x' → f x' == g x') x)
+               → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
+  lift-func-eq (s , t) h = ap (λ p → s , p) (λ= h)

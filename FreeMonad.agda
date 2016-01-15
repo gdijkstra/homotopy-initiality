@@ -50,17 +50,17 @@ module _ {F : Container} where
 
   open Container.Container F
 
-  -- module Ind
-  --   (X : Type0) (Y : ⟦ F * ⟧₀ X → Type0)
-  --   (m-η : (x : X) → Y (η* x))
-  --   (m-c : (x : ⟦ F ⟧₀ (⟦ F * ⟧₀ X)) → □ F Y x → Y (c* x))
+  module Ind
+    (X : Type0) (Y : ⟦ F * ⟧₀ X → Type0)
+    (m-η : (x : X) → Y (η* x))
+    (m-c : (x : ⟦ F ⟧₀ (⟦ F * ⟧₀ X)) → □ F Y x → Y (c* x))
 
-  --   where
-  --   {-# NO_TERMINATION_CHECK #-}
-  --   ind* : (x : ⟦ F * ⟧₀ X) → Y x
-  --   ind* (η x       , t) = m-η (t unit)
-  --   ind* (c (s , u) , t) = m-c x (□-lift F ind* x)
-  --     where x = (s , (λ z → u z , (λ x → t (z , x))))
+    where
+    {-# NO_TERMINATION_CHECK #-}
+    ind* : (x : ⟦ F * ⟧₀ X) → Y x
+    ind* (η x       , t) = m-η (t unit)
+    ind* (c (s , u) , t) = m-c x (bar F ind* x)
+      where x = (s , (λ z → u z , (λ x → t (z , x))))
 
-  --   ind*-β : (x : ⟦ F ⟧₀ (⟦ F * ⟧₀ X)) → ind* (c* x) == m-c x (□-lift F ind* x)
-  --   ind*-β x = idp
+    ind*-β : (x : ⟦ F ⟧₀ (⟦ F * ⟧₀ X)) → ind* (c* x) == m-c x (bar F ind* x)
+    ind*-β x = idp
