@@ -35,3 +35,27 @@ _,_*-hom {X} {Y} {θ} {ρ} f f₀ =
                 (ρ *¹) (c* (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
                  =⟪idp⟫ -- comp. rule for ⟦ F * ⟧₁
                 (ρ *¹) (⟦ F * ⟧₁ f (c* x)) ∎∎)
+
+-- Functor laws
+
+id*-hom :
+  {X : Type0}
+  {θ : has-alg₀ F X}
+  (x : ⟦ F * ⟧₀ X)
+  → _,_*-hom {X} {X} {θ} {θ} (idf X) (λ _ → idp) x == idp
+id*-hom {X} {θ} =
+  Ind.ind* X
+           (λ x → id*₀ x == idp)
+           (λ x → idp)
+           (λ x p → ↯
+              (idf X , (λ _ → idp) *-hom) (c* x)
+               =⟪idp⟫
+              ap θ (lift-func-eq F (θ *¹) (θ *¹) x (bar F id*₀ x))
+               =⟪ ap (λ h → ap θ (lift-func-eq F (θ *¹) (θ *¹) x h)) (λ= p) ⟫
+              ap θ (lift-func-eq F (θ *¹) (θ *¹) x (λ _ → idp))
+               =⟪ ap (λ h → ap θ h) (lift-func-eq-idp F (θ *¹) x) ⟫
+              idp ∎∎)
+  where id*₀ = (idf X , (λ _ → idp) *-hom)
+
+-- TODO: composition
+

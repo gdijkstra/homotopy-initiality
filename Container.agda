@@ -44,9 +44,22 @@ bar : (F : Container) {A : Type0} {B : A → Type0}
   → ((x : A) → B x) → (x : ⟦ F ⟧₀ A) → □ F B x
 bar F 𝓼 (s , t) = λ p → 𝓼 (t p)
 
-module _ (F : Container) {A B : Type0} (f g : A → B) where
-  open import lib.Funext using (λ=)
+open import lib.Funext using (λ=)
 
-  lift-func-eq : (x : ⟦ F ⟧₀ A) (y : □ F (λ x' → f x' == g x') x)
-               → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
-  lift-func-eq (s , t) h = ap (λ p → s , p) (λ= h)
+postulate
+  λ=-idp :
+    {A : Type0}
+    {P : A → Type0}
+    (f : (x : A) → P x)
+    → λ= (λ x → idp {a = f x}) == idp
+
+module _ (F : Container) {A B : Type0} where
+  lift-func-eq :
+    (f g : A → B)
+    (x : ⟦ F ⟧₀ A) (y : □ F (λ x' → f x' == g x') x)
+     → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
+  lift-func-eq f g (s , t) h = ap (λ p → s , p) (λ= h)
+
+  lift-func-eq-idp : (f : A → B)
+    (x : ⟦ F ⟧₀ A) → lift-func-eq f f x (λ _ → idp) == idp
+  lift-func-eq-idp f (s , t) = ap (λ h → ap (λ p → s , p) h) (λ=-idp (f ∘ t))
