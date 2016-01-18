@@ -21,7 +21,7 @@ record Spec : Type1 where
 
   G₁₀ : (X : Type0) (θ₀ : has-alg₀ F₀ X) (x : ⟦ F₁ ⟧₀ X) → Type0
   G₁₀ X θ₀ x = ((θ₀ *¹) (l ‼ x) == (θ₀ *¹) (r ‼ x))
-  
+
   G₁₁ :
     {X Y : Type0}
     (θ₀ : has-alg₀ F₀ X)

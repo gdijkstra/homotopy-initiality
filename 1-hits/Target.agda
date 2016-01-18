@@ -15,6 +15,8 @@ module 1-hits.Target (s : Spec) where
   open Spec s
   open import 1-hits.Alg0.FreeMonad F₀
 
+  open import lib.Funext using (λ=)
+
   G₁₁-id :
     {X : Type0}
     (θ₀ : has-alg₀ F₀ X)
@@ -24,8 +26,10 @@ module 1-hits.Target (s : Spec) where
   G₁₁-id {X} θ₀ x y = ↯
     G₁₁ θ₀ θ₀ (idf X) (λ x' → idp) x y
      =⟪idp⟫
-    ! ((idf X , (λ x' → idp) *-hom) (l ‼ x)) ∙ ap (idf X) y ∙ (idf X , (λ x' → idp) *-hom) (r ‼ x)
-     =⟪ ap (λ h → ! (h (l ‼ x)) ∙ ap (idf X) y ∙ h (r ‼ x)) {!!} ⟫
+    ! (((idf X) , (λ _ → idp) *-hom) (l ‼ x)) ∙ ap (idf X) y ∙ ((idf X) , (λ _ → idp) *-hom) (r ‼ x)
+     =⟪ ap (λ h → ! h ∙ ap (idf X) y ∙ (idf X , (λ _ → idp) *-hom) (r ‼ x)) (id*-hom (l ‼ x)) ⟫
+    ap (idf X) y ∙ ((idf X) , (λ _ → idp) *-hom) (r ‼ x)
+     =⟪ ap (λ h → ap (idf X) y ∙ h) (id*-hom (r ‼ x)) ⟫
     ap (idf X) y ∙ idp
      =⟪ ∙-unit-r (ap (idf X) y) ⟫
     ap (idf X) y
@@ -46,8 +50,31 @@ module 1-hits.Target (s : Spec) where
     (y : G₁₀ X θ₀ x)
     → G₁₁ θ₀ ζ₀ (g ∘ f) (λ x' → ap g (f₀ x') ∙ g₀ (⟦ F₀ ⟧₁ f x')) x y
       == G₁₁ ρ₀ ζ₀ g g₀ (⟦ F₁ ⟧₁ f x) (G₁₁ θ₀ ρ₀ f f₀ x y)
-  G₁₁-comp θ₀ ρ₀ ζ₀ g f g₀ f₀ x y = admit _
-
+  G₁₁-comp θ₀ ρ₀ ζ₀ g f g₀ f₀ x y = ↯
+    G₁₁ θ₀ ζ₀ (g ∘ f) (λ x' → ap g (f₀ x') ∙ g₀ (⟦ F₀ ⟧₁ f x')) x y
+     =⟪idp⟫
+    ! (g₀∘f₀* (l ‼ x)) ∙ ap (g ∘ f) y ∙ (g₀∘f₀* (r ‼ x))
+     =⟪ ap (λ h → ! (h (l ‼ x)) ∙ ap (g ∘ f) y ∙ h (r ‼ x)) (λ= (comp*-hom θ₀ ρ₀ ζ₀ g f g₀ f₀)) ⟫
+    ! (g₀*∘f₀* (l ‼ x)) ∙ ap (g ∘ f) y ∙ (g₀*∘f₀* (r ‼ x))
+     =⟪idp⟫ -- def
+    ! (ap g (f₀* (l ‼ x)) ∙ g₀* (⟦ F₀ * ⟧₁ f (l ‼ x))) ∙ ap (g ∘ f) y ∙ (ap g (f₀* (r ‼ x)) ∙ g₀* (⟦ F₀ * ⟧₁ f (r ‼ x)))
+     =⟪idp⟫ -- naturality
+    ! (ap g (f₀* (l ‼ x)) ∙ g₀* (l ‼ (⟦ F₁ ⟧₁ f x))) ∙ ap (g ∘ f) y ∙ (ap g (f₀* (r ‼ x)) ∙ g₀* (r ‼ (⟦ F₁ ⟧₁ f x)))
+     =⟪ ap (λ h → h ∙ ap (g ∘ f) y ∙ (ap g (f₀* (r ‼ x)) ∙ g₀* (r ‼ (⟦ F₁ ⟧₁ f x)))) (!-∙ (ap g (f₀* (l ‼ x))) (g₀* (l ‼ (⟦ F₁ ⟧₁ f x)))) ⟫
+    (! (g₀* (l ‼ (⟦ F₁ ⟧₁ f x))) ∙ ! (ap g (f₀* (l ‼ x)))) ∙ ap (g ∘ f) y ∙ (ap g (f₀* (r ‼ x)) ∙ g₀* (r ‼ (⟦ F₁ ⟧₁ f x)))
+     =⟪ ap (λ h → (! (g₀* (l ‼ (⟦ F₁ ⟧₁ f x))) ∙ h) ∙ ap (g ∘ f) y ∙ (ap g (f₀* (r ‼ x)) ∙ g₀* (r ‼ (⟦ F₁ ⟧₁ f x)))) (!-ap g (f₀* (l ‼ x))) ⟫ -- !-ap
+    (! (g₀* (l ‼ (⟦ F₁ ⟧₁ f x))) ∙ ap g (! (f₀* (l ‼ x)))) ∙ ap (g ∘ f) y ∙ (ap g (f₀* (r ‼ x)) ∙ g₀* (r ‼ (⟦ F₁ ⟧₁ f x)))
+     =⟪ admit _ ⟫ -- ap reasoning
+    ! (g₀* (l ‼ (⟦ F₁ ⟧₁ f x))) ∙ ap g (! (f₀* (l ‼ x)) ∙ ap f y ∙ f₀* (r ‼ x)) ∙ g₀* (r ‼ (⟦ F₁ ⟧₁ f x))
+     =⟪idp⟫
+    G₁₁ ρ₀ ζ₀ g g₀ (⟦ F₁ ⟧₁ f x) (G₁₁ θ₀ ρ₀ f f₀ x y) ∎∎
+      where g₀∘f₀ = (λ x' → ap g (f₀ x') ∙ g₀ (⟦ F₀ ⟧₁ f x'))
+            g₀* = (g , g₀ *-hom)
+            f₀* = (f , f₀ *-hom)
+            g₀∘f₀* : is-alg₀-hom (F₀ *) (θ₀ *¹) (ζ₀ *¹) (g ∘ f)
+            g₀∘f₀* = (λ x' → ((g ∘ f) , g₀∘f₀ *-hom) x')
+            g₀*∘f₀* = (λ x' → ap g (f₀* x') ∙ g₀* (⟦ F₀ * ⟧₁ f x'))
+      
   -- Target functor preserves products
   module _
       {X Y : Type0}

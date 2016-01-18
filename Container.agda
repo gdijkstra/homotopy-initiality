@@ -61,10 +61,10 @@ module _ (F : Container) where
     → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
   lift-func-eq f g (s , t) h = ap (λ p → s , p) (λ= h)
 
-  lift-fun-eq-idp :
+  lift-func-eq-idp :
     {A B : Type0}
     (f : A → B)
     (x : ⟦ F ⟧₀ A) 
     → lift-func-eq f f x (λ _ → idp) == idp
-  lift-fun-eq-idp f (s , t) =
+  lift-func-eq-idp f (s , t) =
     ap (λ h → ap (λ p → s , p) h) (λ=-idp _)
