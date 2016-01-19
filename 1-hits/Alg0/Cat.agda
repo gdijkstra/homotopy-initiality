@@ -19,18 +19,22 @@ square-to-disc' : ∀ {i} {A : Type i} {a₀₀ a₀₁ a₁₀ a₁₁ : A}
   → Square (p ∙ r) idp idp (q ∙ s)
 square-to-disc' ids = ids
 
-Alg₀-left-id :
-  {X Y : Alg₀-obj}
-  (f : Alg₀-hom X Y)
-  → Alg₀-comp {X} {Y} {Y} (Alg₀-id Y) f  == f
-Alg₀-left-id {X} {Y} (f , f₀) =
-  pair= idp (λ= (λ x → ∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x)))
+module _
+  {𝓧 𝓨 : Alg₀-obj}
+  (𝓯 : Alg₀-hom 𝓧 𝓨)
+  where
+  
+  open Alg₀-hom 𝓯
 
-Alg₀-right-id :
-  {X Y : Alg₀-obj}
-  (f : Alg₀-hom X Y)
-  → Alg₀-comp {X} {X} {Y} f (Alg₀-id X) == f
-Alg₀-right-id f = idp
+  left-id-alg₀ : ∘-alg₀ (id-alg₀ 𝓨) 𝓯 == 𝓯
+  left-id-alg₀ = mk-alg₀-hom-eq
+    (∘-alg₀ (id-alg₀ 𝓨) 𝓯)
+    𝓯
+    idp
+    (λ= (λ x → ∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x)))
+
+  right-id-alg₀ : ∘-alg₀ 𝓯 (id-alg₀ 𝓧) == 𝓯
+  right-id-alg₀ = idp
 
 module _
   {𝓧 𝓨 𝓩 𝓦 : Alg₀-obj}
@@ -39,20 +43,20 @@ module _
   (𝓯 : Alg₀-hom 𝓧 𝓨)
   where
 
-  open Σ 𝓧 renaming (fst to X; snd to θ)
-  open Σ 𝓨 renaming (fst to Y; snd to ρ)
-  open Σ 𝓩 renaming (fst to Z; snd to ζ)
-  open Σ 𝓦 renaming (fst to W; snd to ω)
-  open Σ 𝓱 renaming (fst to h; snd to h₀)
-  open Σ 𝓰 renaming (fst to g; snd to g₀)
-  open Σ 𝓯 renaming (fst to f; snd to f₀)
+  open Alg₀-obj 𝓧
+  open Alg₀-obj 𝓨 renaming (X to Y; θ to ρ)
+  open Alg₀-obj 𝓩 renaming (X to Z; θ to ζ)
+  open Alg₀-obj 𝓦 renaming (X to W; θ to ω)
+  open Alg₀-hom 𝓱 renaming (f to h; f₀ to h₀)
+  open Alg₀-hom 𝓰 renaming (f to g; f₀ to g₀)
+  open Alg₀-hom 𝓯
   
-  Alg₀-assoc : (Alg₀-comp {𝓧} {𝓨} {𝓦} (Alg₀-comp {𝓨} {𝓩} {𝓦} 𝓱 𝓰) 𝓯)
-            == (Alg₀-comp {𝓧} {𝓩} {𝓦} 𝓱 (Alg₀-comp {𝓧} {𝓨} {𝓩} 𝓰 𝓯))
-  Alg₀-assoc =
+  assoc-alg₀ : (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯)
+            == (∘-alg₀ 𝓱 (∘-alg₀ 𝓰 𝓯))
+  assoc-alg₀ =
     mk-alg₀-hom-eq-square {𝓧} {𝓦}
-                          (Alg₀-comp {𝓧} {𝓨} {𝓦} (Alg₀-comp {𝓨} {𝓩} {𝓦} 𝓱 𝓰) 𝓯)
-                          (Alg₀-comp {𝓧} {𝓩} {𝓦} 𝓱 (Alg₀-comp {𝓧} {𝓨} {𝓩} 𝓰 𝓯))
+                          (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯)
+                          (∘-alg₀ 𝓱 (∘-alg₀ 𝓰 𝓯))
                           idp
                           (λ x → square-to-disc'
                                    {p = ap (h ∘ g) (f₀ x)}
@@ -79,6 +83,6 @@ Alg₀ : Cat
 Alg₀ = record
   { obj = Alg₀-obj
   ; hom = Alg₀-hom
-  ; comp = λ {X} {Y} {Z} → Alg₀-comp {X} {Y} {Z}
-  ; id = λ X → Alg₀-id X 
+  ; comp = ∘-alg₀
+  ; id = id-alg₀
   }

@@ -8,42 +8,60 @@ module 1-hits.Alg0.Alg (F : Container) where
 has-alg₀ : Type0 → Type0
 has-alg₀ X = ⟦ F ⟧₀ X → X
 
-Alg₀-obj : Type1
-Alg₀-obj = Σ Type0 has-alg₀
+record Alg₀-obj : Type1 where
+  constructor mk-alg₀
+  field
+    X : Type0
+    θ : has-alg₀ X
+    
+module _
+  (𝓧 𝓨 : Alg₀-obj)
+  where
 
-is-alg₀-hom :
-  {X Y : Type0}
-  (θ : has-alg₀ X)
-  (ρ : has-alg₀ Y)
-  (f : X → Y)
-  → Type0
-is-alg₀-hom {X} θ ρ f = (x : ⟦ F ⟧₀ X) → f (θ x) == ρ (⟦ F ⟧₁ f x)
+  open Alg₀-obj 𝓧
+  open Alg₀-obj 𝓨 renaming (X to Y ; θ to ρ)
   
-Alg₀-hom : Alg₀-obj → Alg₀-obj → Type0
-Alg₀-hom (X , θ) (Y , ρ) = Σ (X → Y) (is-alg₀-hom θ ρ)
+  is-alg₀-hom :
+    (f : X → Y)
+    → Type0
+  is-alg₀-hom f = (x : ⟦ F ⟧₀ X) → f (θ x) == ρ (⟦ F ⟧₁ f x)
 
-_∘₀_ :
-  {X Y Z : Type0}
-  {θ : has-alg₀ X}
-  {ρ : has-alg₀ Y}
-  {ζ : has-alg₀ Z}
-  {g : Y → Z}
-  {f : X → Y}
-  (g₀ : is-alg₀-hom ρ ζ g)
-  (f₀ : is-alg₀-hom θ ρ f)
-  → is-alg₀-hom θ ζ (g ∘ f)
-_∘₀_ {g = g} {f = f} g₀ f₀ = λ x → ap g (f₀ x) ∙ g₀ (⟦ F ⟧₁ f x)
+record Alg₀-hom (𝓧 𝓨 : Alg₀-obj) : Type0 where
+  constructor mk-alg₀-hom
 
-Alg₀-comp :
-  {X Y Z : Alg₀-obj}
-  → Alg₀-hom Y Z
-  → Alg₀-hom X Y
-  → Alg₀-hom X Z
-Alg₀-comp {(X , θ)} {(Y , ρ)} {(Z , ζ)} (g , g₀) (f , f₀) =
-    g ∘ f
-  , (_∘₀_ {X} {Y} {Z} {θ} {ρ} {ζ} {g} {f} g₀ f₀)
+  open Alg₀-obj 𝓧
+  open Alg₀-obj 𝓨 renaming (X to Y ; θ to ρ)
 
-Alg₀-id :
-  (X : Alg₀-obj)
-  → Alg₀-hom X X
-Alg₀-id (X , θ) = idf X , (λ x → idp)
+  field
+    f : X → Y
+    f₀ : is-alg₀-hom 𝓧 𝓨 f
+    
+module _
+  {𝓧 𝓨 𝓩 : Alg₀-obj}
+  (𝓰 : Alg₀-hom 𝓨 𝓩)
+  (𝓯 : Alg₀-hom 𝓧 𝓨)
+  where
+  
+  open Alg₀-hom 𝓰 renaming (f to g ; f₀ to g₀)
+  open Alg₀-hom 𝓯
+
+  ∘₀ : is-alg₀-hom 𝓧 𝓩 (g ∘ f)
+  ∘₀ = λ x → ap g (f₀ x) ∙ g₀ (⟦ F ⟧₁ f x)
+
+  ∘-alg₀ : Alg₀-hom 𝓧 𝓩
+  ∘-alg₀ = mk-alg₀-hom (g ∘ f) ∘₀
+
+module _
+  (𝓧 : Alg₀-obj)
+  where
+
+  open Alg₀-obj 𝓧
+
+  id : X → X
+  id = idf X
+
+  id₀ : is-alg₀-hom 𝓧 𝓧 id
+  id₀ = λ _ → idp
+
+  id-alg₀ : Alg₀-hom 𝓧 𝓧
+  id-alg₀ = mk-alg₀-hom id id₀

@@ -14,11 +14,21 @@ open import Admit
 _*¹ : {X : Type0} (θ : has-alg₀ F X) → has-alg₀ (F *) X
 _*¹ {X} θ = rec* X X (idf X) θ
 
--- TODO: Get better notation for this.
-_,_*-hom : {X Y : Type0} {θ : has-alg₀ F X} {ρ : has-alg₀ F Y}
-  (f : X → Y) (f₀ : is-alg₀-hom F θ ρ f) → is-alg₀-hom (F *) (θ *¹) (ρ *¹) f
-_,_*-hom {X} {Y} {θ} {ρ} f f₀ =
-  Ind.ind* X
+star : Alg₀-obj F → Alg₀-obj (F *)
+star (mk-alg₀ X θ) = mk-alg₀ X (θ *¹)
+
+module _
+  {𝓧 𝓨 : Alg₀-obj F}
+  (𝓯 : Alg₀-hom F 𝓧 𝓨)
+  where
+  
+  open Alg₀-obj F 𝓧
+  open Alg₀-obj F 𝓨 renaming (X to Y ; θ to ρ)  
+  open Alg₀-hom F 𝓯
+
+  star-hom₀ : is-alg₀-hom (F *) (star 𝓧) (star 𝓨) f
+  star-hom₀ = Ind.ind*
+           X
            (λ z → f ((θ *¹) z) == (ρ *¹) (⟦ F * ⟧₁ f z))
            (λ x → idp)
            (λ x p → ↯
@@ -35,43 +45,56 @@ _,_*-hom {X} {Y} {θ} {ρ} f f₀ =
                 ρ (⟦ F ⟧₁ (ρ *¹) (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
                  =⟪idp⟫ -- comp. rule for ρ *¹
                 (ρ *¹) (c* (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
-                 =⟪idp⟫ -- comp. rule for ⟦ F * ⟧₁
+                 =⟪idp⟫ -- comp. rule for c*
                 (ρ *¹) (⟦ F * ⟧₁ f (c* x)) ∎∎)
 
--- Functor laws
-id*-hom :
-  {X : Type0}
-  {θ : has-alg₀ F X}
-  (x : ⟦ F * ⟧₀ X)
-  → _,_*-hom {X} {X} {θ} {θ} (idf X) (λ _ → idp) x == idp
-id*-hom {X} {θ} =
-  Ind.ind* X
-           (λ x → id*₀ x == idp)
-           (λ x → idp)
-           (λ x p → ↯
-              (idf X , (λ _ → idp) *-hom) (c* x)
-               =⟪idp⟫
-              ap θ (lift-func-eq F (θ *¹) (θ *¹) x (bar F id*₀ x))
-               =⟪ ap (λ h → ap θ (lift-func-eq F (θ *¹) (θ *¹) x h)) (λ= p) ⟫
-              ap θ (lift-func-eq F (θ *¹) (θ *¹) x (λ _ → idp))
-               =⟪ ap (λ h → ap θ h) (lift-func-eq-idp F (θ *¹) x) ⟫
-              idp ∎∎)
-  where id*₀ = (idf X , (λ _ → idp) *-hom)
+  star-hom : Alg₀-hom (F *) (star 𝓧) (star 𝓨)
+  star-hom = mk-alg₀-hom f star-hom₀
+  
+-- Functor laws, we're only focusing on the second part of the
+-- morphisms, as the functions between algebra carriers remain
+-- unchanged.
+module _
+  (𝓧 : Alg₀-obj F)
+  where
 
-comp*-hom :
-    {X Y Z : Type0}
-    (θ : has-alg₀ F X)
-    (ρ : has-alg₀ F Y)
-    (ζ : has-alg₀ F Z)
-    (g : Y → Z)
-    (f : X → Y)
-    (g₀ : is-alg₀-hom F ρ ζ g)
-    (f₀ : is-alg₀-hom F θ ρ f)
+  open Alg₀-obj F 𝓧
+
+  -- Can cubical reasoning make this more readable?
+  star-hom-id :
     (x : ⟦ F * ⟧₀ X)
-    →  (g ∘ f , _∘₀_ F {X} {Y} {Z} {θ} {ρ} {ζ} {g} {f} g₀ f₀ *-hom) x
-    == _∘₀_ (F *) {X} {Y} {Z} {θ *¹} {ρ *¹} {ζ *¹} {g = g} {f = f} (g , g₀ *-hom) (f , f₀ *-hom) x
-comp*-hom {X} {Y} {Z} θ ρ ζ g f g₀ f₀ =
-  Ind.ind* X
+    → star-hom₀ (id-alg₀ F 𝓧) x == idp
+  star-hom-id = 
+    Ind.ind* X
+             (λ x → id*₀ x == idp)
+             (λ x → idp)
+             (λ x p → ↯
+                id*₀ (c* x)
+                 =⟪idp⟫
+                ap θ (lift-func-eq F (θ *¹) (θ *¹) x (bar F id*₀ x))
+                 =⟪ ap (λ h → ap θ (lift-func-eq F (θ *¹) (θ *¹) x h)) (λ= p) ⟫
+                ap θ (lift-func-eq F (θ *¹) (θ *¹) x (λ _ → idp))
+                 =⟪ ap (λ h → ap θ h) (lift-func-eq-idp F (θ *¹) x) ⟫
+                idp ∎∎)
+    where id*₀ = star-hom₀ (id-alg₀ F 𝓧)
+
+module _
+  {𝓧 𝓨 𝓩 : Alg₀-obj F}
+  (𝓰 : Alg₀-hom F 𝓨 𝓩)
+  (𝓯 : Alg₀-hom F 𝓧 𝓨)
+  where
+
+  open Alg₀-obj F 𝓧
+  open Alg₀-obj F 𝓨 renaming (X to Y ; θ to ρ)
+  open Alg₀-obj F 𝓩 renaming (X to Z ; θ to ζ)  
+  open Alg₀-hom F 𝓰 renaming (f to g ; f₀ to g₀)
+  open Alg₀-hom F 𝓯
+  
+  star-hom-comp :
+    (x : ⟦ F * ⟧₀ X)
+    → star-hom₀ (∘-alg₀ F 𝓰 𝓯) x == ∘₀ (F *) (star-hom 𝓰) (star-hom 𝓯) x 
+  star-hom-comp =
+    Ind.ind* X
            (λ x → g₀∘f₀* x == g₀*∘f₀* x)
            (λ x → idp)
            (λ x p → ↯
@@ -96,11 +119,11 @@ comp*-hom {X} {Y} {Z} θ ρ ζ g f g₀ f₀ =
               ap g (f₀* (c* x))  ∙ g₀* (⟦ F * ⟧₁ f (c* x))
                =⟪idp⟫
               g₀*∘f₀* (c* x) ∎∎)
-    where g₀∘f₀ = _∘₀_ F {X} {Y} {Z} {θ} {ρ} {ζ} {g} {f} g₀ f₀
-          g₀∘f₀* = (g ∘ f , _∘₀_ F {X} {Y} {Z} {θ} {ρ} {ζ} {g} {f} g₀ f₀ *-hom)
-          g₀* = (g , g₀ *-hom)
-          f₀* = (f , f₀ *-hom)
-          g₀*∘f₀* = _∘₀_ (F *) {X} {Y} {Z} {θ *¹} {ρ *¹} {ζ *¹} {g = g} {f = f} g₀* f₀*
+    where g₀∘f₀ = ∘₀ F 𝓰 𝓯
+          g₀∘f₀* = star-hom₀ (∘-alg₀ F 𝓰 𝓯)
+          g₀* = star-hom₀ 𝓰
+          f₀* = star-hom₀ 𝓯
+          g₀*∘f₀* = ∘₀ (F *) (star-hom 𝓰) (star-hom 𝓯)
           rec-gf = (λ x → (lift-func-eq F (g ∘ f ∘ (θ *¹)) ((ζ *¹) ∘ ⟦ F * ⟧₁ (g ∘ f)) x (bar F g₀∘f₀* x)))
           rec-f = (λ x → lift-func-eq F (f ∘ (θ *¹)) ((ρ *¹) ∘ ⟦ F * ⟧₁ f) x (bar F f₀* x))
           rec-g = (λ x → lift-func-eq F (g ∘ (ρ *¹)) ((ζ *¹) ∘ ⟦ F * ⟧₁ g) x (bar F g₀* x))
