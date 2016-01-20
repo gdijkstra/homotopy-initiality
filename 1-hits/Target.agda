@@ -16,54 +16,66 @@ module 1-hits.Target (s : Spec) where
   open Spec s
   open import 1-hits.Alg0.FreeMonad F₀
 
-  module _ (𝓧 : Alg₀-obj F₀) where
-    open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
+  -- We want the definition of G₁₀ and G₁₁ to be abstract outside this
+  -- file, but we still need to be able to prove properties about
+  -- it. Ideally we would put the whole module in an abstract block,
+  -- but that doesn't work.
+  private
+    module Prim-obj (𝓧 : Alg₀-obj F₀) where
+      open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
 
-    G₁₀ : (x : ⟦ F₁ ⟧₀ X) → Type0
-    G₁₀ x = ((θ₀ *¹) (l ‼ x) == (θ₀ *¹) (r ‼ x))
+      G₁₀ : (x : ⟦ F₁ ⟧₀ X) → Type0
+      G₁₀ x = ((θ₀ *¹) (l ‼ x) == (θ₀ *¹) (r ‼ x))
 
-  module _
-    {𝓧 𝓨 : Alg₀-obj F₀}
-    (𝓯 : Alg₀-hom F₀ 𝓧 𝓨)
-    where
+  G₁₀ = Prim-obj.G₁₀
+
+  private
+    module Prim-hom
+      {𝓧 𝓨 : Alg₀-obj F₀}
+      (𝓯 : Alg₀-hom F₀ 𝓧 𝓨)
+      where
     
-    open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
-    open Alg₀-obj F₀ 𝓨 renaming (X to Y ; θ to ρ₀)
-    open Alg₀-hom F₀ 𝓯
+      open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
+      open Alg₀-obj F₀ 𝓨 renaming (X to Y ; θ to ρ₀)
+      open Alg₀-hom F₀ 𝓯
+  
+      G₁₁ : (x : ⟦ F₁ ⟧₀ X) → G₁₀ 𝓧 x → G₁₀ 𝓨 ((⟦ F₁ ⟧₁ f) x)
+      G₁₁ x p = ↯
+        (ρ₀ *¹) (l ‼ ⟦ F₁ ⟧₁ f x)
+         =⟪idp⟫
+        (ρ₀ *¹) (⟦ F₀ * ⟧₁ f (l ‼ x))
+         =⟪ ! (star-hom₀ 𝓯 (l ‼ x)) ⟫
+        f ((θ₀ *¹) (l ‼ x))
+         =⟪ ap f p ⟫
+        f ((θ₀ *¹) (r ‼ x))
+         =⟪ star-hom₀ 𝓯 (r ‼ x) ⟫
+        (ρ₀ *¹) (⟦ F₀ * ⟧₁ f (r ‼ x))
+         =⟪idp⟫
+        (ρ₀ *¹) (r ‼ ⟦ F₁ ⟧₁ f x) ∎∎
+     -- i.e. proof term is: ! (star-hom 𝓯 (l ‼ x)) ∙ ap f p ∙ star-hom 𝓯 (r ‼ x)
 
-    G₁₁ : (x : ⟦ F₁ ⟧₀ X) → G₁₀ 𝓧 x → G₁₀ 𝓨 ((⟦ F₁ ⟧₁ f) x)
-    G₁₁ x p = ↯
-      (ρ₀ *¹) (l ‼ ⟦ F₁ ⟧₁ f x)
-       =⟪idp⟫
-      (ρ₀ *¹) (⟦ F₀ * ⟧₁ f (l ‼ x))
-       =⟪ ! (star-hom₀ 𝓯 (l ‼ x)) ⟫
-      f ((θ₀ *¹) (l ‼ x))
-       =⟪ ap f p ⟫
-      f ((θ₀ *¹) (r ‼ x))
-       =⟪ star-hom₀ 𝓯 (r ‼ x) ⟫
-      (ρ₀ *¹) (⟦ F₀ * ⟧₁ f (r ‼ x))
-       =⟪idp⟫
-      (ρ₀ *¹) (r ‼ ⟦ F₁ ⟧₁ f x) ∎∎
-   -- i.e. proof term is: ! (star-hom 𝓯 (l ‼ x)) ∙ ap f p ∙ star-hom 𝓯 (r ‼ x)
+  G₁₁ = Prim-hom.G₁₁
 
   module _ (𝓧 : Alg₀-obj F₀) where
-    open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
-
-    G₁₁-id : (x : ⟦ F₁ ⟧₀ X) (p : G₁₀ 𝓧 x) → G₁₁ (id-alg₀ F₀ 𝓧) x p == p
-    G₁₁-id x p = ↯
-      G₁₁ (id-alg₀ F₀ 𝓧) x p
-       =⟪idp⟫
-      ! ((star-hom₀ (id-alg₀ F₀ 𝓧)) (l ‼ x)) ∙ ap (idf X) p ∙ (star-hom₀ (id-alg₀ F₀ 𝓧)) (r ‼ x)
-       =⟪ ap (λ h → ! h ∙ ap (idf X) p ∙ star-hom₀ (id-alg₀ F₀ 𝓧) (r ‼ x)) (star-hom-id 𝓧 (l ‼ x)) ⟫
-      ap (idf X) p ∙ (star-hom₀ (id-alg₀ F₀ 𝓧)) (r ‼ x)
-       =⟪ ap (λ h → ap (idf X) p ∙ h) (star-hom-id 𝓧 (r ‼ x)) ⟫
-      ap (idf X) p ∙ idp
-       =⟪ ∙-unit-r (ap (idf X) p) ⟫
-      ap (idf X) p
-       =⟪ ap-idf p ⟫
-      p
-      ∎∎
+      open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
   
+      G₁₁-id : (x : ⟦ F₁ ⟧₀ X) (p : G₁₀ 𝓧 x) → G₁₁ (id-alg₀ F₀ 𝓧) x p == p
+      G₁₁-id x p = ↯
+        G₁₁ (id-alg₀ F₀ 𝓧) x p
+         =⟪idp⟫
+        ! ((star-hom₀ (id-alg₀ F₀ 𝓧)) (l ‼ x)) ∙ ap (idf X) p ∙ (star-hom₀ (id-alg₀ F₀ 𝓧)) (r ‼ x)
+         =⟪ ap (λ h → ! h ∙ ap (idf X) p ∙ star-hom₀ (id-alg₀ F₀ 𝓧) (r ‼ x)) (star-hom-id 𝓧 (l ‼ x)) ⟫
+        ap (idf X) p ∙ (star-hom₀ (id-alg₀ F₀ 𝓧)) (r ‼ x)
+         =⟪ ap (λ h → ap (idf X) p ∙ h) (star-hom-id 𝓧 (r ‼ x)) ⟫
+        ap (idf X) p ∙ idp
+         =⟪ ∙-unit-r (ap (idf X) p) ⟫
+        ap (idf X) p
+         =⟪ ap-idf p ⟫
+        p
+        ∎∎
+  
+      G₁₁-id-λ= : (x : ⟦ F₁ ⟧₀ X) → G₁₁ (id-alg₀ F₀ 𝓧) x == (λ p → p)
+      G₁₁-id-λ= x = λ= (G₁₁-id x)
 
   -- Target functor preserves composition
   module _

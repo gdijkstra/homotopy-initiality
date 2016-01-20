@@ -12,12 +12,7 @@ open import 1-hits.Alg0.Eq F
 open import lib.types.PathSeq
 open import lib.PathGroupoid
 open import lib.cubical.Cubical
-
-square-to-disc' : ∀ {i} {A : Type i} {a₀₀ a₀₁ a₁₀ a₁₁ : A}
-  {p : a₀₀ == a₀₁} {q : a₀₀ == a₁₀} {r : a₀₁ == a₁₁} {s : a₁₀ == a₁₁}
-  → Square p q r s
-  → Square (p ∙ r) idp idp (q ∙ s)
-square-to-disc' ids = ids
+open import 1-hits.Cube
 
 module _
   {𝓧 𝓨 : Alg₀-obj}
@@ -26,15 +21,17 @@ module _
   
   open Alg₀-hom 𝓯
 
-  left-id-alg₀ : ∘-alg₀ (id-alg₀ 𝓨) 𝓯 == 𝓯
-  left-id-alg₀ = mk-alg₀-hom-eq
-    (∘-alg₀ (id-alg₀ 𝓨) 𝓯)
-    𝓯
-    idp
-    (λ= (λ x → ∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x)))
+  abstract
+    left-id-alg₀ : ∘-alg₀ (id-alg₀ 𝓨) 𝓯 == 𝓯
+    left-id-alg₀ = mk-alg₀-hom-eq
+      (∘-alg₀ (id-alg₀ 𝓨) 𝓯)
+      𝓯
+      idp
+      (λ= (λ x → ∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x)))
 
-  right-id-alg₀ : ∘-alg₀ 𝓯 (id-alg₀ 𝓧) == 𝓯
-  right-id-alg₀ = idp
+  abstract
+    right-id-alg₀ : ∘-alg₀ 𝓯 (id-alg₀ 𝓧) == 𝓯
+    right-id-alg₀ = idp
 
 module _
   {𝓧 𝓨 𝓩 𝓦 : Alg₀-obj}
