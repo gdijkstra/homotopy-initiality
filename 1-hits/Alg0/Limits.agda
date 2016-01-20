@@ -34,7 +34,6 @@ module _
   π₂-alg₀ : Alg₀-hom ×-alg₀ 𝓨
   π₂-alg₀ = mk-alg₀-hom snd (λ _ → idp)
 
-
 products : has-products
 products = record
   { prod = ×-alg₀

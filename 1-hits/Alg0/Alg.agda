@@ -14,6 +14,9 @@ record Alg₀-obj : Type1 where
     X : Type0
     θ : has-alg₀ X
     
+U₀ : Alg₀-obj → Type0
+U₀ (mk-alg₀ X _) = X
+
 module _
   (𝓧 𝓨 : Alg₀-obj)
   where

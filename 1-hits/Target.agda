@@ -46,10 +46,7 @@ module 1-hits.Target (s : Spec) where
       (ρ₀ *¹) (r ‼ ⟦ F₁ ⟧₁ f x) ∎∎
    -- i.e. proof term is: ! (star-hom 𝓯 (l ‼ x)) ∙ ap f p ∙ star-hom 𝓯 (r ‼ x)
 
-
-  -- open import lib.Funext using (λ=)
-
-  module _ {𝓧 : Alg₀-obj F₀} where
+  module _ (𝓧 : Alg₀-obj F₀) where
     open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
 
     G₁₁-id : (x : ⟦ F₁ ⟧₀ X) (p : G₁₀ 𝓧 x) → G₁₁ (id-alg₀ F₀ 𝓧) x p == p
@@ -67,6 +64,8 @@ module 1-hits.Target (s : Spec) where
       p
       ∎∎
   
+
+  -- Target functor preserves composition
   module _
     {𝓧 𝓨 𝓩 : Alg₀-obj F₀}
     (𝓰 : Alg₀-hom F₀ 𝓨 𝓩)
@@ -84,13 +83,19 @@ module 1-hits.Target (s : Spec) where
                           (G₁₁ (∘-alg₀ F₀ 𝓰 𝓯) x p)
                           (ap (g ∘ f) p)
                           (! (star-hom₀ (∘-alg₀ F₀ 𝓰 𝓯) (r ‼ x)))
-      G₁₁-𝓰∘𝓯-sq = disc-to-square {!!}
+      G₁₁-𝓰∘𝓯-sq = disc-to-square (admit _)
 
-      G₁₁-𝓰-G₁₁-𝓯-sq : {!!}
-      G₁₁-𝓰-G₁₁-𝓯-sq = {!!}
+      G₁₁-𝓰-G₁₁-𝓯-sq : Square (! (star-hom₀ 𝓰 (l ‼ ⟦ F₁ ⟧₁ f x)))
+                               (G₁₁ 𝓰 (⟦ F₁ ⟧₁ f x) (G₁₁ 𝓯 x p))
+                               (ap g (G₁₁ 𝓯 x p))
+                               (! (star-hom₀ 𝓰 (r ‼ ⟦ F₁ ⟧₁ f x)))
+      G₁₁-𝓰-G₁₁-𝓯-sq = disc-to-square (admit _)
+
+      -- TODO: Idea is to get similar squares with the G₁₁ stuff at
+      -- the top and then use uniqueness to show that they are equal.
 
       G₁₁-comp : G₁₁ (∘-alg₀ F₀ 𝓰 𝓯) x p == G₁₁ 𝓰 (⟦ F₁ ⟧₁ f x) (G₁₁ 𝓯 x p)
-      G₁₁-comp = {!!}
+      G₁₁-comp = admit _ 
   --   G₁₁-comp x p = ↯
   --     G₁₁ θ₀ ζ₀ (g ∘ f) (λ x' → ap g (f₀ x') ∙ g₀ (⟦ F₀ ⟧₁ f x')) x p
   --      =⟪idp⟫
@@ -119,87 +124,90 @@ module 1-hits.Target (s : Spec) where
   --             g₀*∘f₀* = (λ x' → ap g (f₀* x') ∙ g₀* (⟦ F₀ * ⟧₁ f x'))
       
   -- -- Target functor preserves products
-  -- module _
-  --     {X Y : Type0}
-  --     (θ₀ : has-alg₀ F₀ X)
-  --     (ρ₀ : has-alg₀ F₀ Y)
-  --     (x : ⟦ F₁ ⟧₀ (X × Y))
-  --   where
+  module _
+    (𝓧 𝓨 : Alg₀-obj F₀)
+    where
 
-    --   open import 1-hits.Alg0.Limits F₀
+    open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
+    open Alg₀-obj F₀ 𝓨 renaming (X to Y ; θ to ρ₀)
 
-  --   module _
-  --     (p : G₁₀ X θ₀ (⟦ F₁ ⟧₁ fst x))
-  --     (q : G₁₀ Y ρ₀ (⟦ F₁ ⟧₁ snd x))
-  --     where
+    open import 1-hits.Alg0.Limits F₀
 
-  --     prodfst = ↯
-  --       fst (((θ₀ ×-alg₀ ρ₀) *¹) (l ‼ x))
-  --        =⟪ (fst , (λ _ → idp) *-hom) (l ‼ x) ⟫
-  --       (θ₀ *¹) (⟦ F₀ * ⟧₁ fst (l ‼ x))
-  --        =⟪idp⟫
-  --       (θ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ fst x))
-  --        =⟪ p ⟫
-  --       (θ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ fst x))
-  --        =⟪ ! ((fst , (λ _ → idp) *-hom) (r ‼ x)) ⟫
-  --       fst (((θ₀ ×-alg₀ ρ₀) *¹) (r ‼ x)) ∎∎
+    module _
+      (x : ⟦ F₁ ⟧₀ (X × Y))
+      (p : G₁₀ 𝓧 (⟦ F₁ ⟧₁ fst x))
+      (q : G₁₀ 𝓨 (⟦ F₁ ⟧₁ snd x))
+      where
 
-  --     prodsnd = ↯
-  --       snd (((θ₀ ×-alg₀ ρ₀) *¹) (l ‼ x))
-  --        =⟪ (snd , (λ _ → idp) *-hom) (l ‼ x) ⟫
-  --       (ρ₀ *¹) (⟦ F₀ * ⟧₁ snd (l ‼ x))
-  --        =⟪idp⟫
-  --       (ρ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ snd x))
-  --        =⟪ q ⟫
-  --       (ρ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ snd x))
-  --        =⟪ ! ((snd , (λ _ → idp) *-hom) (r ‼ x)) ⟫
-  --       snd (((θ₀ ×-alg₀ ρ₀) *¹) (r ‼ x)) ∎∎
-        
-  --     G₁₀-prod : G₁₀ (X × Y) (θ₀ ×-alg₀ ρ₀) x
-  --     G₁₀-prod = pair×= prodfst prodsnd
+      prodfst : fst (((×₀ 𝓧 𝓨) *¹) (l ‼ x)) == fst (((×₀ 𝓧 𝓨) *¹) (r ‼ x))
+      prodfst = ↯
+        fst (((×₀ 𝓧 𝓨) *¹) (l ‼ x))
+         =⟪ star-hom₀ (π₁-alg₀ 𝓧 𝓨) (l ‼ x) ⟫
+        (θ₀ *¹) (⟦ F₀ * ⟧₁ fst (l ‼ x))
+         =⟪idp⟫
+        (θ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ fst x))
+         =⟪ p ⟫
+        (θ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ fst x))
+         =⟪ ! (star-hom₀ (π₁-alg₀ 𝓧 𝓨) (r ‼ x)) ⟫
+        fst (((×₀ 𝓧 𝓨) *¹) (r ‼ x)) ∎∎
+
+      prodsnd : snd (((×₀ 𝓧 𝓨) *¹) (l ‼ x)) == snd (((×₀ 𝓧 𝓨) *¹) (r ‼ x))
+      prodsnd = ↯
+        snd (((×₀ 𝓧 𝓨) *¹) (l ‼ x))
+         =⟪ star-hom₀ (π₂-alg₀ 𝓧 𝓨) (l ‼ x) ⟫
+        (ρ₀ *¹) (⟦ F₀ * ⟧₁ snd (l ‼ x))
+         =⟪idp⟫
+        (ρ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ snd x))
+         =⟪ q ⟫
+        (ρ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ snd x))
+         =⟪ ! (star-hom₀ (π₂-alg₀ 𝓧 𝓨) (r ‼ x)) ⟫
+        snd (((×₀ 𝓧 𝓨) *¹) (r ‼ x)) ∎∎
+
+      G₁₀-prod : G₁₀ (×-alg₀ 𝓧 𝓨) x
+      G₁₀-prod = pair×= prodfst prodsnd --prodfst prodsnd
     
-  --     -- Straight-forward but verbose path algebra shows that we can
-  --     -- project out the parts of product as expected.
-  --     G₁₀-π₁ : G₁₁ (θ₀ ×-alg₀ ρ₀) θ₀ fst (λ x₁ → idp) x G₁₀-prod == p
-  --     G₁₀-π₁ = ↯
-  --       G₁₁ (θ₀ ×-alg₀ ρ₀) θ₀ fst (λ x₁ → idp) x G₁₀-prod
-  --        =⟪idp⟫
-  --       ! fst₀-l ∙ fst×= G₁₀-prod ∙ fst₀-r
-  --        =⟪ ap (λ h → ! fst₀-l ∙ h ∙ fst₀-r) (fst×=-β prodfst prodsnd ) ⟫
-  --       ! fst₀-l ∙ (fst₀-l ∙ p ∙ ! fst₀-r) ∙ fst₀-r
-  --        =⟪ ! (∙-assoc (! fst₀-l) _ fst₀-r) ⟫
-  --       (! fst₀-l ∙ (fst₀-l ∙ p ∙ ! fst₀-r)) ∙ fst₀-r
-  --        =⟪ ap (λ h → h ∙ fst₀-r) (! (∙-assoc (! fst₀-l) fst₀-l (p ∙ ! fst₀-r))) ⟫
-  --       ((! fst₀-l ∙ fst₀-l) ∙ p ∙ ! fst₀-r) ∙ fst₀-r
-  --        =⟪ ap (λ h → (h ∙ p ∙ ! fst₀-r) ∙ fst₀-r) (!-inv-l fst₀-l) ⟫
-  --       (p ∙ ! fst₀-r) ∙ fst₀-r
-  --        =⟪ ∙-assoc p (! fst₀-r) fst₀-r ⟫
-  --       p ∙ (! fst₀-r ∙ fst₀-r)
-  --        =⟪ ap (λ h → p ∙ h) (!-inv-l fst₀-r) ⟫
-  --       p ∙ idp
-  --        =⟪ ∙-unit-r p ⟫
-  --       p ∎∎
-  --       where fst₀-l = ((fst , (λ _ → idp) *-hom) (l ‼ x))
-  --             fst₀-r = ((fst , (λ _ → idp) *-hom) (r ‼ x))
+      -- Straight-forward but verbose path algebra shows that we can
+      -- project out the parts of product as expected.
+      G₁₀-π₁ : G₁₁ (π₁-alg₀ 𝓧 𝓨) x G₁₀-prod == p
+      G₁₀-π₁ = ↯ 
+        G₁₁ (π₁-alg₀ 𝓧 𝓨) x G₁₀-prod
+         =⟪idp⟫
+        ! fst₀-l ∙ fst×= G₁₀-prod ∙ fst₀-r
+         =⟪ ap (λ h → ! fst₀-l ∙ h ∙ fst₀-r) (fst×=-β prodfst prodsnd ) ⟫
+        ! fst₀-l ∙ (fst₀-l ∙ p ∙ ! fst₀-r) ∙ fst₀-r
+         =⟪ ! (∙-assoc (! fst₀-l) _ fst₀-r) ⟫
+        (! fst₀-l ∙ (fst₀-l ∙ p ∙ ! fst₀-r)) ∙ fst₀-r
+         =⟪ ap (λ h → h ∙ fst₀-r) (! (∙-assoc (! fst₀-l) fst₀-l (p ∙ ! fst₀-r))) ⟫
+        ((! fst₀-l ∙ fst₀-l) ∙ p ∙ ! fst₀-r) ∙ fst₀-r
+         =⟪ ap (λ h → (h ∙ p ∙ ! fst₀-r) ∙ fst₀-r) (!-inv-l fst₀-l) ⟫
+        (p ∙ ! fst₀-r) ∙ fst₀-r
+         =⟪ ∙-assoc p (! fst₀-r) fst₀-r ⟫
+        p ∙ (! fst₀-r ∙ fst₀-r)
+         =⟪ ap (λ h → p ∙ h) (!-inv-l fst₀-r) ⟫
+        p ∙ idp
+         =⟪ ∙-unit-r p ⟫
+        p ∎∎
+        where fst₀-l = star-hom₀ (π₁-alg₀ 𝓧 𝓨) (l ‼ x)
+              fst₀-r = star-hom₀ (π₁-alg₀ 𝓧 𝓨) (r ‼ x)
     
-  --     G₁₀-π₂ : G₁₁ (θ₀ ×-alg₀ ρ₀) ρ₀ snd (λ x₁ → idp) x G₁₀-prod == q
-  --     G₁₀-π₂ = ↯
-  --       G₁₁ (θ₀ ×-alg₀ ρ₀) ρ₀ snd (λ x₁ → idp) x G₁₀-prod
-  --        =⟪idp⟫
-  --       ! snd₀-l ∙ snd×= G₁₀-prod ∙ snd₀-r
-  --        =⟪ ap (λ h → ! snd₀-l ∙ h ∙ snd₀-r) (snd×=-β prodfst prodsnd ) ⟫
-  --       ! snd₀-l ∙ (snd₀-l ∙ q ∙ ! snd₀-r) ∙ snd₀-r
-  --        =⟪ ! (∙-assoc (! snd₀-l) _ snd₀-r) ⟫
-  --       (! snd₀-l ∙ (snd₀-l ∙ q ∙ ! snd₀-r)) ∙ snd₀-r
-  --        =⟪ ap (λ h → h ∙ snd₀-r) (! (∙-assoc (! snd₀-l) snd₀-l (q ∙ ! snd₀-r))) ⟫
-  --       ((! snd₀-l ∙ snd₀-l) ∙ q ∙ ! snd₀-r) ∙ snd₀-r
-  --        =⟪ ap (λ h → (h ∙ q ∙ ! snd₀-r) ∙ snd₀-r) (!-inv-l snd₀-l) ⟫
-  --       (q ∙ ! snd₀-r) ∙ snd₀-r
-  --        =⟪ ∙-assoc q (! snd₀-r) snd₀-r ⟫
-  --       q ∙ (! snd₀-r ∙ snd₀-r)
-  --        =⟪ ap (λ h → q ∙ h) (!-inv-l snd₀-r) ⟫
-  --       q ∙ idp
-  --        =⟪ ∙-unit-r q ⟫
-  --       q ∎∎
-  --       where snd₀-l = ((snd , (λ _ → idp) *-hom) (l ‼ x))
-  --             snd₀-r = ((snd , (λ _ → idp) *-hom) (r ‼ x))
+      G₁₀-π₂ : G₁₁ (π₂-alg₀ 𝓧 𝓨) x G₁₀-prod == q
+      G₁₀-π₂ = ↯
+        G₁₁ (π₂-alg₀ 𝓧 𝓨) x G₁₀-prod
+         =⟪idp⟫
+        ! snd₀-l ∙ snd×= G₁₀-prod ∙ snd₀-r
+         =⟪ ap (λ h → ! snd₀-l ∙ h ∙ snd₀-r) (snd×=-β prodfst prodsnd ) ⟫
+        ! snd₀-l ∙ (snd₀-l ∙ q ∙ ! snd₀-r) ∙ snd₀-r
+         =⟪ ! (∙-assoc (! snd₀-l) _ snd₀-r) ⟫
+        (! snd₀-l ∙ (snd₀-l ∙ q ∙ ! snd₀-r)) ∙ snd₀-r
+         =⟪ ap (λ h → h ∙ snd₀-r) (! (∙-assoc (! snd₀-l) snd₀-l (q ∙ ! snd₀-r))) ⟫
+        ((! snd₀-l ∙ snd₀-l) ∙ q ∙ ! snd₀-r) ∙ snd₀-r
+         =⟪ ap (λ h → (h ∙ q ∙ ! snd₀-r) ∙ snd₀-r) (!-inv-l snd₀-l) ⟫
+        (q ∙ ! snd₀-r) ∙ snd₀-r
+         =⟪ ∙-assoc q (! snd₀-r) snd₀-r ⟫
+        q ∙ (! snd₀-r ∙ snd₀-r)
+         =⟪ ap (λ h → q ∙ h) (!-inv-l snd₀-r) ⟫
+        q ∙ idp
+         =⟪ ∙-unit-r q ⟫
+        q ∎∎
+        where snd₀-l = star-hom₀ (π₂-alg₀ 𝓧 𝓨) (l ‼ x)
+              snd₀-r = star-hom₀ (π₂-alg₀ 𝓧 𝓨) (r ‼ x)
