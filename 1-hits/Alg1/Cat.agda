@@ -2,7 +2,6 @@
 
 open import lib.Basics
 open import lib.types.Sigma
-open import Cat
 open import Container
 open import 1-hits.Spec
 open import Admit
@@ -18,6 +17,8 @@ open import 1-hits.Alg0.Cat F₀
 open import 1-hits.Alg1.Alg s
 open import 1-hits.Alg1.Eq s
 open import 1-hits.Target s
+open import 1-hits.Cube
+open import 1-hits.Alg0.FreeMonad F₀
 
 module _
   {𝓧 𝓨 : Alg₁-obj}
@@ -32,17 +33,23 @@ module _
     𝓰' = id-alg₀ 𝓨'
     g₁ = λ x → G₁₁-id 𝓨' x (ρ₁ x)
 
-    foo : (∘₁ (id-alg₁ 𝓨) 𝓯 x)
-       == G₁₁-comp 𝓰' 𝓯' x (θ₁ x) ∙ ap (G₁₁ 𝓰' (⟦ F₁ ⟧₁ f x)) (f₁ x) ∙ g₁ (⟦ F₁ ⟧₁ f x)
-    foo = ↯
-      (∘₁ (id-alg₁ 𝓨) 𝓯 x)
-       =⟪idp⟫
-      G₁₁-comp 𝓰' 𝓯' x (θ₁ x) ∙ ap (G₁₁ 𝓰' (⟦ F₁ ⟧₁ f x)) (f₁ x) ∙ g₁ (⟦ F₁ ⟧₁ f x)
-       =⟪ {!↓-='-to-square (apd (λ h → ap h (f₁ x)) (G₁₁-id-λ= 𝓨' (⟦ F₁ ⟧₁ f x))) !} ⟫
-      G₁₁-comp 𝓰' 𝓯' x (θ₁ x) ∙ {!!} ∙ g₁ (⟦ F₁ ⟧₁ f x)
-       =⟪ {!!} ⟫
-      G₁₁-comp 𝓰' 𝓯' x (θ₁ x) ∙ ap (G₁₁ 𝓰' (⟦ F₁ ⟧₁ f x)) (f₁ x) ∙ g₁ (⟦ F₁ ⟧₁ f x)
-      ∎∎
+    foo : G₁₁ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ f x)
+    foo = ∘₁ (id-alg₁ 𝓨) 𝓯 x
+
+    foo' : Square
+           (G₁₁ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') x (θ₁ x))
+           (ap (λ z → (ρ₀ *¹) (l ‼ ⟦ F₁ ⟧₁ (Alg₀-hom.f z) x)) (left-id-alg₀ 𝓯'))
+           (ap (λ z → (ρ₀ *¹) (r ‼ ⟦ F₁ ⟧₁ (Alg₀-hom.f z) x)) (left-id-alg₀ 𝓯'))
+           (G₁₁ 𝓯' x (θ₁ x))
+    foo' = ↓-='-to-square (apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) (left-id-alg₀ 𝓯'))
+
+    foo'' : Square
+            (ρ₁ (⟦ F₁ ⟧₁ f x))
+            (ap (λ z → (ρ₀ *¹) (l ‼ ⟦ F₁ ⟧₁ (Alg₀-hom.f z) x)) (left-id-alg₀ 𝓯'))
+            (ap (λ z → (ρ₀ *¹) (r ‼ ⟦ F₁ ⟧₁ (Alg₀-hom.f z) x)) (left-id-alg₀ 𝓯'))
+            (ρ₁ (⟦ F₁ ⟧₁ f x))
+    foo'' = ↓-='-to-square (apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) (left-id-alg₀ 𝓯'))
+
 
     left-id-square : 
       SquareOver _ vid-square
@@ -50,7 +57,15 @@ module _
                    (apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) (left-id-alg₀ 𝓯'))
                    (apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) (left-id-alg₀ 𝓯'))
                    (f₁ x)
-    left-id-square = {!!}
+    left-id-square = {!f₁ x!}
+
+    right-id-square : 
+      Square (∘₁ 𝓯 (id-alg₁ 𝓧) x)
+             idp
+             idp
+             (f₁ x)
+    right-id-square = {!apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) (right-id-alg₀ 𝓯')!}
+
 
 --   left-id-alg₁ : ∘-alg₁ (id-alg₁ 𝓨) 𝓯 == 𝓯
 --   left-id-alg₁ = mk-alg₁-hom-eq-square

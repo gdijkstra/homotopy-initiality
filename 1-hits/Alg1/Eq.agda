@@ -32,7 +32,14 @@ private
        (p₁ : (f₁ 𝓯) == (f₁ 𝓰) [ (λ 𝓱 → (x : ⟦ F₁ ⟧₀ X) → G₁₁ 𝓱 x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) ↓ 𝓹' ])
        → 𝓯 == 𝓰
     mk-alg₁-hom-eq (mk-alg₁-hom 𝓯' f₁) (mk-alg₁-hom .𝓯' g₁) idp = ap (mk-alg₁-hom 𝓯')
-  
+
+    mk-alg₁-hom-eq-λ= :
+       (𝓯 𝓰 : Alg₁-hom 𝓧 𝓨)
+       (𝓹'  : 𝓯' 𝓯 == 𝓯' 𝓰)
+       (p₁ : (x : ⟦ F₁ ⟧₀ X) → (f₁ 𝓯) x == (f₁ 𝓰) x [ (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) ↓ 𝓹' ])
+       → 𝓯 == 𝓰
+    mk-alg₁-hom-eq-λ= (mk-alg₁-hom 𝓯' f₁) (mk-alg₁-hom .𝓯' g₁) idp p₁ = ap (mk-alg₁-hom 𝓯') (λ= p₁)
+
     mk-alg₁-hom-eq-square :
        (𝓯 𝓰 : Alg₁-hom 𝓧 𝓨)
        (𝓹'  : 𝓯' 𝓯 == 𝓯' 𝓰)
@@ -78,3 +85,24 @@ module _
              (g₁ x))
      → 𝓯 == 𝓰
   mk-alg₁-hom-eq-square = Prim.mk-alg₁-hom-eq-square 𝓧 𝓨 𝓯 𝓰
+
+  open import 1-hits.Cube
+
+  mk-alg₁-hom-eq-cube :
+     (𝓹'  : 𝓯' == 𝓰')
+     (p₁ : (x : ⟦ F₁ ⟧₀ X)
+         → Cube (vert-degen-square (f₁ x))
+                (vert-degen-square (g₁ x))
+                vid-square
+                (square-apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) 𝓹')
+                (square-apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) 𝓹')
+                vid-square)
+     → 𝓯 == 𝓰
+  mk-alg₁-hom-eq-cube 𝓹' p₁ =
+    Prim.mk-alg₁-hom-eq-λ= 𝓧 𝓨 𝓯 𝓰
+      𝓹'
+      (λ x → from-cube (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x))
+                       (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))
+                       𝓹'
+                       (f₁ x)
+                       (g₁ x) (p₁ x))
