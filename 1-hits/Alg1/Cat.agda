@@ -30,56 +30,30 @@ module _
   open Alg₁-hom 𝓯
 
   module _ (x : ⟦ F₁ ⟧₀ X) where
-    𝓰' = id-alg₀ 𝓨'
-    g₁ = λ x → G₁₁-id 𝓨' x (ρ₁ x)
 
-    foo : G₁₁ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ f x)
-    foo = ∘₁ (id-alg₁ 𝓨) 𝓯 x
+    lemma : ∘₁ 𝓯 (id-alg₁ 𝓧) x == f₁ x
+    lemma = ↯
+      ∘₁ 𝓯 (id-alg₁ 𝓧) x
+       =⟪idp⟫
+      G₁₁-comp 𝓯' (id-alg₀ 𝓧') x (θ₁ x) ∙ ap (G₁₁ 𝓯' x) (G₁₁-id 𝓧' x (θ₁ x)) ∙ f₁ x
+       =⟪ ! (∙-assoc (G₁₁-comp 𝓯' (id-alg₀ 𝓧') x (θ₁ x)) (ap (G₁₁ 𝓯' x) (id₁ 𝓧 x)) (f₁ x)) ⟫
+      (G₁₁-comp 𝓯' (id-alg₀ 𝓧') x (θ₁ x) ∙ ap (G₁₁ 𝓯' x) (G₁₁-id 𝓧' x (θ₁ x))) ∙ f₁ x
+       =⟪ ap (λ p → p ∙ f₁ x) (G₁₁-comp-right-id 𝓯' x (θ₁ x)) ⟫
+      f₁ x ∎∎
 
-    foo' : Square
-           (G₁₁ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') x (θ₁ x))
-           (ap (λ z → (ρ₀ *¹) (l ‼ ⟦ F₁ ⟧₁ (Alg₀-hom.f z) x)) (left-id-alg₀ 𝓯'))
-           (ap (λ z → (ρ₀ *¹) (r ‼ ⟦ F₁ ⟧₁ (Alg₀-hom.f z) x)) (left-id-alg₀ 𝓯'))
-           (G₁₁ 𝓯' x (θ₁ x))
-    foo' = ↓-='-to-square (apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) (left-id-alg₀ 𝓯'))
+  left-id-alg₁ : ∘-alg₁ (id-alg₁ 𝓨) 𝓯 == 𝓯
+  left-id-alg₁ = mk-alg₁-hom-eq-cube
+    (∘-alg₁ (id-alg₁ 𝓨) 𝓯)
+    𝓯
+    (left-id-alg₀ 𝓯')
+    (λ x → {!!})
 
-    foo'' : Square
-            (ρ₁ (⟦ F₁ ⟧₁ f x))
-            (ap (λ z → (ρ₀ *¹) (l ‼ ⟦ F₁ ⟧₁ (Alg₀-hom.f z) x)) (left-id-alg₀ 𝓯'))
-            (ap (λ z → (ρ₀ *¹) (r ‼ ⟦ F₁ ⟧₁ (Alg₀-hom.f z) x)) (left-id-alg₀ 𝓯'))
-            (ρ₁ (⟦ F₁ ⟧₁ f x))
-    foo'' = ↓-='-to-square (apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) (left-id-alg₀ 𝓯'))
-
-
-    left-id-square : 
-      SquareOver _ vid-square
-                   (∘₁ (id-alg₁ 𝓨) 𝓯 x)
-                   (apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) (left-id-alg₀ 𝓯'))
-                   (apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) (left-id-alg₀ 𝓯'))
-                   (f₁ x)
-    left-id-square = {!f₁ x!}
-
-    right-id-square : 
-      Square (∘₁ 𝓯 (id-alg₁ 𝓧) x)
-             idp
-             idp
-             (f₁ x)
-    right-id-square = {!apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) (right-id-alg₀ 𝓯')!}
-
-
---   left-id-alg₁ : ∘-alg₁ (id-alg₁ 𝓨) 𝓯 == 𝓯
---   left-id-alg₁ = mk-alg₁-hom-eq-square
---     (∘-alg₁ (id-alg₁ 𝓨) 𝓯)
---     𝓯
---     (left-id-alg₀ 𝓯')
---     (λ x → admit _)
-
---   right-id-alg₁ : ∘-alg₁ 𝓯 (id-alg₁ 𝓧) == 𝓯
---   right-id-alg₁ = mk-alg₁-hom-eq-square
---     (∘-alg₁ 𝓯 (id-alg₁ 𝓧))
---     𝓯
---     (right-id-alg₀ 𝓯')
---     (λ x → admit _)
+  right-id-alg₁ : ∘-alg₁ 𝓯 (id-alg₁ 𝓧) == 𝓯
+  right-id-alg₁ = mk-alg₁-hom-eq-cube
+    (∘-alg₁ 𝓯 (id-alg₁ 𝓧))
+    𝓯
+    idp
+    (λ x → y-id-cube-in (lemma x ∙h⊡ hid-square {p = f₁ x}))
 
 -- module _
 --   {𝓧 𝓨 𝓩 𝓦 : Alg₁-obj}

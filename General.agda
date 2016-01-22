@@ -118,6 +118,5 @@ module SectionInduction⇒Initiality
             s' : (i ∘' s) == Id X
             s' = snd (section-induction i)
 
-
   initial : is-initial X
   initial = λ Y → f Y , f-unique Y

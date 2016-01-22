@@ -27,6 +27,7 @@ module 1-hits.Target (s : Spec) where
       G₁₀ : (x : ⟦ F₁ ⟧₀ X) → Type0
       G₁₀ x = ((θ₀ *¹) (l ‼ x) == (θ₀ *¹) (r ‼ x))
 
+
   G₁₀ = Prim-obj.G₁₀
 
   private
@@ -134,8 +135,24 @@ module 1-hits.Target (s : Spec) where
   --             g₀∘f₀* : is-alg₀-hom (F₀ *) (θ₀ *¹) (ζ₀ *¹) (g ∘ f)
   --             g₀∘f₀* = (λ x' → ((g ∘ f) , g₀∘f₀ *-hom) x')
   --             g₀*∘f₀* = (λ x' → ap g (f₀* x') ∙ g₀* (⟦ F₀ * ⟧₁ f x'))
-      
-  -- -- Target functor preserves products
+
+
+  -- Target functor preserves right identity law
+  module _
+    {𝓧 𝓨 : Alg₀-obj F₀}
+    (𝓯 : Alg₀-hom F₀ 𝓧 𝓨)
+    where
+
+    open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
+    open Alg₀-obj F₀ 𝓨 renaming (X to Y ; θ to ρ₀)
+    open Alg₀-hom F₀ 𝓯
+
+    module _ (x : ⟦ F₁ ⟧₀ X) (p : G₁₀ 𝓧 x) where
+      G₁₁-comp-right-id :
+        G₁₁-comp 𝓯 (id-alg₀ F₀ 𝓧) x p ∙ ap (G₁₁ 𝓯 x) (G₁₁-id 𝓧 x p) == idp
+      G₁₁-comp-right-id = admit _
+
+  -- Target functor preserves products
   module _
     (𝓧 𝓨 : Alg₀-obj F₀)
     where
