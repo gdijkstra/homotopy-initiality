@@ -1,4 +1,4 @@
-* Specifying higher inductive types
+# Specifying higher inductive types
 
 [![Build Status](https://travis-ci.org/gdijkstra/homotopy-initiality.svg?branch=master)](https://travis-ci.org/gdijkstra/homotopy-initiality)
 
