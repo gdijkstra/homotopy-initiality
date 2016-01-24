@@ -5,8 +5,9 @@ module nondep.Sect where
 open import lib.Basics
 open import lib.types.Sigma
 open import Cat
-open import nondep.Base
+open import nondep.Core
 open import nondep.Fib
+open import Admit
 
 is-section :
   (s : Spec)
@@ -56,8 +57,4 @@ bar s F 𝓧 P 𝓼 x
 ψ ε X P 𝓼
   = (λ x → x , (𝓼 x)) , idp
 ψ (s ▸ mk-constr F G) (𝓧 , θ) (P , m) (𝓼 , 𝓼')
-  = (f ,
-    (λ x →
-      {!fst= (𝓼' x)!})) , {!!}
-   where
-     f = fst (ψ s 𝓧 P 𝓼)
+  = admit _

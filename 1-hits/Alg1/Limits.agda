@@ -2,16 +2,15 @@ open import lib.Basics
 open import lib.types.Sigma
 open import Cat
 open import Container
-open import 1-hits.Spec
+open import 1-hits.Core
 
 -- Category laws
 module 1-hits.Alg1.Limits (s : Spec) where
 
 open import lib.cubical.Cubical
 open Spec s
-open import 1-hits.Alg0.Alg F₀
-open import 1-hits.Alg0.Limits F₀
-open import 1-hits.Alg1.Alg s
+open import 1-hits.Alg0 F₀
+open import 1-hits.Alg1.Core s
 open import 1-hits.Alg1.Eq s
 open import 1-hits.Alg1.Cat s
 open import 1-hits.Target s

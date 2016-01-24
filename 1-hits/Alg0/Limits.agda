@@ -9,7 +9,7 @@ open import lib.Basics
 open import lib.types.Sigma
 open import lib.types.PathSeq
 open import lib.cubical.Cubical
-open import 1-hits.Alg0.Alg F
+open import 1-hits.Alg0.Core F
 open import 1-hits.Alg0.Eq F
 open import 1-hits.Alg0.Cat F
 open import General Alg₀

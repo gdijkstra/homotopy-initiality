@@ -6,7 +6,7 @@ open import Container
 module 1-hits.Alg0.Eq (F : Container) where
 
 open import lib.Basics
-open import 1-hits.Alg0.Alg F
+open import 1-hits.Alg0.Core F
 open import lib.cubical.Cubical
 
 private

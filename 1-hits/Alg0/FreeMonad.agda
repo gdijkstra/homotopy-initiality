@@ -6,7 +6,7 @@ open import Container
 -- Lifting F-algebras to monad algebras of the free monad F *
 module 1-hits.Alg0.FreeMonad (F : Container) where
 
-open import 1-hits.Alg0.Alg
+open import 1-hits.Alg0.Core
 open import FreeMonad
 open import lib.types.PathSeq
 open import Admit

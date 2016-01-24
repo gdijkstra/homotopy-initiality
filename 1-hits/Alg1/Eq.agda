@@ -3,19 +3,17 @@
 open import lib.Basics
 open import lib.types.Sigma
 open import Container
-open import 1-hits.Spec
+open import 1-hits.Core
 open import lib.cubical.Cubical
+open import Admit
 
 -- Equality of algebra homomorphisms
 module 1-hits.Alg1.Eq (s : Spec) where
 
 open Spec s
 open import 1-hits.Target s
-open import 1-hits.Alg1.Alg s
-open import 1-hits.Alg0.Alg F₀
-open import 1-hits.Alg0.Eq F₀
-open import lib.cubical.Cubical
-open import 1-hits.Alg0.FreeMonad F₀
+open import 1-hits.Alg1.Core s
+open import 1-hits.Alg0 F₀
 
 private
   module Prim
@@ -122,13 +120,13 @@ module _
       (x : ⟦ F₁ ⟧₀ X)
       →  ap (λ h → (ρ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ h x))) p
       == ap (λ 𝓱 → (ρ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))) (mk-alg₀-hom-eq-square 𝓯' 𝓰' p p₀)
-    lemma-l x = {!!}
+    lemma-l x = admit _
 
     lemma-r :
       (x : ⟦ F₁ ⟧₀ X)
       →  ap (λ h → (ρ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ h x))) p
       == ap (λ 𝓱 → (ρ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))) (mk-alg₀-hom-eq-square 𝓯' 𝓰' p p₀)
-    lemma-r x = {!!}
+    lemma-r x = admit _
 
     simplify-bottom :
       (x : ⟦ F₁ ⟧₀ X)
@@ -138,7 +136,7 @@ module _
              (square-apd (λ h → ρ₁ (⟦ F₁ ⟧₁ h x)) p)
              (square-apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) 𝓹')
              (vert-degen-square (lemma-r x))
-    simplify-bottom x = {!!}
+    simplify-bottom x = admit _
 
     goal :
       (x : ⟦ F₁ ⟧₀ X)

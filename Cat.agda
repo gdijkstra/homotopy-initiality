@@ -59,17 +59,3 @@ _⇒_ : Cat → Cat → Type1
    (f : 𝓒 [ A , B ])
  → (∫ 𝓒 F) [ (A , x) , (B , (F ⋆⋆ f) x) ]
 ∫-lift F x f = f , idp
-
--- We only need naturality of functors into Type.
-record NatTrans {𝓒 : Cat} (F G : 𝓒 ⇒ TypeCat) : Type1 where
-  constructor mk-nat-trans
-  field
-    α : (X : / 𝓒 /) → F ⋆ X → G ⋆ X
-    naturality :
-      {X Y : / 𝓒 /}
-      (f : 𝓒 [ X , Y ])
-      (x : F ⋆ X)
-      → α Y ((F ⋆⋆ f) x) == (G ⋆⋆ f) (α X x)
-
-_‼_ : {𝓒 : Cat} {F G : 𝓒 ⇒ TypeCat} → NatTrans F G → {X : / 𝓒 /} → F ⋆ X → G ⋆ X
-(mk-nat-trans α _) ‼ x = α _ x

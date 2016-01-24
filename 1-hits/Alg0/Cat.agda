@@ -7,7 +7,7 @@ module 1-hits.Alg0.Cat (F : Container) where
 open import lib.Basics
 open import lib.types.Sigma
 open import Cat
-open import 1-hits.Alg0.Alg F
+open import 1-hits.Alg0.Core F
 open import 1-hits.Alg0.Eq F
 open import lib.types.PathSeq
 open import lib.PathGroupoid

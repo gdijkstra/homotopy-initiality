@@ -3,7 +3,8 @@
 open import lib.Basics
 open import lib.types.Sigma
 open import Container
-open import 1-hits.Spec
+open import Cat
+open import 1-hits.Core
 open import Admit
 open import lib.cubical.Cubical
 open import lib.types.PathSeq
@@ -12,13 +13,11 @@ open import lib.types.PathSeq
 module 1-hits.Alg1.Cat (s : Spec) where
 
 open Spec s
-open import 1-hits.Alg0.Alg F₀
-open import 1-hits.Alg0.Cat F₀
-open import 1-hits.Alg1.Alg s
+open import 1-hits.Alg0 F₀
+open import 1-hits.Alg1.Core s
 open import 1-hits.Alg1.Eq s
 open import 1-hits.Target s
 open import 1-hits.Cube
-open import 1-hits.Alg0.FreeMonad F₀
 
 module _
   {𝓧 𝓨 : Alg₁-obj}
@@ -46,7 +45,7 @@ module _
     (∘-alg₁ (id-alg₁ 𝓨) 𝓯)
     𝓯
     (left-id-alg₀ 𝓯')
-    (λ x → {!!})
+    (λ x → admit _)
 
   right-id-alg₁ : ∘-alg₁ 𝓯 (id-alg₁ 𝓧) == 𝓯
   right-id-alg₁ = mk-alg₁-hom-eq-cube
@@ -74,10 +73,10 @@ module _
 --             == (∘-alg₁ 𝓱 (∘-alg₁ 𝓰 𝓯))
 --   assoc-alg₁ = admit _
   
--- Alg₁ : Cat
--- Alg₁ = record
---   { obj = Alg₁-obj
---   ; hom = Alg₁-hom
---   ; comp = ∘-alg₁
---   ; id = id-alg₁
---   }
+Alg₁ : Cat
+Alg₁ = record
+  { obj = Alg₁-obj
+  ; hom = Alg₁-hom
+  ; comp = ∘-alg₁
+  ; id = id-alg₁
+  }

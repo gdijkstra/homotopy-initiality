@@ -2,12 +2,12 @@
 
 open import lib.Basics
 open import Container
-open import 1-hits.Spec
+open import 1-hits.Core
 
-module 1-hits.Alg1.Alg (s : Spec) where
+module 1-hits.Alg1.Core (s : Spec) where
 
 open Spec s
-open import 1-hits.Alg0.Alg F₀
+open import 1-hits.Alg0 F₀
 open import 1-hits.Target s
 
 has-alg₁ :

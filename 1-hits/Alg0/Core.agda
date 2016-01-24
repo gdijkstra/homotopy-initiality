@@ -3,7 +3,7 @@
 open import lib.Basics
 open import Container
 
-module 1-hits.Alg0.Alg (F : Container) where
+module 1-hits.Alg0.Core (F : Container) where
 
 has-alg₀ : Type0 → Type0
 has-alg₀ X = ⟦ F ⟧₀ X → X

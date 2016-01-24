@@ -1,6 +1,6 @@
 {-# OPTIONS --without-K #-}
 
-module dep.Base where
+module dep.Core where
 
 open import lib.Basics
 open import Cat

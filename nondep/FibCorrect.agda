@@ -4,8 +4,9 @@ module nondep.FibCorrect where
 
 open import lib.Basics
 open import Cat
-open import nondep.Base
+open import nondep.Core
 open import nondep.Fib
+open import Admit
 
 module _
   (s : Spec)
@@ -31,7 +32,7 @@ Im :
 Im ε X Y p x
   = Σ Y (λ y → p y == x)
 Im (s ▸ mk-constr F G) (𝓧 , θ) (𝓨 , ρ) (p , p')
-  = (Im s 𝓧 𝓨 p) , (λ { (.(Func.hom F (proj s 𝓧 (Im s 𝓧 𝓨 p)) y) , y , idp) → {!!} , {!!} })
+  = (Im s 𝓧 𝓨 p) , (λ { (.(Func.hom F (proj s 𝓧 (Im s 𝓧 𝓨 p)) y) , y , idp) → admit _ , admit _ })
 
 -- from-to :
 --   (s : Spec)

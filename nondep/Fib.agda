@@ -4,7 +4,7 @@ module nondep.Fib where
 
 open import lib.Basics
 open import Cat
-open import nondep.Base
+open import nondep.Core
 
 -- Fibration over a given algebra
 Fib : (s : Spec) → / Alg s / → Type1

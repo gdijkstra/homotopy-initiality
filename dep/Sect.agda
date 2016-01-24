@@ -4,8 +4,9 @@ module dep.Sect where
 
 open import lib.Basics
 open import Cat
-open import dep.Base
+open import dep.Core
 open import dep.Fib
+open import Admit
 
 is-section :
   (s : Spec)
@@ -29,7 +30,7 @@ to-is-section :
   (a : is-section s 𝓧 P 𝓼)
   → is-section (s ▸ mk-constr F G) (𝓧 , θ) (P , m) (𝓼 , 𝓼')
 to-is-section s F G 𝓧 θ P m 𝓼 𝓼' a
-  = pair= a {!!}
+  = pair= a (admit _)
 
 -- We want to define Π for algebra fibrations
 Sect :
@@ -80,7 +81,7 @@ F-bar s F 𝓧 P 𝓼 x
 ψ ε X P 𝓼
   = (λ x → x , (𝓼 x)) , idp
 ψ (s ▸ mk-constr F G) (𝓧 , θ) (P , m) (𝓼 , 𝓼')
-  = (f , {!!}) , {!!}
+  = (f , admit _) , admit _
   where
     f : Alg s [ 𝓧 , total s 𝓧 P ]
     f = fst (ψ s 𝓧 P 𝓼)
@@ -89,5 +90,5 @@ F-bar s F 𝓧 P 𝓼 x
 
 G-bar s F G 𝓧 P x 𝓼 p
   = (G ⋆⋆ (fst (ψ s 𝓧 P 𝓼)) , idp) p
-  , {!!}
+  , admit _
 

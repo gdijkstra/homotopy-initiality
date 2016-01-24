@@ -5,24 +5,23 @@ open import lib.PathGroupoid
 open import lib.types.Sigma
 open import Container
 open import FreeMonad
-open import 1-hits.Alg0.Alg 
 open import Admit
-open import 1-hits.Spec
+open import 1-hits.Core
 open import lib.types.PathSeq
 open import lib.cubical.Cubical
 
 -- Definition and properties of target functor G.
 module 1-hits.Target (s : Spec) where
   open Spec s
-  open import 1-hits.Alg0.FreeMonad F₀
+  open import 1-hits.Alg0 F₀
 
   -- We want the definition of G₁₀ and G₁₁ to be abstract outside this
   -- file, but we still need to be able to prove properties about
   -- it. Ideally we would put the whole module in an abstract block,
   -- but that doesn't work.
   private
-    module Prim-obj (𝓧 : Alg₀-obj F₀) where
-      open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
+    module Prim-obj (𝓧 : Alg₀-obj) where
+      open Alg₀-obj 𝓧 renaming (θ to θ₀)
 
       G₁₀ : (x : ⟦ F₁ ⟧₀ X) → Type0
       G₁₀ x = ((θ₀ *¹) (l ‼ x) == (θ₀ *¹) (r ‼ x))
@@ -32,13 +31,13 @@ module 1-hits.Target (s : Spec) where
 
   private
     module Prim-hom
-      {𝓧 𝓨 : Alg₀-obj F₀}
-      (𝓯 : Alg₀-hom F₀ 𝓧 𝓨)
+      {𝓧 𝓨 : Alg₀-obj}
+      (𝓯 : Alg₀-hom 𝓧 𝓨)
       where
     
-      open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
-      open Alg₀-obj F₀ 𝓨 renaming (X to Y ; θ to ρ₀)
-      open Alg₀-hom F₀ 𝓯
+      open Alg₀-obj 𝓧 renaming (θ to θ₀)
+      open Alg₀-obj 𝓨 renaming (X to Y ; θ to ρ₀)
+      open Alg₀-hom 𝓯
   
       G₁₁ : (x : ⟦ F₁ ⟧₀ X) → G₁₀ 𝓧 x → G₁₀ 𝓨 ((⟦ F₁ ⟧₁ f) x)
       G₁₁ x p = ↯
@@ -57,16 +56,16 @@ module 1-hits.Target (s : Spec) where
 
   G₁₁ = Prim-hom.G₁₁
 
-  module _ (𝓧 : Alg₀-obj F₀) where
-      open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
+  module _ (𝓧 : Alg₀-obj) where
+      open Alg₀-obj 𝓧 renaming (θ to θ₀)
   
-      G₁₁-id : (x : ⟦ F₁ ⟧₀ X) (p : G₁₀ 𝓧 x) → G₁₁ (id-alg₀ F₀ 𝓧) x p == p
+      G₁₁-id : (x : ⟦ F₁ ⟧₀ X) (p : G₁₀ 𝓧 x) → G₁₁ (id-alg₀ 𝓧) x p == p
       G₁₁-id x p = ↯
-        G₁₁ (id-alg₀ F₀ 𝓧) x p
+        G₁₁ (id-alg₀ 𝓧) x p
          =⟪idp⟫
-        ! ((star-hom₀ (id-alg₀ F₀ 𝓧)) (l ‼ x)) ∙ ap (idf X) p ∙ (star-hom₀ (id-alg₀ F₀ 𝓧)) (r ‼ x)
-         =⟪ ap (λ h → ! h ∙ ap (idf X) p ∙ star-hom₀ (id-alg₀ F₀ 𝓧) (r ‼ x)) (star-hom-id 𝓧 (l ‼ x)) ⟫
-        ap (idf X) p ∙ (star-hom₀ (id-alg₀ F₀ 𝓧)) (r ‼ x)
+        ! ((star-hom₀ (id-alg₀ 𝓧)) (l ‼ x)) ∙ ap (idf X) p ∙ (star-hom₀ (id-alg₀ 𝓧)) (r ‼ x)
+         =⟪ ap (λ h → ! h ∙ ap (idf X) p ∙ star-hom₀ (id-alg₀ 𝓧) (r ‼ x)) (star-hom-id 𝓧 (l ‼ x)) ⟫
+        ap (idf X) p ∙ (star-hom₀ (id-alg₀ 𝓧)) (r ‼ x)
          =⟪ ap (λ h → ap (idf X) p ∙ h) (star-hom-id 𝓧 (r ‼ x)) ⟫
         ap (idf X) p ∙ idp
          =⟪ ∙-unit-r (ap (idf X) p) ⟫
@@ -75,27 +74,27 @@ module 1-hits.Target (s : Spec) where
         p
         ∎∎
   
-      G₁₁-id-λ= : (x : ⟦ F₁ ⟧₀ X) → G₁₁ (id-alg₀ F₀ 𝓧) x == (λ p → p)
+      G₁₁-id-λ= : (x : ⟦ F₁ ⟧₀ X) → G₁₁ (id-alg₀ 𝓧) x == (λ p → p)
       G₁₁-id-λ= x = λ= (G₁₁-id x)
 
   -- Target functor preserves composition
   module _
-    {𝓧 𝓨 𝓩 : Alg₀-obj F₀}
-    (𝓰 : Alg₀-hom F₀ 𝓨 𝓩)
-    (𝓯 : Alg₀-hom F₀ 𝓧 𝓨)
+    {𝓧 𝓨 𝓩 : Alg₀-obj}
+    (𝓰 : Alg₀-hom 𝓨 𝓩)
+    (𝓯 : Alg₀-hom 𝓧 𝓨)
     where
 
-    open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
-    open Alg₀-obj F₀ 𝓨 renaming (X to Y ; θ to ρ₀)
-    open Alg₀-obj F₀ 𝓩 renaming (X to Z ; θ to ζ₀)
-    open Alg₀-hom F₀ 𝓰 renaming (f to g ; f₀ to g₀)
-    open Alg₀-hom F₀ 𝓯
+    open Alg₀-obj 𝓧 renaming (θ to θ₀)
+    open Alg₀-obj 𝓨 renaming (X to Y ; θ to ρ₀)
+    open Alg₀-obj 𝓩 renaming (X to Z ; θ to ζ₀)
+    open Alg₀-hom 𝓰 renaming (f to g ; f₀ to g₀)
+    open Alg₀-hom 𝓯
 
     module _ (x : ⟦ F₁ ⟧₀ X) (p : G₁₀ 𝓧 x) where
-      G₁₁-𝓰∘𝓯-sq : Square (! (star-hom₀ (∘-alg₀ F₀ 𝓰 𝓯) (l ‼ x)))
-                          (G₁₁ (∘-alg₀ F₀ 𝓰 𝓯) x p)
+      G₁₁-𝓰∘𝓯-sq : Square (! (star-hom₀ (∘-alg₀ 𝓰 𝓯) (l ‼ x)))
+                          (G₁₁ (∘-alg₀ 𝓰 𝓯) x p)
                           (ap (g ∘ f) p)
-                          (! (star-hom₀ (∘-alg₀ F₀ 𝓰 𝓯) (r ‼ x)))
+                          (! (star-hom₀ (∘-alg₀ 𝓰 𝓯) (r ‼ x)))
       G₁₁-𝓰∘𝓯-sq = disc-to-square (admit _)
 
       G₁₁-𝓰-G₁₁-𝓯-sq : Square (! (star-hom₀ 𝓰 (l ‼ ⟦ F₁ ⟧₁ f x)))
@@ -107,7 +106,7 @@ module 1-hits.Target (s : Spec) where
       -- TODO: Idea is to get similar squares with the G₁₁ stuff at
       -- the top and then use uniqueness to show that they are equal.
 
-      G₁₁-comp : G₁₁ (∘-alg₀ F₀ 𝓰 𝓯) x p == G₁₁ 𝓰 (⟦ F₁ ⟧₁ f x) (G₁₁ 𝓯 x p)
+      G₁₁-comp : G₁₁ (∘-alg₀ 𝓰 𝓯) x p == G₁₁ 𝓰 (⟦ F₁ ⟧₁ f x) (G₁₁ 𝓯 x p)
       G₁₁-comp = admit _ 
   --   G₁₁-comp x p = ↯
   --     G₁₁ θ₀ ζ₀ (g ∘ f) (λ x' → ap g (f₀ x') ∙ g₀ (⟦ F₀ ⟧₁ f x')) x p
@@ -139,28 +138,26 @@ module 1-hits.Target (s : Spec) where
 
   -- Target functor preserves right identity law
   module _
-    {𝓧 𝓨 : Alg₀-obj F₀}
-    (𝓯 : Alg₀-hom F₀ 𝓧 𝓨)
+    {𝓧 𝓨 : Alg₀-obj}
+    (𝓯 : Alg₀-hom 𝓧 𝓨)
     where
 
-    open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
-    open Alg₀-obj F₀ 𝓨 renaming (X to Y ; θ to ρ₀)
-    open Alg₀-hom F₀ 𝓯
+    open Alg₀-obj 𝓧 renaming (θ to θ₀)
+    open Alg₀-obj 𝓨 renaming (X to Y ; θ to ρ₀)
+    open Alg₀-hom 𝓯
 
     module _ (x : ⟦ F₁ ⟧₀ X) (p : G₁₀ 𝓧 x) where
       G₁₁-comp-right-id :
-        G₁₁-comp 𝓯 (id-alg₀ F₀ 𝓧) x p ∙ ap (G₁₁ 𝓯 x) (G₁₁-id 𝓧 x p) == idp
+        G₁₁-comp 𝓯 (id-alg₀ 𝓧) x p ∙ ap (G₁₁ 𝓯 x) (G₁₁-id 𝓧 x p) == idp
       G₁₁-comp-right-id = admit _
 
   -- Target functor preserves products
   module _
-    (𝓧 𝓨 : Alg₀-obj F₀)
+    (𝓧 𝓨 : Alg₀-obj)
     where
 
-    open Alg₀-obj F₀ 𝓧 renaming (θ to θ₀)
-    open Alg₀-obj F₀ 𝓨 renaming (X to Y ; θ to ρ₀)
-
-    open import 1-hits.Alg0.Limits F₀
+    open Alg₀-obj 𝓧 renaming (θ to θ₀)
+    open Alg₀-obj 𝓨 renaming (X to Y ; θ to ρ₀)
 
     module _
       (x : ⟦ F₁ ⟧₀ (X × Y))
