@@ -1,6 +1,6 @@
 # Specifying higher inductive types
 
-[![Build Status](https://travis-ci.org/gdijkstra/homotopy-initiality.svg?branch=master)](https://travis-ci.org/gdijkstra/homotopy-initiality)
+[![Build Status](https://travis-ci.org/gdijkstra/homotopy-initiality.svg?branch=general-approach)](https://travis-ci.org/gdijkstra/homotopy-initiality)
 
 This project aims to formalise a notion of higher inductive types and
 prove general properties about them. Most importantly we want to be
