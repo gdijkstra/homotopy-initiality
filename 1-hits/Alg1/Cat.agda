@@ -41,14 +41,14 @@ module _
       f₁ x ∎∎
 
   left-id-alg₁ : ∘-alg₁ (id-alg₁ 𝓨) 𝓯 == 𝓯
-  left-id-alg₁ = mk-alg₁-hom-eq-cube
+  left-id-alg₁ = alg₁-hom=-cube
     (∘-alg₁ (id-alg₁ 𝓨) 𝓯)
     𝓯
     (left-id-alg₀ 𝓯')
     (λ x → admit _)
 
   right-id-alg₁ : ∘-alg₁ 𝓯 (id-alg₁ 𝓧) == 𝓯
-  right-id-alg₁ = mk-alg₁-hom-eq-cube
+  right-id-alg₁ = alg₁-hom=-cube
     (∘-alg₁ 𝓯 (id-alg₁ 𝓧))
     𝓯
     idp

@@ -9,13 +9,13 @@ has-alg₀ : Type0 → Type0
 has-alg₀ X = ⟦ F ⟧₀ X → X
 
 record Alg₀-obj : Type1 where
-  constructor mk-alg₀
+  constructor alg₀
   field
     X : Type0
     θ : has-alg₀ X
     
 U₀ : Alg₀-obj → Type0
-U₀ (mk-alg₀ X _) = X
+U₀ (alg₀ X _) = X
 
 module _
   (𝓧 𝓨 : Alg₀-obj)
@@ -30,7 +30,7 @@ module _
   is-alg₀-hom f = (x : ⟦ F ⟧₀ X) → f (θ x) == ρ (⟦ F ⟧₁ f x)
 
 record Alg₀-hom (𝓧 𝓨 : Alg₀-obj) : Type0 where
-  constructor mk-alg₀-hom
+  constructor alg₀-hom
 
   open Alg₀-obj 𝓧
   open Alg₀-obj 𝓨 renaming (X to Y ; θ to ρ)
@@ -52,7 +52,7 @@ module _
   ∘₀ = λ x → ap g (f₀ x) ∙ g₀ (⟦ F ⟧₁ f x)
 
   ∘-alg₀ : Alg₀-hom 𝓧 𝓩
-  ∘-alg₀ = mk-alg₀-hom (g ∘ f) ∘₀
+  ∘-alg₀ = alg₀-hom (g ∘ f) ∘₀
 
 module _
   (𝓧 : Alg₀-obj)
@@ -67,4 +67,4 @@ module _
   id₀ = λ _ → idp
 
   id-alg₀ : Alg₀-hom 𝓧 𝓧
-  id-alg₀ = mk-alg₀-hom id id₀
+  id-alg₀ = alg₀-hom id id₀

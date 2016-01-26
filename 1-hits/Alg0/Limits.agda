@@ -26,13 +26,13 @@ module _
   ×₀ = λ x → θ (⟦ F ⟧₁ fst x) , ρ (⟦ F ⟧₁ snd x)
   
   ×-alg₀ : Alg₀-obj
-  ×-alg₀ = mk-alg₀ (X × Y) ×₀
+  ×-alg₀ = alg₀ (X × Y) ×₀
 
   π₁-alg₀ : Alg₀-hom ×-alg₀ 𝓧
-  π₁-alg₀ = mk-alg₀-hom fst (λ _ → idp)
+  π₁-alg₀ = alg₀-hom fst (λ _ → idp)
 
   π₂-alg₀ : Alg₀-hom ×-alg₀ 𝓨
-  π₂-alg₀ = mk-alg₀-hom snd (λ _ → idp)
+  π₂-alg₀ = alg₀-hom snd (λ _ → idp)
 
 products : has-products
 products = record
@@ -83,7 +83,7 @@ module Equaliser
            g (θ (⟦ F ⟧₁ i x)) ∎∎))
 
   𝓔 : Alg₀-obj
-  𝓔 = mk-alg₀ E ε
+  𝓔 = alg₀ E ε
 
   i₀ : is-alg₀-hom 𝓔 𝓧 i
   i₀ = (λ x → idp)
@@ -99,10 +99,10 @@ module Equaliser
   p₀ x = admit _
 
   𝓲 : Alg₀-hom 𝓔 𝓧
-  𝓲 = mk-alg₀-hom i i₀
+  𝓲 = alg₀-hom i i₀
 
   comm : ∘-alg₀ 𝓯 𝓲 == ∘-alg₀ 𝓰 𝓲 
-  comm = mk-alg₀-hom-eq-square-λ= {𝓔} {𝓨}
+  comm = alg₀-hom=⊡-λ= {𝓔} {𝓨}
           (∘-alg₀ 𝓯 𝓲)
           (∘-alg₀ 𝓰 𝓲)
           p'

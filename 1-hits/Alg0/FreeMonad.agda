@@ -15,7 +15,7 @@ _*¹ : {X : Type0} (θ : has-alg₀ F X) → has-alg₀ (F *) X
 _*¹ {X} θ = rec* X X (idf X) θ
 
 star : Alg₀-obj F → Alg₀-obj (F *)
-star (mk-alg₀ X θ) = mk-alg₀ X (θ *¹)
+star (alg₀ X θ) = alg₀ X (θ *¹)
 
 module _
   {𝓧 𝓨 : Alg₀-obj F}
@@ -49,7 +49,7 @@ module _
                 (ρ *¹) (⟦ F * ⟧₁ f (c* x)) ∎∎)
 
   star-hom : Alg₀-hom (F *) (star 𝓧) (star 𝓨)
-  star-hom = mk-alg₀-hom f star-hom₀
+  star-hom = alg₀-hom f star-hom₀
   
 -- Functor laws, we're only focusing on the second part of the
 -- morphisms, as the functions between algebra carriers remain

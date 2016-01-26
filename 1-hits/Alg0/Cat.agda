@@ -23,7 +23,7 @@ module _
 
   abstract
     left-id-alg₀ : ∘-alg₀ (id-alg₀ 𝓨) 𝓯 == 𝓯
-    left-id-alg₀ = mk-alg₀-hom-eq
+    left-id-alg₀ = alg₀-hom=
       (∘-alg₀ (id-alg₀ 𝓨) 𝓯)
       𝓯
       idp
@@ -51,7 +51,7 @@ module _
   assoc-alg₀ : (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯)
             == (∘-alg₀ 𝓱 (∘-alg₀ 𝓰 𝓯))
   assoc-alg₀ =
-    mk-alg₀-hom-eq-square {𝓧} {𝓦}
+    alg₀-hom=⊡ {𝓧} {𝓦}
                           (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯)
                           (∘-alg₀ 𝓱 (∘-alg₀ 𝓰 𝓯))
                           idp
