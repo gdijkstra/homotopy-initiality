@@ -35,12 +35,15 @@ module _
   open Alg₀-hom 𝓯
   open Alg₀-hom 𝓰 renaming (f to g ; f₀ to g₀)
   
-  alg₀-hom=⊡ :
-    (p : f == g)
-    (p₀ : (x : ⟦ F ⟧₀ X) →
-             Square (f₀ x) (app= p (θ x)) (ap (λ h → ρ (⟦ F ⟧₁ h x)) p) (g₀ x))
-    → 𝓯 == 𝓰
-  alg₀-hom=⊡ = Prim.alg₀-hom=⊡ 𝓧 𝓨 𝓯 𝓰
+  record =⊡Alg₀-hom : Type0 where
+    constructor =⊡alg₀-hom
+    field
+      p : f == g
+      p₀ : (x : ⟦ F ⟧₀ X) →
+             Square (f₀ x) (app= p (θ x)) (ap (λ h → ρ (⟦ F ⟧₁ h x)) p) (g₀ x)
+
+  alg₀-hom=⊡ : =⊡Alg₀-hom → 𝓯 == 𝓰
+  alg₀-hom=⊡ (=⊡alg₀-hom p p₀) = Prim.alg₀-hom=⊡ 𝓧 𝓨 𝓯 𝓰 p p₀
 
   alg₀-hom=⊡-λ= :
     (p  : (x : X) → f x == g x)

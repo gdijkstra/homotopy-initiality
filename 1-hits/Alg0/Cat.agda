@@ -26,8 +26,7 @@ module _
     left-id-alg₀ = alg₀-hom=
       (∘-alg₀ (id-alg₀ 𝓨) 𝓯)
       𝓯
-      idp
-      (λ= (λ x → ∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x)))
+      (=alg₀-hom idp (λ= (λ x → ∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x))))
 
   abstract
     right-id-alg₀ : ∘-alg₀ 𝓯 (id-alg₀ 𝓧) == 𝓯
@@ -54,13 +53,13 @@ module _
     alg₀-hom=⊡ {𝓧} {𝓦}
                           (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯)
                           (∘-alg₀ 𝓱 (∘-alg₀ 𝓰 𝓯))
-                          idp
-                          (λ x → square-to-disc'
+                          (=⊡alg₀-hom idp
+                            (λ x → square-to-disc'
                                    {p = ap (h ∘ g) (f₀ x)}
                                    {q = ap h (ap g (f₀ x) ∙ g₀ (⟦ F ⟧₁ f x))}
                                    {r = ap h (g₀ (⟦ F ⟧₁ f x)) ∙ h₀ (⟦ F ⟧₁ (g ∘ f) x) }
                                    {s = h₀ (⟦ F ⟧₁ (g ∘ f) x)}
-                                   (ap-lemma x ∙v⊡ assoc-sq x))
+                                   (ap-lemma x ∙v⊡ assoc-sq x)))
       where 
             ap-lemma : (x : ⟦ F ⟧₀ X) → (ap h (ap g (f₀ x) ∙ g₀ (⟦ F ⟧₁ f x))) == (ap (h ∘ g) (f₀ x) ∙ ap h (g₀ (⟦ F ⟧₁ f x)))
             ap-lemma x = ↯

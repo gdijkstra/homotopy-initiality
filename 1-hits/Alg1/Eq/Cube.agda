@@ -51,7 +51,7 @@ module _
              Square (f₀ x) (app= p (θ₀ x)) (ap (λ h → ρ₀ (⟦ F₀ ⟧₁ h x)) p) (g₀ x))
     where
 
-    𝓹' = alg₀-hom=⊡ 𝓯' 𝓰' p p₀
+    𝓹' = alg₀-hom=⊡ 𝓯' 𝓰' (=⊡alg₀-hom p p₀)
 
     -- Hopefully we can show this by induction, but of course we have
     -- to move everything from module parameters to function
@@ -59,13 +59,13 @@ module _
     lemma-l :
       (x : ⟦ F₁ ⟧₀ X)
       →  ap (λ h → (ρ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ h x))) p
-      == ap (λ 𝓱 → (ρ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))) (alg₀-hom=⊡ 𝓯' 𝓰' p p₀)
+      == ap (λ 𝓱 → (ρ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))) (alg₀-hom=⊡ 𝓯' 𝓰' (=⊡alg₀-hom p p₀))
     lemma-l x = admit _
 
     lemma-r :
       (x : ⟦ F₁ ⟧₀ X)
       →  ap (λ h → (ρ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ h x))) p
-      == ap (λ 𝓱 → (ρ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))) (alg₀-hom=⊡ 𝓯' 𝓰' p p₀)
+      == ap (λ 𝓱 → (ρ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))) (alg₀-hom=⊡ 𝓯' 𝓰' (=⊡alg₀-hom p p₀))
     lemma-r x = admit _
 
     simplify-bottom :

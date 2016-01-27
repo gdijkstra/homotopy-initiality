@@ -55,9 +55,9 @@ module _
   alg₁-hom=-1 :
      (p  : f == g)
      (p₀ : f₀ == g₀ [ (λ h → (x : ⟦ F₀ ⟧₀ X) → h (θ₀ x) == ρ₀ (⟦ F₀ ⟧₁ h x)) ↓ p ])
-     (p₁ : f₁ == g₁ [ (λ 𝓱 → (x : ⟦ F₁ ⟧₀ X) → G₁₁ 𝓱 x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) ↓ alg₀-hom= 𝓯' 𝓰' p p₀ ])
+     (p₁ : f₁ == g₁ [ (λ 𝓱 → (x : ⟦ F₁ ⟧₀ X) → G₁₁ 𝓱 x (θ₁ x) == ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) ↓ alg₀-hom= 𝓯' 𝓰' (=alg₀-hom p p₀) ])
      → 𝓯 == 𝓰
-  alg₁-hom=-1 p p₀ p₁ = Prim.alg₁-hom= 𝓧 𝓨 𝓯 𝓰 (alg₀-hom= 𝓯' 𝓰' p p₀) p₁
+  alg₁-hom=-1 p p₀ p₁ = Prim.alg₁-hom= 𝓧 𝓨 𝓯 𝓰 (alg₀-hom= 𝓯' 𝓰' (=alg₀-hom p p₀)) p₁
 
   alg₁-hom=-λ= :
        (𝓹'  : 𝓯' == 𝓰')
