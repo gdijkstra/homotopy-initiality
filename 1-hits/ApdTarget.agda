@@ -37,7 +37,6 @@ module Prim
     where 𝓯 = (alg₀-hom f f₀)
           𝓰 = (alg₀-hom f g₀)
 
-
   -- We hope to show that the square:
   --   square-apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) (alg₀-hom=⊡ F₀ 𝓯 𝓰 (=⊡alg₀-hom p p₀))
   -- in some sense factors as three squares. Since G₁₁ 𝓱 x (θ₁ x) is defined as:
@@ -56,6 +55,28 @@ module Prim
       (! (star-hom₀ 𝓰 (l ‼ x)) ∙ ap (f 𝓰) (θ₁ x) ∙ star-hom₀ 𝓰 (r ‼ x))
     other-square = !□v (⊡* 𝓯 𝓰 p p₀ (l ‼ x)) ⊡v square-apd (λ h → ap h (θ₁ x)) p ⊡v ⊡* 𝓯 𝓰 p p₀ (r ‼ x)
 
+  lemma-l :
+    (𝓯 𝓰 : Alg₀-hom 𝓧 𝓨)
+    (p : f 𝓯 == f 𝓰)
+    (p₀ : (x : ⟦ F₀ ⟧₀ X)
+          → Square (f₀ 𝓯 x) (app= p (θ x)) (ap (λ h → ρ (⟦ F₀ ⟧₁ h x)) p) (f₀ 𝓰 x))
+    (x : ⟦ F₁ ⟧₀ X)
+    →  ap (λ h → (ρ *¹) (l ‼ (⟦ F₁ ⟧₁ h x))) p
+    == ap (λ 𝓱 → (ρ *¹) (l ‼ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))) (alg₀-hom=⊡ F₀ 𝓯 𝓰 (=⊡alg₀-hom p p₀))
+  lemma-l (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
+  lemma-l (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = idp
+
+  lemma-r :
+    (𝓯 𝓰 : Alg₀-hom 𝓧 𝓨)
+    (p : f 𝓯 == f 𝓰)
+    (p₀ : (x : ⟦ F₀ ⟧₀ X)
+          → Square (f₀ 𝓯 x) (app= p (θ x)) (ap (λ h → ρ (⟦ F₀ ⟧₁ h x)) p) (f₀ 𝓰 x))
+    (x : ⟦ F₁ ⟧₀ X)
+    →  ap (λ h → (ρ *¹) (r ‼ (⟦ F₁ ⟧₁ h x))) p
+    == ap (λ 𝓱 → (ρ *¹) (r ‼ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))) (alg₀-hom=⊡ F₀ 𝓯 𝓰 (=⊡alg₀-hom p p₀))
+  lemma-r (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
+  lemma-r (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = idp
+
   -- apd-G :
   --   (𝓯 𝓰 : Alg₀-hom 𝓧 𝓨)
   --   (p : f 𝓯 == f 𝓰)
@@ -63,5 +84,7 @@ module Prim
   --         → Square (f₀ 𝓯 x) (app= p (θ x)) (ap (λ h → ρ (⟦ F₀ ⟧₁ h x)) p) (f₀ 𝓰 x))
   --   (x : ⟦ F₁ ⟧₀ X)
   --   → square-apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) (alg₀-hom=⊡ F₀ 𝓯 𝓰 (=⊡alg₀-hom p p₀))
-  --      == {!!□v (⊡* 𝓯 𝓰 p p₀ (l ‼ x))!} ⊡v {!square-apd !} ⊡v {!(⊡* 𝓯 𝓰 p p₀ (r ‼ x))!}
-  -- apd-G f g p p₀ = {!!}
+  --      == ! (lemma-l 𝓯 𝓰 p p₀ x) ∙v⊡ other-square x 𝓯 𝓰 p p₀ ⊡v∙ lemma-r 𝓯 𝓰 p p₀ x
+  -- apd-G (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
+  -- apd-G (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = {!!} -- some cube calculus
+
