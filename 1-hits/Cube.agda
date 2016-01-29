@@ -204,3 +204,60 @@ lemma-stuff :
       ⊡v horiz-degen-square (idp {a = q})
       ⊡v horiz-degen-square (idp {a = r})
 lemma-stuff {p = idp} {q = idp} {r = r} = idp
+
+_⊡v∙³_ :
+    ∀ {i} {A : Type i}
+    {a b c d : A}
+    {p p' : a == b}
+    {q : a == c}
+    {r : b == d}
+    {r' : b == d}
+    {s s' : c == d}
+    {top : Square p q r s}
+    {bot : Square p' q r s'}
+    {u : p == p'}
+    {v : s == s'}    
+  → Cube (vert-degen-square u)
+         (vert-degen-square v)
+         vid-square
+         top
+         bot
+         vid-square
+  → (z : r == r')
+  → Cube (vert-degen-square u)
+         (vert-degen-square v)
+         vid-square
+         (top ⊡v∙ z)
+         (bot ⊡v∙ z)
+         vid-square
+_⊡v∙³_ {top = ids} {bot = ids} {u = idp} {v = idp} x idp = idc
+
+_∙v⊡³_ :
+    ∀ {i} {A : Type i}
+    {a b c d : A}
+    {p p' : a == b}
+    {q : a == c}
+    {q' : a == c}      
+    {r : b == d}
+    {s s' : c == d}
+    {top : Square p q r s}
+    {bot : Square p' q r s'}
+    {u : p == p'}
+    {v : s == s'}    
+  → (z : q' == q)
+  → Cube (vert-degen-square u)
+         (vert-degen-square v)
+         vid-square
+         top
+         bot
+         vid-square
+  → Cube (vert-degen-square u)
+         (vert-degen-square v)
+         vid-square
+         (z ∙v⊡ top)
+         (z ∙v⊡ bot)
+         vid-square
+_∙v⊡³_ {top = ids} {bot = ids} {u = idp} {v = idp} idp x = idc
+
+infixr 80 _⊡v∙³_
+infixr 80 _∙v⊡³_

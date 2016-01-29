@@ -17,7 +17,7 @@ open import 1-hits.Target s
 open import lib.cubical.Cubical
 open import 1-hits.Cube
 
-module Prim
+module _
   (𝓧 𝓨 : Alg₀-obj)
   (θ₁ : (x : ⟦ F₁ ⟧₀ (U₀ 𝓧)) → G₁₀ 𝓧 x)
   (ρ₁ : (x : ⟦ F₁ ⟧₀ (U₀ 𝓨)) → G₁₀ 𝓨 x)  
@@ -38,12 +38,6 @@ module Prim
     where 𝓯 = (alg₀-hom f f₀)
           𝓰 = (alg₀-hom f g₀)
 
-  -- We hope to show that the square:
-  --   square-apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) (alg₀-hom=⊡ F₀ 𝓯 𝓰 (=⊡alg₀-hom p p₀))
-  -- in some sense factors as three squares. Since G₁₁ 𝓱 x (θ₁ x) is defined as:
-  --   h₀* (l x) ∙ ap h p ∙ h₀* (r x)
-  -- one would guess that the apd square of this factors into three
-  -- squares corresponding to each factor of the path
   module _ (x : ⟦ F₁ ⟧₀ X)
            (𝓯 𝓰 : Alg₀-hom 𝓧 𝓨)
            (p : f 𝓯 == f 𝓰)
@@ -78,7 +72,7 @@ module Prim
   lemma-r (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
   lemma-r (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = idp
 
-  apd-G :
+  apd-G-correct :
     (𝓯 𝓰 : Alg₀-hom 𝓧 𝓨)
     (p : f 𝓯 == f 𝓰)
     (p₀ : (x : ⟦ F₀ ⟧₀ X)
@@ -86,13 +80,13 @@ module Prim
     (x : ⟦ F₁ ⟧₀ X)
     → square-apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) (alg₀-hom=⊡ F₀ 𝓯 𝓰 (=⊡alg₀-hom p p₀))
        == ! (lemma-l 𝓯 𝓰 p p₀ x) ∙v⊡ other-square x 𝓯 𝓰 p p₀ ⊡v∙ lemma-r 𝓯 𝓰 p p₀ x
-  apd-G (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
-  apd-G (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = lemma-stuff
+  apd-G-correct (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
+  apd-G-correct (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = lemma-stuff
     {p = star-hom₀ (alg₀-hom f f₀) (l ‼ x)}
     {q = ap f (θ₁ x)}
     {r = star-hom₀ (alg₀-hom f f₀) (r ‼ x)}
 
-  apd-ρ₁ :
+  apd-ρ₁-correct :
     (𝓯 𝓰 : Alg₀-hom 𝓧 𝓨)
     (p : f 𝓯 == f 𝓰)
     (p₀ : (x : ⟦ F₀ ⟧₀ X)
@@ -100,5 +94,5 @@ module Prim
     (x : ⟦ F₁ ⟧₀ X)
     → square-apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) (alg₀-hom=⊡ F₀ 𝓯 𝓰 (=⊡alg₀-hom p p₀))
        == ! (lemma-l 𝓯 𝓰 p p₀ x) ∙v⊡ square-apd (λ h → ρ₁ (⟦ F₁ ⟧₁ h x)) p ⊡v∙ lemma-r 𝓯 𝓰 p p₀ x
-  apd-ρ₁ (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
-  apd-ρ₁ (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = idp
+  apd-ρ₁-correct (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
+  apd-ρ₁-correct (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = idp

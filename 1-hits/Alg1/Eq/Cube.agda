@@ -45,73 +45,34 @@ module _
                        (f₁ x)
                        (g₁ x) (p₁ x))
 
-  module _
-    (p : f == g)
-    (p₀ : (x : ⟦ F₀ ⟧₀ X) →
-             Square (f₀ x) (app= p (θ₀ x)) (ap (λ h → ρ₀ (⟦ F₀ ⟧₁ h x)) p) (g₀ x))
-    where
+open import 1-hits.ApdTarget s
 
-    𝓹' = alg₀-hom=⊡ 𝓯' 𝓰' (=⊡alg₀-hom p p₀)
+open Alg₁-obj
+open Alg₁-hom
 
-    -- Hopefully we can show this by induction, but of course we have
-    -- to move everything from module parameters to function
-    -- arguments.
-    lemma-l :
-      (x : ⟦ F₁ ⟧₀ X)
-      →  ap (λ h → (ρ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ h x))) p
-      == ap (λ 𝓱 → (ρ₀ *¹) (l ‼ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))) (alg₀-hom=⊡ 𝓯' 𝓰' (=⊡alg₀-hom p p₀))
-    lemma-l x = admit _
-
-    lemma-r :
-      (x : ⟦ F₁ ⟧₀ X)
-      →  ap (λ h → (ρ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ h x))) p
-      == ap (λ 𝓱 → (ρ₀ *¹) (r ‼ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))) (alg₀-hom=⊡ 𝓯' 𝓰' (=⊡alg₀-hom p p₀))
-    lemma-r x = admit _
-
-    simplify-bottom :
-      (x : ⟦ F₁ ⟧₀ X)
-      → Cube vid-square
+alg₁-hom=-cube' :
+  {𝓧 𝓨 : Alg₁-obj}
+  {𝓯 𝓰 : Alg₁-hom 𝓧 𝓨}
+  (p : f 𝓯 == f 𝓰)
+  (p₀ : (x : ⟦ F₀ ⟧₀ (X 𝓧))
+         → Square (f₀ 𝓯 x) (app= p (θ₀ 𝓧 x)) (ap (λ h → (θ₀ 𝓨) (⟦ F₀ ⟧₁ h x)) p) (f₀ 𝓰 x))
+  (p₁ : (x : ⟦ F₁ ⟧₀ (X 𝓧))
+      → Cube (vert-degen-square (f₁ 𝓯 x))
+             (vert-degen-square (f₁ 𝓰 x))
              vid-square
-             (vert-degen-square (lemma-l x))
-             (square-apd (λ h → ρ₁ (⟦ F₁ ⟧₁ h x)) p)
-             (square-apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) 𝓹')
-             (vert-degen-square (lemma-r x))
-    simplify-bottom x = admit _
-
-    goal :
-      (x : ⟦ F₁ ⟧₀ X)
-      → Cube (vert-degen-square (f₁ x))              -- left
-             (vert-degen-square (g₁ x))              -- right
-             (vert-degen-square (! (lemma-l x)))     -- back
-             (square-apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) 𝓹')  -- top
-             (square-apd (λ h → ρ₁ (⟦ F₁ ⟧₁ h x)) p) -- bot
-             (vert-degen-square (! (lemma-r x)))     -- front
-      → Cube (vert-degen-square (f₁ x))
-             (vert-degen-square (g₁ x))
-             vid-square
-             (square-apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) 𝓹')
-             (square-apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) 𝓹')
-             vid-square
-    goal x c = ( cube-shift-left  (⊡v-right-id-degen (f₁ x))
-               ∘ cube-shift-right (⊡v-right-id-degen (g₁ x))
-               ∘ cube-shift-back  (⊡v-inv-id (lemma-l x))
-               ∘ cube-shift-front (⊡v-inv-id (lemma-r x)))
-               (c ∙³z simplify-bottom x)
-
-    alg₁-hom=-cube' :
-       (p₁ : (x : ⟦ F₁ ⟧₀ X)
-           → Cube (vert-degen-square (f₁ x))
-                  (vert-degen-square (g₁ x))
-                  vid-square
-                  (square-apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) 𝓹')
-                  (square-apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) 𝓹')
-                  vid-square)
-       → 𝓯 == 𝓰
-    alg₁-hom=-cube' p₁ =
-      alg₁-hom=-λ= 𝓯 𝓰
-        𝓹'
-        (λ x → from-cube (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x))
-                         (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x))
-                         𝓹'
-                         (f₁ x)
-                         (g₁ x) (p₁ x))
+             (other-square (𝓧' 𝓧) (𝓧' 𝓨) (θ₁ 𝓧) (θ₁ 𝓨) x (𝓯' 𝓯) (𝓯' 𝓰) p p₀)
+             (square-apd (λ h → (θ₁ 𝓨) (⟦ F₁ ⟧₁ h x)) p)
+             vid-square)
+  → 𝓯 == 𝓰
+alg₁-hom=-cube' {𝓧} {𝓨} {alg₁-hom (alg₀-hom f f₀) f₁} {alg₁-hom (alg₀-hom g g₀) g₁} p p₀ p₁ =
+  alg₁-hom=-cube 𝓯_ 𝓰_ (alg₀-hom=⊡ 𝓯'_ 𝓰'_ (=⊡alg₀-hom p p₀)) (λ x →
+     cube-shift-top (! (apd-G-correct (𝓧' 𝓧) (𝓧' 𝓨) (θ₁ 𝓧) (θ₁ 𝓨) 𝓯'_ 𝓰'_ p p₀ x))
+    (cube-shift-bot (! (apd-ρ₁-correct (𝓧' 𝓧) (𝓧' 𝓨) (θ₁ 𝓧) (θ₁ 𝓨) 𝓯'_ 𝓰'_ p p₀ x))
+     (! ((lemma-l (𝓧' 𝓧) (𝓧' 𝓨) (θ₁ 𝓧) (θ₁ 𝓨) 𝓯'_ 𝓰'_ p p₀ x))
+        ∙v⊡³ p₁ x
+        ⊡v∙³ lemma-r (𝓧' 𝓧) (𝓧' 𝓨) (θ₁ 𝓧) (θ₁ 𝓨) 𝓯'_ 𝓰'_ p p₀ x)))
+  where
+    𝓯'_ = alg₀-hom f f₀
+    𝓰'_ = alg₀-hom g g₀
+    𝓯_ = alg₁-hom 𝓯'_ f₁
+    𝓰_ = alg₁-hom 𝓰'_ g₁
