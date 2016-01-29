@@ -193,3 +193,14 @@ infixr 8 _∙³z_
 ⊡v-inv-id : ∀ {i} {A : Type i} {a a' : A} {p q : a == a'} (r : p == q)
   → vert-degen-square (! r) ⊡v vert-degen-square r == vid-square
 ⊡v-inv-id {p = idp} idp = idp
+
+lemma-stuff :
+  ∀ {i} {A : Type i} {a a' a'' a''' : A}
+  {p : a' == a}
+  {q : a' == a''}
+  {r : a'' == a'''}
+  →  horiz-degen-square (idp {a = ! p ∙ q ∙ r})
+  == !□v (horiz-degen-square (idp {a = p}))
+      ⊡v horiz-degen-square (idp {a = q})
+      ⊡v horiz-degen-square (idp {a = r})
+lemma-stuff {p = idp} {q = idp} {r = r} = idp

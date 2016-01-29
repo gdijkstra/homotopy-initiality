@@ -20,6 +20,7 @@ open import 1-hits.Cube
 module Prim
   (𝓧 𝓨 : Alg₀-obj)
   (θ₁ : (x : ⟦ F₁ ⟧₀ (U₀ 𝓧)) → G₁₀ 𝓧 x)
+  (ρ₁ : (x : ⟦ F₁ ⟧₀ (U₀ 𝓨)) → G₁₀ 𝓨 x)  
   where
 
   open Alg₀-obj 𝓧
@@ -49,10 +50,10 @@ module Prim
            (p₀ : (x : ⟦ F₀ ⟧₀ X) → Square (f₀ 𝓯 x) (app= p (θ x)) (ap (λ h → ρ (⟦ F₀ ⟧₁ h x)) p) (f₀ 𝓰 x))
     where
     other-square : Square
-      (! (star-hom₀ 𝓯 (l ‼ x)) ∙ ap (f 𝓯) (θ₁ x) ∙ star-hom₀ 𝓯 (r ‼ x))
-      (ap (λ h → (ρ *¹) (⟦ F₀ * ⟧₁ h (l ‼ x))) p)
-      (ap (λ h → (ρ *¹) (⟦ F₀ * ⟧₁ h (r ‼ x))) p)
-      (! (star-hom₀ 𝓰 (l ‼ x)) ∙ ap (f 𝓰) (θ₁ x) ∙ star-hom₀ 𝓰 (r ‼ x))
+        (! (star-hom₀ 𝓯 (l ‼ x)) ∙ ap (f 𝓯) (θ₁ x) ∙ star-hom₀ 𝓯 (r ‼ x))
+        (ap (λ h → (ρ *¹) (⟦ F₀ * ⟧₁ h (l ‼ x))) p)
+        (ap (λ h → (ρ *¹) (⟦ F₀ * ⟧₁ h (r ‼ x))) p)
+        (! (star-hom₀ 𝓰 (l ‼ x)) ∙ ap (f 𝓰) (θ₁ x) ∙ star-hom₀ 𝓰 (r ‼ x))
     other-square = !□v (⊡* 𝓯 𝓰 p p₀ (l ‼ x)) ⊡v square-apd (λ h → ap h (θ₁ x)) p ⊡v ⊡* 𝓯 𝓰 p p₀ (r ‼ x)
 
   lemma-l :
@@ -77,14 +78,27 @@ module Prim
   lemma-r (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
   lemma-r (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = idp
 
-  -- apd-G :
-  --   (𝓯 𝓰 : Alg₀-hom 𝓧 𝓨)
-  --   (p : f 𝓯 == f 𝓰)
-  --   (p₀ : (x : ⟦ F₀ ⟧₀ X)
-  --         → Square (f₀ 𝓯 x) (app= p (θ x)) (ap (λ h → ρ (⟦ F₀ ⟧₁ h x)) p) (f₀ 𝓰 x))
-  --   (x : ⟦ F₁ ⟧₀ X)
-  --   → square-apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) (alg₀-hom=⊡ F₀ 𝓯 𝓰 (=⊡alg₀-hom p p₀))
-  --      == ! (lemma-l 𝓯 𝓰 p p₀ x) ∙v⊡ other-square x 𝓯 𝓰 p p₀ ⊡v∙ lemma-r 𝓯 𝓰 p p₀ x
-  -- apd-G (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
-  -- apd-G (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = {!!} -- some cube calculus
+  apd-G :
+    (𝓯 𝓰 : Alg₀-hom 𝓧 𝓨)
+    (p : f 𝓯 == f 𝓰)
+    (p₀ : (x : ⟦ F₀ ⟧₀ X)
+          → Square (f₀ 𝓯 x) (app= p (θ x)) (ap (λ h → ρ (⟦ F₀ ⟧₁ h x)) p) (f₀ 𝓰 x))
+    (x : ⟦ F₁ ⟧₀ X)
+    → square-apd (λ 𝓱 → G₁₁ 𝓱 x (θ₁ x)) (alg₀-hom=⊡ F₀ 𝓯 𝓰 (=⊡alg₀-hom p p₀))
+       == ! (lemma-l 𝓯 𝓰 p p₀ x) ∙v⊡ other-square x 𝓯 𝓰 p p₀ ⊡v∙ lemma-r 𝓯 𝓰 p p₀ x
+  apd-G (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
+  apd-G (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = lemma-stuff
+    {p = star-hom₀ (alg₀-hom f f₀) (l ‼ x)}
+    {q = ap f (θ₁ x)}
+    {r = star-hom₀ (alg₀-hom f f₀) (r ‼ x)}
 
+  apd-ρ₁ :
+    (𝓯 𝓰 : Alg₀-hom 𝓧 𝓨)
+    (p : f 𝓯 == f 𝓰)
+    (p₀ : (x : ⟦ F₀ ⟧₀ X)
+          → Square (f₀ 𝓯 x) (app= p (θ x)) (ap (λ h → ρ (⟦ F₀ ⟧₁ h x)) p) (f₀ 𝓰 x))
+    (x : ⟦ F₁ ⟧₀ X)
+    → square-apd (λ 𝓱 → ρ₁ (⟦ F₁ ⟧₁ (Alg₀-hom.f 𝓱) x)) (alg₀-hom=⊡ F₀ 𝓯 𝓰 (=⊡alg₀-hom p p₀))
+       == ! (lemma-l 𝓯 𝓰 p p₀ x) ∙v⊡ square-apd (λ h → ρ₁ (⟦ F₁ ⟧₁ h x)) p ⊡v∙ lemma-r 𝓯 𝓰 p p₀ x
+  apd-ρ₁ (alg₀-hom f f₀) (alg₀-hom .f g₀) idp p₀ x with (λ= (λ x₁ → horiz-degen-path (p₀ x₁)))
+  apd-ρ₁ (alg₀-hom f f₀) (alg₀-hom .f .f₀) idp p₀ x | idp = idp
