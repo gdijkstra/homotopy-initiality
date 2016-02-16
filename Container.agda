@@ -42,6 +42,12 @@ module _ (F : Container) where
 
   □ : {A : Type0} (B : A → Type0) → ⟦ F ⟧₀ A → Type0
   □ B (s , t) = (p : Ps s) → B (t p)
+
+  φ : {A : Type0} (B : A → Type0) → ⟦ F ⟧₀ (Σ A B) → Σ (⟦ F ⟧₀ A) (□ B)
+  φ B (s , t) = (⟦ F ⟧₁ fst (s , t)) , (λ p → snd (t p))
+
+  φ⁻¹ : {A : Type0} (B : A → Type0) → Σ (⟦ F ⟧₀ A) (□ B) → ⟦ F ⟧₀ (Σ A B)
+  φ⁻¹ B ((s , t) , p) = s , (λ x → (t x) , (p x))
   
   bar : {A : Type0} {B : A → Type0}
     → ((x : A) → B x) → (x : ⟦ F ⟧₀ A) → □ B x
