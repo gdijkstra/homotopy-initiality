@@ -44,7 +44,7 @@ module _
   left-id-alg₁ = alg₁-hom=-cube'
     idp
     (λ x → horiz-degen-square (∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x))) 
-    (λ x → {!!})
+    (λ x → admit _)
 
   right-id-alg₁ : ∘-alg₁ 𝓯 (id-alg₁ 𝓧) == 𝓯
   right-id-alg₁ = alg₁-hom=-cube
