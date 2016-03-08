@@ -5,13 +5,13 @@ module dep.Sect where
 open import lib.Basics
 open import Cat
 open import dep.Core
-open import dep.Fib
+open import dep.Fam
 open import Admit
 
 is-section :
   (s : Spec)
   (𝓧 : / Alg s /)
-  (P : Fib s 𝓧)
+  (P : Fam s 𝓧)
   (𝓼 : Alg s [ 𝓧 , total s 𝓧 P ])
   → Type0
 is-section s 𝓧 P 𝓼
@@ -23,7 +23,7 @@ to-is-section :
   (G : ∫ (Alg s) F ⇒ TypeCat)
   (𝓧 : / Alg s /)
   (θ : (x : F ⋆ 𝓧) → G ⋆ (𝓧 , x))
-  (P : Fib s 𝓧)
+  (P : Fam s 𝓧)
   (m : (x : Σ (F ⋆ 𝓧) (□-F s F 𝓧 P)) → □-G s F G 𝓧 P (fst x) (snd x) (θ (fst x)))
   (𝓼 : Alg s [ 𝓧 , total s 𝓧 P ])
   (𝓼' : (x : F ⋆ 𝓧) → (G ⋆⋆ 𝓼 , idp) (θ x) == fst (m (((F ⋆⋆ proj s 𝓧 P) ((F ⋆⋆ 𝓼) x)) , ((F ⋆⋆ 𝓼) x) , idp)))
@@ -36,14 +36,14 @@ to-is-section s F G 𝓧 θ P m 𝓼 𝓼' a
 Sect :
   (s : Spec)
   (𝓧 : / Alg s /)
-  (P : Fib s 𝓧)
+  (P : Fam s 𝓧)
   → Type0
 
 F-bar :
   (s : Spec)
   (F : Alg s ⇒ TypeCat)
   (𝓧 : / Alg s /)
-  (P : Fib s 𝓧)
+  (P : Fam s 𝓧)
   → Sect s 𝓧 P
   → (x : F ⋆ 𝓧) → □-F s F 𝓧 P x
 
@@ -52,7 +52,7 @@ G-bar :
   (F : Alg s ⇒ TypeCat)
   (G : ∫ (Alg s) F ⇒ TypeCat)
   (𝓧 : / Alg s /)
-  (P : Fib s 𝓧)
+  (P : Fam s 𝓧)
   (x : F ⋆ 𝓧)
   → (𝓼 : Sect s 𝓧 P)
   → (p : G ⋆ (𝓧 , x)) → □-G s F G 𝓧 P x (F-bar s F 𝓧 P 𝓼 x) p
@@ -60,7 +60,7 @@ G-bar :
 ψ :
   (s : Spec)
   (𝓧 : / Alg s /)
-  (P : Fib s 𝓧)
+  (P : Fam s 𝓧)
   → Sect s 𝓧 P → Σ (Alg s [ 𝓧 , total s 𝓧 P ]) (is-section s 𝓧 P)
 
 Sect ε X P

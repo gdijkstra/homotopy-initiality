@@ -30,4 +30,3 @@ import Nondep
 
 -- Restricted specification of 1-HITs, using containers.
 import 1-hits
-

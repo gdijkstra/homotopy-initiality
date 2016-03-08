@@ -50,6 +50,11 @@ module _ {i j}
     → Square (f x) (ap h p) (ap k p) (f y)
   square-apd = ↓-='-to-square ∘ apd f
   
+  square-apd-idp=ids :
+    {x : A}
+    → square-apd {x} {x} idp == horiz-degen-square idp
+  square-apd-idp=ids = idp
+
   square-apd=apd :
     {x y : A}
     (p : x == y)
