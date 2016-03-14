@@ -47,11 +47,17 @@ module _
     (λ x → admit _)
 
   right-id-alg₁ : ∘-alg₁ 𝓯 (id-alg₁ 𝓧) == 𝓯
-  right-id-alg₁ = alg₁-hom=-cube
-    (∘-alg₁ 𝓯 (id-alg₁ 𝓧))
-    𝓯
-    idp
-    (λ x → y-id-cube-in (lemma x ∙h⊡ hid-square {p = f₁ x}))
+  right-id-alg₁ =
+    alg₁-hom-cst2=
+      𝓧
+      𝓨
+      f
+      f₀
+      f₀
+      (∘₁ 𝓯 (id-alg₁ 𝓧))
+      f₁
+      idp
+      (λ x → horiz-degen-square (lemma x))
 
 -- module _
 --   {𝓧 𝓨 𝓩 𝓦 : Alg₁-obj}
