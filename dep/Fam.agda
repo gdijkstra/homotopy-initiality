@@ -8,6 +8,7 @@ open import dep.Core
 
 -- Families over a given algebra
 Fam : (s : Spec) → / Alg s / → Type1
+has-fam : (s : Spec) (c : Constr (Alg s)) (𝓧 : / Alg s /) (θ : has-alg c 𝓧) → Fam s 𝓧 → Type0
 
 □-F :
   (s : Spec)
@@ -71,10 +72,12 @@ proj :
   (y : □-F s F 𝓧 P x)
   → G ⋆ (total s 𝓧 P , φ-F s F 𝓧 P (x , y)) → Σ (G ⋆ (𝓧 , x)) (□-G s F G 𝓧 P x y)
 
+has-fam s (mk-constr F G) 𝓧 θ P = (x : Σ (F ⋆ 𝓧) (□-F s F 𝓧 P)) → □-G s F G 𝓧 P (fst x) (snd x) (θ (fst x))
+
 Fam ε X
   = X → Type0
-Fam (s ▸ mk-constr F G) (𝓧 , θ)
-  = Σ (Fam s 𝓧) (λ P → (x : Σ (F ⋆ 𝓧) (□-F s F 𝓧 P)) → □-G s F G 𝓧 P (fst x) (snd x) (θ (fst x)))
+Fam (s ▸ c) (𝓧 , θ)
+  = Σ (Fam s 𝓧) (has-fam s c 𝓧 θ)
 
 □-F s F 𝓧 P x
   = Σ (F ⋆ total s 𝓧 P) (λ y → (F ⋆⋆ proj s 𝓧 P) y == x)

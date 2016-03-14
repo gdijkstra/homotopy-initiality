@@ -9,16 +9,16 @@ open import dep.Fam
 open import dep.Fib
 open import Admit
 
-data FamView (s : Spec) (𝓧 : / Alg s /) : Fib s 𝓧 → Type1 where
-  mk-famview : (𝓟 : Fam s 𝓧) → FamView s 𝓧 ((total s 𝓧 𝓟) , (proj s 𝓧 𝓟))
+data Singleton {i} {A : Type i} (x : A) : Type i where
+  _with=_ : (y : A) → x == y → Singleton x
 
-private
-  singleton-elim-2 :
-    (X : Set)
-    (P : X → Set)
-    (x : X)
-    → Σ (Σ X P) (λ y → fst y == x) ≃ P x
-  singleton-elim-2 X P x =
+inspect : ∀ {i} {A : Type i} (x : A) → Singleton x
+inspect x = x with= idp
+
+-- TODO: Situation on Type
+module _ (X : Type0) (P : X → Type0) where
+  singleton-elim-2 : (x : X) → Σ (Σ X P) (λ y → fst y == x) ≃ P x
+  singleton-elim-2 x =
     equiv
       help-to
       help-from
@@ -34,49 +34,69 @@ private
         help-from-to : (a : Σ (Σ X P) (λ y → fst y == x)) → help-from (help-to a) == a
         help-from-to ((.x , p) , idp) = idp
 
--- The preimage operation needs to be defined mutually with its
--- correctness proof.
+data FamView (s : Spec) (𝓧 : / Alg s /) : Fib s 𝓧 → Type1 where
+  mk-famview : (𝓟 : Fam s 𝓧) → FamView s 𝓧 ((total s 𝓧 𝓟) , (proj s 𝓧 𝓟))
+
+famViewHelper :
+  (s : Spec) (c : Constr (Alg s))
+  (𝓧 : / Alg s /) (θ : has-alg c 𝓧)
+  (𝓨 : / Alg s /) (ρ : has-alg c 𝓨)
+  (p : Alg s [ 𝓨 , 𝓧 ]) (p₀ : is-alg-hom c ρ θ p)
+  (w : FamView s 𝓧 (𝓨 , p))
+  → FamView (s ▸ c) (𝓧 , θ) ((𝓨 , ρ) , p , p₀)
+famViewHelper s c 𝓧 θ .(total s 𝓧 𝓟) ρ .(proj s 𝓧 𝓟) p₀ (mk-famview 𝓟)
+  = mk-famview ((𝓟 , (λ { (.(Func.hom (Constr.F c) (proj s 𝓧 𝓟) x) , x , idp) → (ρ x) , (p₀ x) })))
+
 famView : (s : Spec) (𝓧 : / Alg s /) (p : Fib s 𝓧) → FamView s 𝓧 p
+famView ε X (Y , p) = admit _
+famView (s ▸ c) (𝓧 , θ) ((𝓨 , ρ) , (p , p₀)) = famViewHelper s c 𝓧 θ 𝓨 ρ p p₀ (famView s 𝓧 (𝓨 , p))
+-- famView (s ▸ c) (𝓧 , θ) ((.(total s 𝓧 𝓟) , ρ) , .(proj s 𝓧 𝓟) , p₀) | mk-famview 𝓟 = mk-famview (𝓟 , (λ { (.(Func.hom (Constr.F c) (proj s 𝓧 𝓟) x) , x , idp) → (ρ x) , (p₀ x) }))
+
+preimageHelper :
+  (s : Spec) (c : Constr (Alg s))
+  (𝓧 : / Alg s /) (θ : has-alg c 𝓧)
+  (𝓨 : / Alg s /) (ρ : has-alg c 𝓨)
+  (p : Alg s [ 𝓨 , 𝓧 ]) (p₀ : is-alg-hom c ρ θ p)
+  (w : FamView s 𝓧 (𝓨 , p))
+  → Fam (s ▸ c) (𝓧 , θ)
+preimageHelper s c 𝓧 θ .(total s 𝓧 𝓟) ρ .(proj s 𝓧 𝓟) p₀ (mk-famview 𝓟)
+  = (𝓟 , (λ { (.(Func.hom (Constr.F c) (proj s 𝓧 𝓟) x) , x , idp) → (ρ x) , (p₀ x) }))
 
 preimage : (s : Spec) (𝓧 : / Alg s /) (𝓟 : Fib s 𝓧) → Fam s 𝓧
-
-data FibView (s : Spec) (𝓧 : / Alg s /) : Fam s 𝓧 → Type1
-
-fibView : (s : Spec) (𝓧 : / Alg s /) (𝓟 : Fam s 𝓧) → FibView s 𝓧 𝓟
-
-fam-to-from : (s : Spec) (𝓧 : / Alg s /)
-  → (b : Fam s 𝓧) → preimage s 𝓧 (total s 𝓧 b , proj s 𝓧 b) == b
-
-fam-from-to : (s : Spec) (𝓧 : / Alg s /)
-  → (a : Fib s 𝓧) → total s 𝓧 (preimage s 𝓧 a) , proj s 𝓧 (preimage s 𝓧 a) == a
-
-famView ε X (Y , p) = admit _
-famView (s ▸ c) (𝓧 , θ) ((𝓨 , ρ) , (p , p₀)) with famView s 𝓧 (𝓨 , p)
-famView (s ▸ c) (𝓧 , θ) ((.(total s 𝓧 𝓟) , ρ) , .(proj s 𝓧 𝓟) , p₀) | mk-famview 𝓟 = mk-famview (𝓟 , (λ { (.(Func.hom (Constr.F c) (proj s 𝓧 𝓟) x) , x , idp) → (ρ x) , (p₀ x) }))
-
 preimage ε X (Y , p) = hfiber p
-preimage (s ▸ c) (𝓧 , θ) ((𝓨 , ρ) , p , p₀) with famView s 𝓧 (𝓨 , p)
-preimage (s ▸ c) (𝓧 , θ) ((.(total s 𝓧 𝓟) , ρ) , .(proj s 𝓧 𝓟) , p₀) | mk-famview 𝓟 = 𝓟 , (λ { (.(Func.hom (Constr.F c) (proj s 𝓧 𝓟) x) , x , idp) → (ρ x) , (p₀ x) })
+preimage (s ▸ c) (𝓧 , θ) ((𝓨 , ρ) , p , p₀) = preimageHelper s c 𝓧 θ 𝓨 ρ p p₀ (famView s 𝓧 (𝓨 , p))
 
-data FibView (s : Spec) (𝓧 : / Alg s /) where
-  mk-fibview : (P : Fib s 𝓧) → FibView s 𝓧 (preimage s 𝓧 P)
+preimage-β :
+  (s : Spec)
+   (c : Constr (Alg s))
+  (𝓧 : / Alg s /)
+  (θ : has-alg c 𝓧)
+  (𝓟 : Fam s 𝓧)
+  (m : has-fam s c 𝓧 θ 𝓟)
+  (A : / Alg s /)
+  (a : A == total s 𝓧 𝓟)
+  (B : Alg s [ A , 𝓧 ])
+  (b : B == proj s 𝓧 𝓟 [ (λ H → Alg s [ H , 𝓧 ]) ↓ a ])
+  (p : FamView s 𝓧 (A , B))
+  → preimage (s ▸ c) (𝓧 , θ) (((total s 𝓧 𝓟) , (λ x → fst (m (Func.hom (Constr.F c) (proj s 𝓧 𝓟) x , x , idp)))) , (proj s 𝓧 𝓟) , (λ x → snd (m (Func.hom (Constr.F c) (proj s 𝓧 𝓟) x , x , idp))))
+  == (𝓟 , m)
+preimage-β = {!!} --preimage-β s c 𝓧 θ 𝓟 m .(total s 𝓧 𝓟) idp .(proj s 𝓧 𝓟) idp (mk-famview .𝓟) = {!a!}
 
-fibView ε X P = admit _
-fibView (s ▸ c) (𝓧 , θ) (𝓟 , m) = admit _
+-- fam-to-from : (s : Spec) (𝓧 : / Alg s /)
+--   → (𝓟 : Fam s 𝓧) → preimage s 𝓧 (total s 𝓧 𝓟 , proj s 𝓧 𝓟) == 𝓟
+-- fam-to-from ε X P = λ= (λ x → ua (singleton-elim-2 X P x))
+-- fam-to-from (s ▸ c) (𝓧 , θ) (𝓟 , m) = {!!}
 
-fam-to-from ε X P = λ= (λ x → ua (singleton-elim-2 X P x))
-fam-to-from (s ▸ c) (𝓧 , θ) (𝓟 , m) with famView s 𝓧 (total s 𝓧 𝓟 , proj s 𝓧 𝓟)
-fam-to-from (s ▸ c) (𝓧 , θ) (𝓟 , m) | f with fam-to-from s 𝓧 𝓟
-fam-to-from (s ▸ c) (𝓧 , θ) (𝓟 , m) | f | p = admit _
+-- fam-from-to : (s : Spec) (𝓧 : / Alg s /)
+--   → (𝓟 : Fib s 𝓧) → (total s 𝓧 (preimage s 𝓧 𝓟) , proj s 𝓧 (preimage s 𝓧 𝓟)) == 𝓟
+-- fam-from-to ε X (Y , p) = {!admit _!}
+-- fam-from-to (s ▸ c) (𝓧 , θ) ((𝓨 , ρ) , (p , p₀)) with famView s 𝓧 (𝓨 , p)
+-- fam-from-to (s ▸ c) (𝓧 , θ) ((.(total s 𝓧 𝓟) , ρ) , .(proj s 𝓧 𝓟) , p₀) | mk-famview 𝓟 = idp
 
-fam-from-to ε X (Y , P) = admit _
-fam-from-to (s ▸ c) (𝓧 , θ) ((𝓨 , ρ) , (p , p₀)) with famView s 𝓧 (𝓨 , p)
-fam-from-to (s ▸ c) (𝓧 , θ) ((.(total s 𝓧 𝓟) , ρ) , .(proj s 𝓧 𝓟) , p₀) | mk-famview 𝓟 = idp
-
-fam-correct : (s : Spec) (𝓧 : / Alg s /) → Fib s 𝓧 == Fam s 𝓧
-fam-correct s 𝓧
-  = ua (equiv
-       (preimage s 𝓧)
-       (λ 𝓟 → total s 𝓧 𝓟 , proj s 𝓧 𝓟)
-       (fam-to-from s 𝓧)
-       (fam-from-to s 𝓧))
+-- fam-correct : (s : Spec) (𝓧 : / Alg s /) → Fib s 𝓧 == Fam s 𝓧
+-- fam-correct s 𝓧
+--   = ua (equiv
+--        (preimage s 𝓧)
+--        (λ 𝓟 → total s 𝓧 𝓟 , proj s 𝓧 𝓟)
+--        (fam-to-from s 𝓧)
+--        (fam-from-to s 𝓧))
