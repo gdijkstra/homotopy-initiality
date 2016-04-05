@@ -1,11 +1,12 @@
 {-# OPTIONS --without-K #-}
 
+open import Admit
+
 open import lib.Basics
 open import lib.types.Sigma
 open import Container
 open import 1-hits.Core
 open import lib.cubical.Cubical
-open import Admit
 
 -- Equality of algebra homomorphisms
 module 1-hits.Alg1.Eq.Cube (s : Spec) where

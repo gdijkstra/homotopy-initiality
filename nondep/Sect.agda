@@ -1,18 +1,19 @@
 {-# OPTIONS --without-K #-}
 
+open import Admit
+
 module nondep.Sect where
 
 open import lib.Basics
 open import lib.types.Sigma
 open import Cat
 open import nondep.Core
-open import nondep.Fib
-open import Admit
+open import nondep.Fam
 
 is-section :
   (s : Spec)
   (𝓧 : / Alg s /)
-  (P : Fib s 𝓧)
+  (P : Fam s 𝓧)
   (𝓼 : Alg s [ 𝓧 , total s 𝓧 P ])
   → Type0
 is-section s 𝓧 P 𝓼
@@ -22,21 +23,21 @@ is-section s 𝓧 P 𝓼
 Sect :
   (s : Spec)
   (𝓧 : / Alg s /)
-  (P : Fib s 𝓧)
+  (P : Fam s 𝓧)
   → Type0
 
 bar :
   (s : Spec)
   (F : Alg s ⇒ TypeCat)
   (𝓧 : / Alg s /)
-  (P : Fib s 𝓧)
+  (P : Fam s 𝓧)
   → Sect s 𝓧 P
   → (x : F ⋆ 𝓧) → □ s F 𝓧 P x
 
 ψ :
   (s : Spec)
   (𝓧 : / Alg s /)
-  (P : Fib s 𝓧)
+  (P : Fam s 𝓧)
   → Sect s 𝓧 P → Σ (Alg s [ 𝓧 , total s 𝓧 P ]) (is-section s 𝓧 P)
 
 Sect ε X P

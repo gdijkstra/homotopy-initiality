@@ -1,5 +1,7 @@
 {-# OPTIONS --without-K #-}
 
+open import Admit
+
 open import lib.Basics
 open import Container
 
@@ -9,7 +11,6 @@ open import 1-hits.Alg0.Core F
 open import 1-hits.Alg0.Fib F
 open import 1-hits.Alg0.Fam F
 open import 1-hits.Alg0.Eq F
-open import Admit
 
 -- Fam 𝓧 ≃ Fib 𝓧
 module _ {𝓧 : Alg₀-obj} where

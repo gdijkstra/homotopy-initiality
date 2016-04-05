@@ -1,11 +1,12 @@
 {-# OPTIONS --without-K #-}
 
+open import Admit
+
 open import lib.Basics
 open import lib.types.Sigma
 open import Container
 open import Cat
 open import 1-hits.Core
-open import Admit
 open import lib.cubical.Cubical
 open import lib.types.PathSeq
 
@@ -41,10 +42,15 @@ module _
       f₁ x ∎∎
 
   left-id-alg₁ : ∘-alg₁ (id-alg₁ 𝓨) 𝓯 == 𝓯
-  left-id-alg₁ = alg₁-hom=-cube'
-    idp
-    (λ x → horiz-degen-square (∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x))) 
-    (λ x → admit _)
+  left-id-alg₁ =
+    alg₁-hom-cst2=-λ
+      𝓧 𝓨
+      f (∘₀ (id-alg₀ 𝓨') 𝓯')
+      f₀
+      (∘₁ (id-alg₁ 𝓨) 𝓯)
+      f₁
+      (λ x → ∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x))
+      (λ x → admit _)
 
   right-id-alg₁ : ∘-alg₁ 𝓯 (id-alg₁ 𝓧) == 𝓯
   right-id-alg₁ =

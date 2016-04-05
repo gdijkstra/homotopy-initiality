@@ -113,8 +113,10 @@ f=⊡-β idp _ | idp = idp
 --           (f₀ 𝓰 x))
 --   (x : ⟦ F ⟧₀ (X 𝓧))
 --   → f₀=⊡ (alg₀-hom=⊡ 𝓯 𝓰 (=⊡alg₀-hom p p₀)) x == p₀ x [ (λ p' → Square (f₀ 𝓯 x) (app= p' (θ 𝓧 x)) (ap (λ h → θ 𝓨 (⟦ F ⟧₁ h x)) p') (f₀ 𝓰 x)) ↓ f=⊡-β p p₀ ]
--- f₀=⊡-β p p₀ x with p₀ x
--- f₀=⊡-β idp p₀ x | asdfp = {!asdfp!}
+-- f₀=⊡-β idp p₀ x with λ= (λ x → horiz-degen-path (p₀ x))
+-- f₀=⊡-β {alg₀ X θ} {alg₀ Y ρ} {alg₀-hom f f₀} {alg₀-hom .f .f₀} idp p₀ x | idp with p₀ x
+-- ... | asdf = {!asdf!}
+-- -- f₀=⊡-β idp p₀ x | asdfp = {!asdfp!}
 
 -- alg₀-hom=⊡-η :
 --   {𝓧 𝓨 : Alg₀-obj}

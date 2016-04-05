@@ -1,12 +1,13 @@
 {-# OPTIONS --without-K #-}
 
+open import Admit
+
 module dep.Sect where
 
 open import lib.Basics
 open import Cat
 open import dep.Core
 open import dep.Fam
-open import Admit
 
 is-section :
   (s : Spec)

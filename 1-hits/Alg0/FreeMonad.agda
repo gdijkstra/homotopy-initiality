@@ -1,5 +1,7 @@
 {-# OPTIONS --without-K #-}
 
+open import Admit
+
 open import lib.Basics
 open import Container
 
@@ -9,7 +11,6 @@ module 1-hits.Alg0.FreeMonad (F : Container) where
 open import 1-hits.Alg0.Core
 open import FreeMonad
 open import lib.types.PathSeq
-open import Admit
 
 _*¹ : {X : Type0} (θ : has-alg₀ F X) → has-alg₀ (F *) X
 _*¹ {X} θ = rec* X X (idf X) θ

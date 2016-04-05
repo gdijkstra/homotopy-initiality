@@ -1,5 +1,7 @@
 {-# OPTIONS --without-K #-}
 
+open import Admit
+
 open import Container
 
 -- Equality of algebra morphisms
@@ -13,7 +15,6 @@ open import 1-hits.Alg0.Core F
 open import 1-hits.Alg0.Eq F
 open import 1-hits.Alg0.Cat F
 open import General Alg₀
-open import Admit
 
 module _
   (𝓧 𝓨 : Alg₀-obj)

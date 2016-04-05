@@ -1,10 +1,11 @@
 {-# OPTIONS --without-K #-}
 
+open import Admit
+
 module dep.Core where
 
 open import lib.Basics
 open import Cat
-open import Admit
 
 record Constr (C : Cat) : Type1 where
   constructor mk-constr

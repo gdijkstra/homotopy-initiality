@@ -1,5 +1,7 @@
 {-# OPTIONS --without-K #-}
 
+open import Admit
+
 module dep.FamCorrect where
 
 open import lib.Basics
@@ -7,13 +9,6 @@ open import Cat
 open import dep.Core
 open import dep.Fam
 open import dep.Fib
-open import Admit
-
-data Singleton {i} {A : Type i} (x : A) : Type i where
-  _with=_ : (y : A) → x == y → Singleton x
-
-inspect : ∀ {i} {A : Type i} (x : A) → Singleton x
-inspect x = x with= idp
 
 -- TODO: Situation on Type
 module _ (X : Type0) (P : X → Type0) where
@@ -80,7 +75,7 @@ preimage-β :
   (p : FamView s 𝓧 (A , B))
   → preimage (s ▸ c) (𝓧 , θ) (((total s 𝓧 𝓟) , (λ x → fst (m (Func.hom (Constr.F c) (proj s 𝓧 𝓟) x , x , idp)))) , (proj s 𝓧 𝓟) , (λ x → snd (m (Func.hom (Constr.F c) (proj s 𝓧 𝓟) x , x , idp))))
   == (𝓟 , m)
-preimage-β = {!!} --preimage-β s c 𝓧 θ 𝓟 m .(total s 𝓧 𝓟) idp .(proj s 𝓧 𝓟) idp (mk-famview .𝓟) = {!a!}
+preimage-β = admit _ --preimage-β s c 𝓧 θ 𝓟 m .(total s 𝓧 𝓟) idp .(proj s 𝓧 𝓟) idp (mk-famview .𝓟) = {!a!}
 
 -- fam-to-from : (s : Spec) (𝓧 : / Alg s /)
 --   → (𝓟 : Fam s 𝓧) → preimage s 𝓧 (total s 𝓧 𝓟 , proj s 𝓧 𝓟) == 𝓟
