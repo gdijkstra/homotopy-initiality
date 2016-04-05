@@ -2,9 +2,8 @@ language: haskell
 
 before_install:
   - cabal update
-  - cabal install cpphs-1.19.3
   - cabal install happy alex
-  - cabal install Agda
+  - cabal install Agda -f -cpphs
   - agda --version
 
 install: true
