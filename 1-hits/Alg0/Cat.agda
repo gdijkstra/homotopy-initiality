@@ -19,18 +19,20 @@ module _
   (𝓯 : Alg₀-hom 𝓧 𝓨)
   where
   
+  open Alg₀-obj 𝓧
   open Alg₀-hom 𝓯
 
-  abstract
-    left-id-alg₀ : ∘-alg₀ (id-alg₀ 𝓨) 𝓯 == 𝓯
-    left-id-alg₀ = alg₀-hom=
-      (∘-alg₀ (id-alg₀ 𝓨) 𝓯)
-      𝓯
-      (=alg₀-hom idp (λ= (λ x → ∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x))))
+  left-id₀ : (x : ⟦ F ⟧₀ X) → ∘₀ (id-alg₀ 𝓨) 𝓯 x == f₀ x
+  left-id₀ x = ∙-unit-r (ap (λ x' → x') (f₀ x)) ∙ ap-idf (f₀ x)
 
-  abstract
-    right-id-alg₀ : ∘-alg₀ 𝓯 (id-alg₀ 𝓧) == 𝓯
-    right-id-alg₀ = idp
+  left-id-alg₀ : ∘-alg₀ (id-alg₀ 𝓨) 𝓯 == 𝓯
+  left-id-alg₀ = alg₀-hom=
+    (∘-alg₀ (id-alg₀ 𝓨) 𝓯)
+    𝓯
+    (=alg₀-hom idp (λ= left-id₀))
+
+  right-id-alg₀ : ∘-alg₀ 𝓯 (id-alg₀ 𝓧) == 𝓯
+  right-id-alg₀ = idp
 
 module _
   {𝓧 𝓨 𝓩 𝓦 : Alg₀-obj}

@@ -31,13 +31,14 @@ module _ (𝓧 𝓨 : Alg₁-obj)
     (f₁ : is-alg₁-hom 𝓧 𝓨 (alg₀-hom f f₀))
     (g₁ : is-alg₁-hom 𝓧 𝓨 (alg₀-hom f g₀))
     (p₀ : f₀ == g₀)
-    (p₁ : (x : ⟦ F₁ ⟧₀ X) → Square (f₁ x) (ap (λ h₀ → G₁₁ (alg₀-hom f h₀) x (θ₁ x)) p₀) idp (g₁ x))
+    (p₁ : (x : ⟦ F₁ ⟧₀ X) →
+      f₁ x == ap (λ h₀ → G₁₁ (alg₀-hom f h₀) x (θ₁ x)) p₀ ∙ (g₁ x))
     → alg₁-hom {𝓧} {𝓨} (alg₀-hom f f₀) f₁ == alg₁-hom (alg₀-hom f g₀) g₁
   alg₁-hom-cst2= f f₀ .f₀ f₁ g₁ idp p₁ =
     alg₁-hom=⊡ (alg₁-hom {𝓧} {𝓨} (alg₀-hom f f₀) f₁)
                (alg₁-hom (alg₀-hom f f₀) g₁)
                idp
-               p₁
+               (λ x → disc-to-square (∙-unit-r (f₁ x) ∙ p₁ x))
 
   alg₁-hom-cst2=-λ :
     (f : X → Y)
@@ -46,11 +47,12 @@ module _ (𝓧 𝓨 : Alg₁-obj)
     (f₁ : is-alg₁-hom 𝓧 𝓨 (alg₀-hom f f₀))
     (g₁ : is-alg₁-hom 𝓧 𝓨 (alg₀-hom f g₀))
     (p₀ : (x : ⟦ F₀ ⟧₀ X) → f₀ x == g₀ x)
-    (p₁ : (x : ⟦ F₁ ⟧₀ X) → Square (f₁ x) (ap (λ h₀ → G₁₁ (alg₀-hom f h₀) x (θ₁ x)) (λ= p₀)) idp (g₁ x))
+    (p₁ : (x : ⟦ F₁ ⟧₀ X) →
+      f₁ x == ap (λ h₀ → G₁₁ (alg₀-hom f h₀) x (θ₁ x)) (λ= p₀) ∙ (g₁ x))
     → alg₁-hom {𝓧} {𝓨} (alg₀-hom f f₀) f₁ == alg₁-hom (alg₀-hom f g₀) g₁
   alg₁-hom-cst2=-λ f f₀ g₀ f₁ g₁ p₀ p₁ with (λ= p₀)
   alg₁-hom-cst2=-λ f f₀ .f₀ f₁ g₁ p₀ p₁ | idp =
     alg₁-hom=⊡ (alg₁-hom {𝓧} {𝓨} (alg₀-hom f f₀) f₁)
                (alg₁-hom (alg₀-hom f f₀) g₁)
                idp
-               p₁
+               (λ x → disc-to-square (∙-unit-r (f₁ x) ∙ p₁ x))

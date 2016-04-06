@@ -32,6 +32,11 @@ module _
     G₁₁-comp-right-id = admit _
 
 -- Target functor preserves left identity law
+  module _ (x : ⟦ F₁ ⟧₀ X) (p : G₁₀ 𝓧 x) where
+    G₁₁-comp-left-id :
+      G₁₁-comp (id-alg₀ 𝓨) 𝓯 x p ∙ G₁₁-id 𝓨 (⟦ F₁ ⟧₁ f x) (G₁₁ 𝓯 x p)
+      == ap (λ h₀ → G₁₁ (alg₀-hom f h₀) x p) (λ= (left-id₀ 𝓯))
+    G₁₁-comp-left-id = admit _
 
 module _
   {𝓧 𝓨 : Alg₀-obj}
