@@ -89,24 +89,53 @@ module _
       idp -- Right identity law for alg₀-hom holds definitionally
       right-id₁
 
--- -- module _
--- --   {𝓧 𝓨 𝓩 𝓦 : Alg₁-obj}
--- --   (𝓱 : Alg₁-hom 𝓩 𝓦)
--- --   (𝓰 : Alg₁-hom 𝓨 𝓩)
--- --   (𝓯 : Alg₁-hom 𝓧 𝓨)
--- --   where
+module _
+  {𝓧 𝓨 𝓩 𝓦 : Alg₁-obj}
+  (𝓱 : Alg₁-hom 𝓩 𝓦)
+  (𝓰 : Alg₁-hom 𝓨 𝓩)
+  (𝓯 : Alg₁-hom 𝓧 𝓨)
+  where
 
--- --   open Alg₁-obj 𝓧
--- --   open Alg₁-obj 𝓨 renaming (𝓧' to 𝓨' ; X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
--- --   open Alg₁-obj 𝓩 renaming (𝓧' to 𝓩' ; X to Z ; θ₀ to ζ₀ ; θ₁ to ζ₁)
--- --   open Alg₁-obj 𝓦 renaming (𝓧' to 𝓦' ; X to W ; θ₀ to ω₀ ; θ₁ to ω₁)
--- --   open Alg₁-hom 𝓱 renaming (𝓯' to 𝓱' ; f to h ; f₀ to g₀ ; f₁ to h₁)
--- --   open Alg₁-hom 𝓰 renaming (𝓯' to 𝓰' ; f to g ; f₀ to g₀ ; f₁ to g₁)
--- --   open Alg₁-hom 𝓯
+  open Alg₁-obj 𝓧
+  open Alg₁-obj 𝓨 renaming (𝓧' to 𝓨' ; X to Y ; θ₀ to ρ₀ ; θ₁ to ρ₁)
+  open Alg₁-obj 𝓩 renaming (𝓧' to 𝓩' ; X to Z ; θ₀ to ζ₀ ; θ₁ to ζ₁)
+  open Alg₁-obj 𝓦 renaming (𝓧' to 𝓦' ; X to W ; θ₀ to ω₀ ; θ₁ to ω₁)
+  open Alg₁-hom 𝓱 renaming (𝓯' to 𝓱' ; f to h ; f₀ to h₀ ; f₁ to h₁)
+  open Alg₁-hom 𝓰 renaming (𝓯' to 𝓰' ; f to g ; f₀ to g₀ ; f₁ to g₁)
+  open Alg₁-hom 𝓯
   
--- --   assoc-alg₁ : (∘-alg₁ (∘-alg₁ 𝓱 𝓰) 𝓯)
--- --             == (∘-alg₁ 𝓱 (∘-alg₁ 𝓰 𝓯))
--- --   assoc-alg₁ = admit _
+  assoc-alg₁ : (∘-alg₁ (∘-alg₁ 𝓱 𝓰) 𝓯)
+            == (∘-alg₁ 𝓱 (∘-alg₁ 𝓰 𝓯))
+  assoc-alg₁ =
+    alg₁-hom-cst2=-λ
+      𝓧
+      𝓦
+      (h ∘ g ∘ f)
+      (∘₀ (∘-alg₀ 𝓱' 𝓰') 𝓯')
+      (∘₀ 𝓱' (∘-alg₀ 𝓰' 𝓯'))
+      (∘₁ (∘-alg₁ 𝓱 𝓰) 𝓯)
+      (∘₁ 𝓱 (∘-alg₁ 𝓰 𝓯))
+      (assoc₀ 𝓱' 𝓰' 𝓯')
+      (λ x → ↯
+        ∘₁ (∘-alg₁ 𝓱 𝓰) 𝓯 x
+         =⟪idp⟫
+        G₁₁-comp (∘-alg₀ 𝓱' 𝓰') 𝓯' x (θ₁ x)
+        ∙ ap (G₁₁ (∘-alg₀ 𝓱' 𝓰') (⟦ F₁ ⟧₁ f x)) (f₁ x)
+        ∙ (∘₁ 𝓱 𝓰) (⟦ F₁ ⟧₁ f x)
+         =⟪idp⟫
+        G₁₁-comp (∘-alg₀ 𝓱' 𝓰') 𝓯' x (θ₁ x)
+        ∙ ap (G₁₁ (∘-alg₀ 𝓱' 𝓰') (⟦ F₁ ⟧₁ f x)) (f₁ x)
+        ∙ G₁₁-comp 𝓱' 𝓰' (⟦ F₁ ⟧₁ f x) (ρ₁ (⟦ F₁ ⟧₁ f x))
+        ∙ ap (G₁₁ 𝓱' (⟦ F₁ ⟧₁ (g ∘ f) x)) (g₁ (⟦ F₁ ⟧₁ f x))
+        ∙ h₁ (⟦ F₁ ⟧₁ (g ∘ f) x)
+         =⟪ admit _ ⟫ -- TODO: finish this proof
+        ap (λ p₀ → G₁₁ (alg₀-hom (h ∘ g ∘ f) p₀) x (θ₁ x)) (λ= (assoc₀ 𝓱' 𝓰' 𝓯'))
+        ∙ G₁₁-comp 𝓱' (∘-alg₀ 𝓰' 𝓯') x (θ₁ x)
+        ∙ ap (G₁₁ 𝓱' (⟦ F₁ ⟧₁ (g ∘ f) x)) (G₁₁-comp 𝓰' 𝓯' x (θ₁ x) ∙ ap (G₁₁ 𝓰' (⟦ F₁ ⟧₁ f x)) (f₁ x) ∙ g₁ (⟦ F₁ ⟧₁ f x))
+        ∙ h₁ (⟦ F₁ ⟧₁ (g ∘ f) x)
+         =⟪idp⟫
+        ap (λ h₂ → G₁₁ (alg₀-hom (h ∘ g ∘ f) h₂) x (θ₁ x)) (λ= (assoc₀ 𝓱' 𝓰' 𝓯'))
+        ∙ ∘₁ 𝓱 (∘-alg₁ 𝓰 𝓯) x ∎∎)
   
 Alg₁ : Cat
 Alg₁ = record
