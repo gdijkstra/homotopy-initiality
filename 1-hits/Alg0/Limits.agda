@@ -1,7 +1,5 @@
 {-# OPTIONS --without-K #-}
 
-open import Admit
-
 open import Container
 
 -- Equality of algebra morphisms
@@ -64,11 +62,6 @@ module Equaliser
   p : f ∘ i == g ∘ i
   p = λ= p'
 
-  lemma :
-    (x : ⟦ F ⟧₀ E)
-    → ⟦ F ⟧₁ (f ∘ i) x == ⟦ F ⟧₁ (g ∘ i) x
-  lemma x = ap (λ h → ⟦ F ⟧₁ h x) p
-
   ε : has-alg₀ E
   ε x = (θ (⟦ F ⟧₁ i x))
         , (↯ (f (θ (⟦ F ⟧₁ i x))
@@ -76,7 +69,7 @@ module Equaliser
            ρ (⟦ F ⟧₁ f (⟦ F ⟧₁ i x))
             =⟪idp⟫
            ρ (⟦ F ⟧₁ (f ∘ i) x)
-            =⟪ ap ρ (lemma x) ⟫ 
+            =⟪ ap (λ h → ρ (⟦ F ⟧₁ h x)) p ⟫
            ρ (⟦ F ⟧₁ (g ∘ i) x)
             =⟪idp⟫ 
            ρ (⟦ F ⟧₁ g (⟦ F ⟧₁ i x))
@@ -89,7 +82,6 @@ module Equaliser
   i₀ : is-alg₀-hom 𝓔 𝓧 i
   i₀ = (λ x → idp)
 
-  -- TODO: Prove this, which is doable, but a tad tedious.
   p₀ :
     (x : ⟦ F ⟧₀ E) →
       Square
@@ -97,7 +89,12 @@ module Equaliser
         (p' (ε x))
         (ap (λ h → ρ (⟦ F ⟧₁ h x)) p)
         (g₀ (⟦ F ⟧₁ i x))
-  p₀ x = admit _
+  p₀ x =
+    (connection2 {p = f₀ (⟦ F ⟧₁ i x)}
+                 {q = ap (λ h → ρ (⟦ F ⟧₁ h x)) p}
+     ⊡h lt-square (ap (λ h → ρ (⟦ F ⟧₁ h x)) p)
+     ⊡h rt-square (g₀ (⟦ F ⟧₁ i x)))
+    ⊡v∙ ∙-unit-r (ap (λ h → ρ (⟦ F ⟧₁ h x)) p)
 
   𝓲 : Alg₀-hom 𝓔 𝓧
   𝓲 = alg₀-hom i i₀
