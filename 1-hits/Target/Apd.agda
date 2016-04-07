@@ -6,14 +6,14 @@ open import 1-hits.Core
 
 -- Some reasoning about apd of G₁₁. This might need to be migrated to
 -- something different.
-module 1-hits.ApdTarget (s : Spec) where
+module 1-hits.Target.Apd (s : Spec) where
 
 open Spec s
 open import lib.Basics
 open import 1-hits.Alg0.Core F₀
 open import 1-hits.Alg0.FreeMonad F₀
 open import 1-hits.Alg0.Eq
-open import 1-hits.Target s
+open import 1-hits.Target.Core s
 open import lib.cubical.Cubical
 open import 1-hits.Cube
 
