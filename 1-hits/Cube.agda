@@ -3,6 +3,28 @@ module 1-hits.Cube where
 open import lib.Basics
 open import lib.cubical.Cubical
 
+module _
+  {A : Type0}
+  {a b c d : A}
+  {p : a == b}
+  {q : b == c}
+  {r : c == d}
+  where
+
+  !-assoc-sq :
+    Square p
+           (p ∙ q)
+           (q ∙ r)
+           r
+  !-assoc-sq = disc-to-square (! (∙-assoc p q r))
+  
+  assoc-sq :
+    Square (p ∙ q)
+           p
+           r
+           (q ∙ r)
+  assoc-sq = disc-to-square (∙-assoc p q r)
+
 square-to-disc' : ∀ {i} {A : Type i} {a₀₀ a₀₁ a₁₀ a₁₁ : A}
   {p : a₀₀ == a₀₁} {q : a₀₀ == a₁₀} {r : a₀₁ == a₁₁} {s : a₁₀ == a₁₁}
   → Square p q r s

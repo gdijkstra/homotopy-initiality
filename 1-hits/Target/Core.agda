@@ -35,5 +35,5 @@ module 1-hits.Target.Core (s : Spec) where
       (ρ₀ *¹) (⟦ F₀ * ⟧₁ f (r ‼ x))
        =⟪idp⟫
       (ρ₀ *¹) (r ‼ ⟦ F₁ ⟧₁ f x) ∎∎
-   -- i.e. proof term is: ! (star-hom 𝓯 (l ‼ x)) ∙ ap f p ∙ star-hom 𝓯 (r ‼ x)
+   -- i.e. proof term is: ! (star-hom₀ 𝓯 (l ‼ x)) ∙ ap f p ∙ star-hom₀ 𝓯 (r ‼ x)
 

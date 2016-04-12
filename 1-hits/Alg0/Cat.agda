@@ -50,7 +50,9 @@ module _
   open Alg₀-hom 𝓯
   
   assoc₀ : (x : ⟦ F ⟧₀ X) → ∘₀ (∘-alg₀ 𝓱 𝓰) 𝓯 x == ∘₀ 𝓱 (∘-alg₀ 𝓰 𝓯) x
-  assoc₀ x = square-to-disc (ap-lemma x ∙v⊡ assoc-sq x)
+  assoc₀ x = square-to-disc (ap-lemma x ∙v⊡ !-assoc-sq {p = ap (h ∘ g) (f₀ x)}
+                                                       {q = ap h (g₀ (⟦ F ⟧₁ f x))}
+                                                       {r = h₀ (⟦ F ⟧₁ (g ∘ f) x)})
     where 
       ap-lemma : (x : ⟦ F ⟧₀ X) → (ap h (ap g (f₀ x) ∙ g₀ (⟦ F ⟧₁ f x))) == (ap (h ∘ g) (f₀ x) ∙ ap h (g₀ (⟦ F ⟧₁ f x)))
       ap-lemma x = ↯
@@ -60,17 +62,11 @@ module _
          =⟪ ap (λ p → p ∙ ap h (g₀ (⟦ F ⟧₁ f x))) (∘-ap h g (f₀ x)) ⟫
         ap (h ∘ g) (f₀ x) ∙ ap h (g₀ (⟦ F ⟧₁ f x)) ∎∎
 
-      assoc-sq : (x : ⟦ F ⟧₀ X) → Square (ap (h ∘ g) (f₀ x))
-                        (ap (h ∘ g) (f₀ x) ∙ ap h (g₀ (⟦ F ⟧₁ f x)))
-                        (ap h (g₀ (⟦ F ⟧₁ f x)) ∙ h₀ (⟦ F ⟧₁ (g ∘ f) x))
-                        (h₀ (⟦ F ⟧₁ (g ∘ f) x))
-      assoc-sq x = disc-to-square (! (∙-assoc (ap (h ∘ g) (f₀ x)) (ap h (g₀ (⟦ F ⟧₁ f x))) (h₀ (⟦ F ⟧₁ (g ∘ f) x))))
-
   assoc-alg₀ : (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯)
             == (∘-alg₀ 𝓱 (∘-alg₀ 𝓰 𝓯))
   assoc-alg₀ =
     alg₀-hom= {𝓧} {𝓦}
-                          (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯)
+    (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯)
                           (∘-alg₀ 𝓱 (∘-alg₀ 𝓰 𝓯))
                           (=alg₀-hom idp (λ= assoc₀))
   

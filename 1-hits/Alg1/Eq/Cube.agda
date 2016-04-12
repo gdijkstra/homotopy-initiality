@@ -46,8 +46,6 @@ module _
                        (f₁ x)
                        (g₁ x) (p₁ x))
 
-open import 1-hits.ApdTarget s
-
 open Alg₁-obj
 open Alg₁-hom
 
