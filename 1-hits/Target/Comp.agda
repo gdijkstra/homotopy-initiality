@@ -1,7 +1,5 @@
 {-# OPTIONS --without-K #-}
 
-open import Admit
-
 open import lib.Basics
 open import 1-hits.Core
 open import Container
@@ -58,20 +56,30 @@ module _
             ∙ ap f p
             ∙ star-hom₀ F₀ 𝓯 (r ‼ x))
       ∙ star-hom₀ F₀ 𝓰 (r ‼ ⟦ F₁ ⟧₁ f x)
-       =⟪ admit _ ⟫ -- ap-∙
+       =⟪ ap (λ h → h ∙ star-hom₀ F₀ 𝓰 (r ‼ ⟦ F₁ ⟧₁ f x)) (ap-∙ g (! (star-hom₀ F₀ 𝓯 (l ‼ x)))
+                                                             (ap f p ∙ star-hom₀ F₀ 𝓯 (r ‼ x))) ⟫
       (ap g (! (star-hom₀ F₀ 𝓯 (l ‼ x)))
       ∙ ap g (ap f p ∙ star-hom₀ F₀ 𝓯 (r ‼ x)))
       ∙ star-hom₀ F₀ 𝓰 (r ‼ ⟦ F₁ ⟧₁ f x)
-       =⟪ admit _ ⟫ -- assoc
+       =⟪ ∙-assoc (ap g (! (star-hom₀ F₀ 𝓯 (l ‼ x))))
+            (ap g (ap f p ∙ star-hom₀ F₀ 𝓯 (r ‼ x)))
+            (star-hom₀ F₀ 𝓰 (r ‼ ⟦ F₁ ⟧₁ f x)) ⟫ -- assoc
       ap g (! (star-hom₀ F₀ 𝓯 (l ‼ x)))
       ∙ ap g (ap f p ∙ star-hom₀ F₀ 𝓯 (r ‼ x))
       ∙ star-hom₀ F₀ 𝓰 (r ‼ ⟦ F₁ ⟧₁ f x)
-       =⟪ admit _ ⟫ -- ap-!
+       =⟪ ap (λ h → ap g (! (star-hom₀ F₀ 𝓯 (l ‼ x))) ∙ h ∙ star-hom₀ F₀ 𝓰 (r ‼ ⟦ F₁ ⟧₁ f x)) (ap-∙ g (ap f p) (star-hom₀ F₀ 𝓯 (r ‼ x))) ⟫ -- ap-∙
+      ap g (! (star-hom₀ F₀ 𝓯 (l ‼ x)))
+      ∙ (ap g (ap f p)
+      ∙ ap g (star-hom₀ F₀ 𝓯 (r ‼ x)))
+      ∙ star-hom₀ F₀ 𝓰 (r ‼ ⟦ F₁ ⟧₁ f x)
+       =⟪ ap (λ h → ap g (! (star-hom₀ F₀ 𝓯 (l ‼ x))) ∙ h)
+            (∙-assoc (ap g (ap f p)) (ap g (star-hom₀ F₀ 𝓯 (r ‼ x)))
+             (star-hom₀ F₀ 𝓰 (r ‼ ⟦ F₁ ⟧₁ f x))) ⟫ -- assoc
       ap g (! (star-hom₀ F₀ 𝓯 (l ‼ x)))
       ∙ ap g (ap f p)
       ∙ ap g (star-hom₀ F₀ 𝓯 (r ‼ x))
       ∙ star-hom₀ F₀ 𝓰 (r ‼ ⟦ F₁ ⟧₁ f x)
-       =⟪ admit _ ⟫ -- ap-!
+       =⟪ ap (λ h → h ∙ ap g (ap f p) ∙ ap g (star-hom₀ F₀ 𝓯 (r ‼ x)) ∙ star-hom₀ F₀ 𝓰 (r ‼ ⟦ F₁ ⟧₁ f x)) (ap-! g (star-hom₀ F₀ 𝓯 (l ‼ x)))  ⟫ -- assoc
       ! (ap g (star-hom₀ F₀ 𝓯 (l ‼ x)))
       ∙ ap g (ap f p)
       ∙ ap g (star-hom₀ F₀ 𝓯 (r ‼ x))
@@ -91,7 +99,10 @@ module _
     down = ↯
       ap (g ∘ f) p
       ∙ star-hom₀ F₀ (∘-alg₀ F₀ 𝓰 𝓯) (r ‼ x)
-       =⟪ admit _ ⟫
+       =⟪ ap (λ h → h ∙ star-hom₀ F₀ (∘-alg₀ F₀ 𝓰 𝓯) (r ‼ x)) (ap-∘ g f p) ⟫
+      ap g (ap f p)
+      ∙ star-hom₀ F₀ (∘-alg₀ F₀ 𝓰 𝓯) (r ‼ x)
+       =⟪ ap (λ h → ap g (ap f p) ∙ h) (star-hom-comp F₀ 𝓰 𝓯 (r ‼ x)) ⟫
       ap g (ap f p)
       ∙ ap g (star-hom₀ F₀ 𝓯 (r ‼ x))
       ∙ (star-hom₀ F₀ 𝓰 (⟦ F₀ * ⟧₁ f (r ‼ x))) ∎∎
