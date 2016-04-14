@@ -3,6 +3,6 @@
 module Nondep where
 
 import nondep.Core
-import nondep.Fib
+import nondep.Fam
 import nondep.FamCorrect
-import nondep.Sect
+import nondep.DepHom

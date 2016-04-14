@@ -7,4 +7,3 @@ import 1-hits.Target
 import 1-hits.Cube
 import 1-hits.Alg0
 import 1-hits.Alg1
-

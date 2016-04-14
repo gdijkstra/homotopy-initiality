@@ -4,6 +4,5 @@ module Dep where
 
 import dep.Core
 import dep.Fam
-import dep.Fib
 import dep.FamCorrect
-import dep.Sect
+import dep.DepHom

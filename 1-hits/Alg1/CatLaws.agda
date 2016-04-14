@@ -11,7 +11,7 @@ open import lib.cubical.Cubical
 open import lib.types.PathSeq
 
 -- Category laws
-module 1-hits.Alg1.Cat (s : Spec) where
+module 1-hits.Alg1.CatLaws (s : Spec) where
 
 open Spec s
 open import 1-hits.Alg0 F₀

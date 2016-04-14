@@ -101,15 +101,27 @@ module _
            (λ x p → ↯
               g₀∘f₀* (c* x)
                =⟪idp⟫
-              g₀∘f₀ (⟦ F ⟧₁ (θ *¹) x) ∙ ap ζ (rec-gf x)
+              g₀∘f₀ (⟦ F ⟧₁ (θ *¹) x)
+              ∙ ap ζ (rec-gf x)
                =⟪idp⟫
-              (ap g (f₀ (⟦ F ⟧₁ (θ *¹) x)) ∙ g₀ (⟦ F ⟧₁ (f ∘ (θ *¹)) x)) ∙ ap ζ (rec-gf x)
+              (ap g (f₀ (⟦ F ⟧₁ (θ *¹) x))
+              ∙ g₀ (⟦ F ⟧₁ (f ∘ (θ *¹)) x))
+              ∙ ap ζ (rec-gf x)
                 =⟪ admit _ ⟫ -- some mad reasoning yo
-              (ap g (f₀ (⟦ F ⟧₁ (θ *¹) x)) ∙ g₀ (⟦ F ⟧₁ (f ∘ (θ *¹)) x)) ∙ (ap (ζ ∘ ⟦ F ⟧₁ g) (rec-f x) ∙ ap ζ (rec-g (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x)))
+              (ap g (f₀ (⟦ F ⟧₁ (θ *¹) x))
+              ∙ g₀ (⟦ F ⟧₁ (f ∘ (θ *¹)) x))
+              ∙ (ap (ζ ∘ ⟦ F ⟧₁ g) (rec-f x)
+              ∙ ap ζ (rec-g (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x)))
                 =⟪ admit _ ⟫ -- assoc
-              ap g (f₀ (⟦ F ⟧₁ (θ *¹) x)) ∙ (g₀ (⟦ F ⟧₁ (f ∘ (θ *¹)) x) ∙ ap (ζ ∘ ⟦ F ⟧₁ g) (rec-f x)) ∙ ap ζ (rec-g (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
+              ap g (f₀ (⟦ F ⟧₁ (θ *¹) x))
+              ∙ (g₀ (⟦ F ⟧₁ (f ∘ (θ *¹)) x)
+              ∙ ap (ζ ∘ ⟦ F ⟧₁ g) (rec-f x))
+              ∙ ap ζ (rec-g (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
                =⟪ admit _ ⟫ -- htpy-natural g₀ (rec-f x)
-              ap g (f₀ (⟦ F ⟧₁ (θ *¹) x)) ∙ (ap (g ∘ ρ) (rec-f x) ∙ g₀ (⟦ F ⟧₁ ((ρ *¹) ∘ ⟦ F * ⟧₁ f) x)) ∙ ap ζ (rec-g (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
+              ap g (f₀ (⟦ F ⟧₁ (θ *¹) x))
+              ∙ (ap (g ∘ ρ) (rec-f x)
+              ∙ g₀ (⟦ F ⟧₁ ((ρ *¹) ∘ ⟦ F * ⟧₁ f) x))
+              ∙ ap ζ (rec-g (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
                =⟪ admit _ ⟫ -- assoc.
               (ap g (f₀ (⟦ F ⟧₁ (θ *¹) x)) ∙ ap (g ∘ ρ) (rec-f x)) ∙ g₀ (⟦ F ⟧₁ ((ρ *¹) ∘ ⟦ F * ⟧₁ f) x) ∙ ap ζ (rec-g (⟦ F ⟧₁ (⟦ F * ⟧₁ f) x))
                =⟪ admit _ ⟫ -- ap-∘

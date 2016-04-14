@@ -5,6 +5,8 @@ open import Container
 
 module 1-hits.Alg0.Core (F : Container) where
 
+open import Cat
+
 has-alg₀ : Type0 → Type0
 has-alg₀ X = ⟦ F ⟧₀ X → X
 
@@ -68,3 +70,11 @@ module _
 
   id-alg₀ : Alg₀-hom 𝓧 𝓧
   id-alg₀ = alg₀-hom id id₀
+  
+Alg₀ : Cat
+Alg₀ = record
+  { obj = Alg₀-obj
+  ; hom = Alg₀-hom
+  ; comp = ∘-alg₀
+  ; id = id-alg₀
+  }

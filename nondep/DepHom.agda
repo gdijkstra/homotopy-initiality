@@ -2,7 +2,7 @@
 
 open import Admit
 
-module nondep.Sect where
+module nondep.DepHom where
 
 open import lib.Basics
 open import lib.types.Sigma
@@ -20,7 +20,7 @@ is-section s 𝓧 P 𝓼
   = (Cat.comp (Alg s) (proj s 𝓧 P) 𝓼 == Cat.id (Alg s) 𝓧)
 
 -- We want to define Π for algebra fibrations
-Sect :
+DepHom :
   (s : Spec)
   (𝓧 : / Alg s /)
   (P : Fam s 𝓧)
@@ -31,19 +31,19 @@ bar :
   (F : Alg s ⇒ TypeCat)
   (𝓧 : / Alg s /)
   (P : Fam s 𝓧)
-  → Sect s 𝓧 P
+  → DepHom s 𝓧 P
   → (x : F ⋆ 𝓧) → □ s F 𝓧 P x
 
 ψ :
   (s : Spec)
   (𝓧 : / Alg s /)
   (P : Fam s 𝓧)
-  → Sect s 𝓧 P → Σ (Alg s [ 𝓧 , total s 𝓧 P ]) (is-section s 𝓧 P)
+  → DepHom s 𝓧 P → Σ (Alg s [ 𝓧 , total s 𝓧 P ]) (is-section s 𝓧 P)
 
-Sect ε X P
+DepHom ε X P
   = (x : X) → P x
-Sect (s ▸ mk-constr F G) (𝓧 , θ) (P , m)
-  = Σ (Sect s 𝓧 P) (λ 𝓼 → (x : F ⋆ 𝓧) → bar s G 𝓧 P 𝓼 (θ x) == m (x , (bar s F 𝓧 P 𝓼 x)))
+DepHom (s ▸ mk-constr F G) (𝓧 , θ) (P , m)
+  = Σ (DepHom s 𝓧 P) (λ 𝓼 → (x : F ⋆ 𝓧) → bar s G 𝓧 P 𝓼 (θ x) == m (x , (bar s F 𝓧 P 𝓼 x)))
 
 bar s F 𝓧 P 𝓼 x
   = ((F ⋆⋆ fst (ψ s 𝓧 P 𝓼)) x)

@@ -2,7 +2,7 @@
 
 open import Container
 
-module 1-hits.Alg0.Cat (F : Container) where
+module 1-hits.Alg0.CatLaws (F : Container) where
 
 open import lib.Basics
 open import lib.types.Sigma
@@ -69,11 +69,3 @@ module _
     (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯)
                           (∘-alg₀ 𝓱 (∘-alg₀ 𝓰 𝓯))
                           (=alg₀-hom idp (λ= assoc₀))
-  
-Alg₀ : Cat
-Alg₀ = record
-  { obj = Alg₀-obj
-  ; hom = Alg₀-hom
-  ; comp = ∘-alg₀
-  ; id = id-alg₀
-  }
