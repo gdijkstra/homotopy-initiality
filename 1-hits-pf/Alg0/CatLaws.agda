@@ -9,11 +9,6 @@ open import lib.Basics
 open import lib.types.Sigma
 open import Cat
 open import 1-hits-pf.Alg0.Core F
---open import 1-hits-pf.Alg0.Eq F
-open import lib.types.PathSeq
-open import lib.PathGroupoid
-open import lib.cubical.Cubical
-
 
 module _
   {𝓧 𝓨 : Alg₀-obj}
@@ -61,19 +56,25 @@ module _
     * Ap (`∘ ⟦ F ⟧₁ f) (Ap (h ∘`) g₀)
     * Ap (`∘ ⟦ F ⟧₁ f) (Ap (`∘ ⟦ F ⟧₁ g) h₀)
 
-     *⟨ {!!} ⟩
+     *⟨ sym (Ap (λ P → Ap (h ∘ g ∘`) f₀ * P * Ap (`∘ ⟦ F ⟧₁ f) (Ap (`∘ ⟦ F ⟧₁ g) h₀)) (Ap-∘ (`∘ ⟦ F ⟧₁ f) (h ∘`) g₀)) ⟩ -- ap-∘
 
     Ap (h ∘ g ∘`) f₀
     * Ap (λ H → h ∘ H ∘ ⟦ F ⟧₁ f) g₀
-    * Ap (`∘ ⟦ F ⟧₁ f) (Ap (`∘ ⟦ F ⟧₁ g) h₀) --Ap (`∘ ⟦ F ⟧₁ f) (Ap (`∘ ⟦ F ⟧₁ g) h₀)
+    * Ap (`∘ ⟦ F ⟧₁ f) (Ap (`∘ ⟦ F ⟧₁ g) h₀)
 
-     *⟨ {!∘₀ (∘-alg₀ 𝓱 𝓰) 𝓯 _ idp!} ⟩
+     *⟨ sym (Ap (λ P → Ap (h ∘ g ∘`) f₀ * Ap (λ H → h ∘ H ∘ ⟦ F ⟧₁ f) g₀ * P) (Ap-∘ (`∘ ⟦ F ⟧₁ f) (`∘ ⟦ F ⟧₁ g) h₀)) ⟩ -- ap-∘
 
     Ap (h ∘ g ∘`) f₀
     * Ap (λ H → h ∘ H ∘ ⟦ F ⟧₁ f) g₀
-    * Ap (`∘ ⟦ F ⟧₁ f) (Ap (`∘ ⟦ F ⟧₁ g) h₀) --Ap (`∘ ⟦ F ⟧₁ f) (Ap (`∘ ⟦ F ⟧₁ g) h₀)
+    * Ap (`∘ ⟦ F ⟧₁ (g ∘ f)) h₀
 
-     *⟨ {!∘₀ (∘-alg₀ 𝓱 𝓰) 𝓯 _ idp!} ⟩
+     *⟨ Ap (λ P → Ap (h ∘ g ∘`) f₀ * P * Ap (`∘ ⟦ F ⟧₁ (g ∘ f)) h₀) (Ap-∘ (h ∘`) (`∘ ⟦ F ⟧₁ f) g₀) ⟩ -- ap-∘
+
+    Ap (h ∘ g ∘`) f₀
+    * Ap (h ∘`) (Ap (`∘ ⟦ F ⟧₁ f) g₀)
+    * Ap (`∘ ⟦ F ⟧₁ (g ∘ f)) h₀
+
+     *⟨ Ap (λ P → P * Ap (h ∘`) (Ap (`∘ ⟦ F ⟧₁ f) g₀) * Ap (`∘ ⟦ F ⟧₁ (g ∘ f)) h₀) (Ap-∘ (h ∘`) (g ∘`) f₀) ⟩ -- ap-∘
 
     Ap (h ∘`) (Ap (g ∘`) f₀)
     * Ap (h ∘`) (Ap (`∘ ⟦ F ⟧₁ f) g₀)
@@ -90,10 +91,5 @@ module _
 
     ∘₀ 𝓱 (∘-alg₀ 𝓰 𝓯) ∎*
 
---   assoc-alg₀ : (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯)
---             == (∘-alg₀ 𝓱 (∘-alg₀ 𝓰 𝓯))
---   assoc-alg₀ =
---     alg₀-hom= {𝓧} {𝓦}
---     (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯)
---                           (∘-alg₀ 𝓱 (∘-alg₀ 𝓰 𝓯))
---                           (=alg₀-hom idp (λ= assoc₀))
+  assoc-alg₀ : Eq (∘-alg₀ (∘-alg₀ 𝓱 𝓰) 𝓯) (∘-alg₀ 𝓱 (∘-alg₀ 𝓰 𝓯))
+  assoc-alg₀ = Ap (alg₀-hom (h ∘ g ∘ f)) assoc₀
