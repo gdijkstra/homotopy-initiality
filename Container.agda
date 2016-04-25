@@ -16,11 +16,11 @@ record Container : Type1 where
 -- Functorial actions
 module _ where
   -- Action on objects
-  ⟦_⟧₀ : Container → Type0 → Type0
+  ⟦_⟧₀ : ∀ {i} → Container → Type i → Type i
   ⟦_⟧₀ (Sh ◁ Ps) X = Σ Sh (λ s → Ps s → X)
 
   -- Action on morphisms
-  ⟦_⟧₁ : {X Y : Type0} → (F : Container) → (X → Y) → ⟦ F ⟧₀ X → ⟦ F ⟧₀ Y
+  ⟦_⟧₁ : ∀ {i j} {X : Type i} {Y : Type j} → (F : Container) → (X → Y) → ⟦ F ⟧₀ X → ⟦ F ⟧₀ Y
   ⟦_⟧₁ (Sh ◁ Ps) f (s , t) = (s , f ∘ t)
 
 record ContHom (A B : Container) : Type0 where
@@ -61,11 +61,16 @@ module _ (F : Container) where
       {P : A → Type0}
       (f : Π A P) → λ= (λ x → idp {a = f x}) == idp
 
-  lift-func-eq :
-    {A B : Type0} (f g : A → B)
-    (x : ⟦ F ⟧₀ A) (y : □ (λ x' → f x' == g x') x)
-    → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
-  lift-func-eq f g (s , t) h = ap (λ p → s , p) (λ= h)
+  module _
+    {A B : Type0}
+    (f g : A → B)
+    (x : ⟦ F ⟧₀ A)
+    where
+
+    open Σ x renaming (fst to s ; snd to t)
+    
+    lift-func-eq : (y : □ (λ x' → f x' == g x') x) → ⟦ F ⟧₁ f x == ⟦ F ⟧₁ g x
+    lift-func-eq h = ap (λ p → s , p) (λ= h)
 
   lift-func-eq-idp :
     {A B : Type0}

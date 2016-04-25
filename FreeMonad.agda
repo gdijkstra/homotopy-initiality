@@ -3,7 +3,7 @@
 module FreeMonad where
 
 open import Container
-open import lib.Base
+open import lib.Basics
 open import lib.types.Unit
 
 module _ (F : Container) where
