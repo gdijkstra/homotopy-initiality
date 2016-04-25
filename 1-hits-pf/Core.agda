@@ -1,6 +1,6 @@
 {-# OPTIONS --without-K #-}
 
-module 1-hits.Core where
+module 1-hits-pf.Core where
 
 open import lib.Basics
 open import Container

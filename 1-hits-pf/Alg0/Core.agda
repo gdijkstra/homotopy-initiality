@@ -52,7 +52,7 @@ module _
   open Alg₀-hom 𝓯
 
   ∘₀ : is-alg₀-hom 𝓧 𝓩 (g ∘ f)
-  ∘₀ = Ap (λ H → g ∘ H) f₀ * Ap (λ H → H ∘ ⟦ F ⟧₁ f) g₀
+  ∘₀ = Ap (g ∘`) f₀ * Ap (`∘ ⟦ F ⟧₁ f) g₀
 
   ∘-alg₀ : Alg₀-hom 𝓧 𝓩
   ∘-alg₀ = alg₀-hom (g ∘ f) ∘₀
