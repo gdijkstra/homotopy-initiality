@@ -11,7 +11,6 @@ module _ {i} {A : Type i} where
   Eq-natural : {x y : A}
     (p : Eq x y) (x' : A) (q : x' == x) → q ∙ p x idp == p x' q
   Eq-natural {x} {y} p .x idp = idp
-  
 
 module Correctness {i} {A : Type i} where
   to : {x y : A} → x == y → Eq x y
@@ -33,6 +32,30 @@ module _ {i} {A : Type i} where
   refl : {x : A} → Eq x x
   refl {x} = λ x' z → z
 
+module _
+  {i} {A : Type i}
+  where
+
+  private
+    refl' : {x : A} → Eq x x
+    refl' {x} = λ x' z → z ∙ idp
+    
+    refl=refl' : {x : A} → refl {x = x} == refl' {x = x}
+    refl=refl' {x} = λ= (λ _ → λ= (λ p → ! (∙-unit-r p)))
+
+  Eq-J : {a : A} {j : ULevel} (B : (a' : A) (p : Eq a a') → Type j) (d : B a refl)
+    {a' : A} (p : Eq a a') → B a' p
+  Eq-J B d p with Correctness.to-from p
+  ... | q with Correctness.from p
+  Eq-J B d ._ | idp | idp = transport (B _) refl=refl' d
+  
+  Eq-J' : {a : A} {j : ULevel} (B : (a' : A) (p : Eq a' a) → Type j) (d : B a refl)
+    {a' : A} (p : Eq a' a) → B a' p
+  Eq-J' B d p with Correctness.to-from p
+  ... | q with Correctness.from p
+  Eq-J' B d ._ | idp | idp = transport (B _) refl=refl' d
+
+module _ {i} {A : Type i} where
   infixr 80 _*_
 
   _*_ : {x y z : A} → Eq x y → Eq y z → Eq x z
@@ -49,10 +72,16 @@ module _ {i} {A : Type i} where
   *-assoc p q r = idp
 
   sym : {x y : A} → Eq x y → Eq y x
-  sym {x} f x' p = p ∙' ! (f x idp) --idp = ! (f x idp)
+  sym {x} f x' p = p ∙' ! (f x idp)
 
-  sym-refl : {x : A} → sym (refl {x}) == refl {x}
+  sym-refl : {x : A} → sym (refl {x = x}) == refl
   sym-refl {x} = idp
+
+  sym-*-inv-r : {x y : A} (p : Eq x y) → Eq (p * sym p) refl
+  sym-*-inv-r = Eq-J (λ a q → Eq (q * sym q) refl) refl
+
+  sym-*-inv-l : {x y : A} (p : Eq x y) → Eq (sym p * p) refl
+  sym-*-inv-l = Eq-J (λ a q → Eq (sym q * q) refl) refl
 
   infix  15 _∎*
   infixr 10 _*⟨_⟩_
@@ -61,4 +90,4 @@ module _ {i} {A : Type i} where
   _ *⟨ p ⟩ q = p * q
 
   _∎* : (x : A) → Eq x x
-  x ∎* = refl {x}
+  x ∎* = refl
