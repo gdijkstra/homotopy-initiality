@@ -48,7 +48,7 @@ module _
   Eq-J B d p with Correctness.to-from p
   ... | q with Correctness.from p
   Eq-J B d ._ | idp | idp = transport (B _) refl=refl' d
-  
+
   Eq-J' : {a : A} {j : ULevel} (B : (a' : A) (p : Eq a' a) → Type j) (d : B a refl)
     {a' : A} (p : Eq a' a) → B a' p
   Eq-J' B d p with Correctness.to-from p

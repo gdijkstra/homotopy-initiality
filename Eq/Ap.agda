@@ -33,3 +33,11 @@ g ∘` = λ f x → g (f x)
 Ap-∘ : ∀ {i j k} {A : Type i} {B : Type j} {C : Type k} (g : B → C) (f : A → B)
      {x y : A} (p : Eq x y) → Eq (Ap (g ∘ f) p) (Ap g (Ap f p))
 Ap-∘ g f = Eq-J (λ a q → Eq (Ap (g ∘ f) q) (Ap g (Ap f q))) refl
+
+Ap-swap :
+  ∀ {i j k l} {A : Type i} {B : Type j} {C : Type k} {D : Type l}
+  (g : C → D) (f : A → B)
+  {h h' : B → C}
+  (p : Eq h h')
+  →  Eq (Ap (`∘ f) (Ap (g ∘`) p)) (Ap (g ∘`) (Ap (`∘ f) p))
+Ap-swap g f {h} = Eq-J (λ h' p → Eq (Ap (`∘ f) (Ap (g ∘`) p)) (Ap (g ∘`) (Ap (`∘ f) p))) refl
