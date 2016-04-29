@@ -30,6 +30,25 @@ _∘` : ∀ {i j k} {A : Type i} {B : Type j} {C : Type k}
   → (B → C) → (A → B) → A → C
 g ∘` = λ f x → g (f x)
 
+_₌∘_ :
+  ∀ {i j k} {A : Type i} {B : Type j} {C : Type k}
+  {g g' : B → C}
+  (p : Eq g g')
+  (f : A → B)
+  → Eq (g ∘ f) (g' ∘ f)
+p ₌∘ f = Ap (`∘ f) p
+
+_∘₌_ :
+  ∀ {i j k} {A : Type i} {B : Type j} {C : Type k}
+  (g : B → C)
+  {f f' : A → B}
+  (p : Eq f f')
+  → Eq (g ∘ f) (g ∘ f')
+g ∘₌ p = Ap (g ∘`) p
+
+infixr 80 _₌∘_
+          _∘₌_
+
 Ap-∘ : ∀ {i j k} {A : Type i} {B : Type j} {C : Type k} (g : B → C) (f : A → B)
      {x y : A} (p : Eq x y) → Eq (Ap (g ∘ f) p) (Ap g (Ap f p))
 Ap-∘ g f = Eq-J (λ a q → Eq (Ap (g ∘ f) q) (Ap g (Ap f q))) refl

@@ -39,10 +39,10 @@ module _
     is-alg₁-hom : Type0
     is-alg₁-hom =
       Square
-        (Ap (`∘ apply l X) (star-hom₀ 𝓯'))
-        (Ap (f ∘`) θ₁)
-        (Ap (`∘ ⟦ F₁ ⟧₁ f) ρ₁)
-        (Ap (`∘ apply r X) (star-hom₀ 𝓯'))
+        (star-hom₀ 𝓯' ₌∘ apply l X)
+        (f ∘₌ θ₁)
+        (ρ₁ ₌∘ ⟦ F₁ ⟧₁ f)
+        (star-hom₀ 𝓯' ₌∘ apply r X)
          
 record Alg₁-hom (𝓧 𝓨 : Alg₁-obj) : Type0 where
   constructor alg₁-hom
@@ -69,14 +69,6 @@ module _
   open Alg₁-hom 𝓰 renaming (𝓯' to 𝓰' ; f to g ; f₀ to g₀ ; f₁ to g₁)
   open Alg₁-hom 𝓯
 
-  -- Have:
-
-  --  f₁   Eq (Ap (f ∘`) θ₁ * Ap (`∘ apply r X) (star-hom₀ 𝓯'))
-  --        (Ap (`∘ apply l X) (star-hom₀ 𝓯') * Ap (`∘ ⟦ F₁ ⟧₁ f) ρ₁)
-
-  --  g₁   Eq (Ap (g ∘`) ρ₁ * Ap (`∘ apply r Y) (star-hom₀ 𝓰'))
-  --        (Ap (`∘ apply l Y) (star-hom₀ 𝓰') * Ap (`∘ ⟦ F₁ ⟧₁ g) ζ₁)
-
   ∘₁ : is-alg₁-hom 𝓧 𝓩 (∘-alg₀ 𝓰' 𝓯')
   ∘₁ = L *h⊡ (T ⊡v B) ⊡h* sym R
     where
@@ -86,39 +78,33 @@ module _
       B = Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (g ∘`) ρ₁
           *v⊡ Ap-sq (`∘ ⟦ F₁ ⟧₁ f) g₁
           ⊡v* sym (Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (`∘ ⟦ F₁ ⟧₁ g) ζ₁)
-      L =
-        Ap (`∘ apply l X) (star-hom₀ (∘-alg₀ 𝓰' 𝓯'))
-          *⟨ Ap (λ P → Ap (`∘ apply l X) P) (*-∘ 𝓰' 𝓯') ⟩ -- *-∘
-        Ap (`∘ apply l X) (Ap (g ∘`) (star-hom₀ 𝓯') * Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))
-          *⟨ Ap-* (`∘ apply l X) (Ap (g ∘`) (star-hom₀ 𝓯')) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰')) ⟩ -- Ap-*
-        Ap (`∘ apply l X) (Ap (g ∘`) (star-hom₀ 𝓯'))
-        * Ap (`∘ apply l X) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))
-          *⟨ Ap (λ P → P * Ap (`∘ apply l X) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))) (Ap-swap g (apply l X) (star-hom₀ 𝓯')) ⟩ -- Ap-swap
-        Ap (g ∘`) (Ap (`∘ apply l X) (star-hom₀ 𝓯'))
-        * Ap (`∘ apply l X) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))
-          *⟨ Ap (λ P → Ap (g ∘`) (Ap (`∘ apply l X) (star-hom₀ 𝓯')) * P) (sym (Ap-∘ (`∘ apply l X) (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))) ⟩ -- Ap-∘
-        Ap (g ∘`) (Ap (`∘ apply l X) (star-hom₀ 𝓯'))
-        * Ap ((`∘ ⟦ F₁ ⟧₁ f) ∘ (`∘ apply l Y)) (star-hom₀ 𝓰')
-          *⟨ Ap (λ P → Ap (g ∘`) (Ap (`∘ apply l X) (star-hom₀ 𝓯')) * P) (Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (`∘ apply l Y) (star-hom₀ 𝓰')) ⟩ -- Ap-∘
-        Ap (g ∘`) (Ap (`∘ apply l X) (star-hom₀ 𝓯'))
-        * Ap (`∘ ⟦ F₁ ⟧₁ f) (Ap (`∘ apply l Y) (star-hom₀ 𝓰')) ∎*
-      R =
-        Ap (`∘ apply r X) (star-hom₀ (∘-alg₀ 𝓰' 𝓯'))
-          *⟨ Ap (λ P → Ap (`∘ apply r X) P) (*-∘ 𝓰' 𝓯') ⟩
-        Ap (`∘ apply r X) (Ap (g ∘`) (star-hom₀ 𝓯') * Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))
-          *⟨ Ap-* (`∘ apply r X) (Ap (g ∘`) (star-hom₀ 𝓯')) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰')) ⟩
-        Ap (`∘ apply r X) (Ap (g ∘`) (star-hom₀ 𝓯'))
-        * Ap (`∘ apply r X) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))
-          *⟨ Ap (λ P → P * Ap (`∘ apply r X) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))) (Ap-swap g (apply r X) (star-hom₀ 𝓯')) ⟩
-        Ap (g ∘`) (Ap (`∘ apply r X) (star-hom₀ 𝓯'))
-        * Ap (`∘ apply r X) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))
-          *⟨ Ap (λ P → Ap (g ∘`) (Ap (`∘ apply r X) (star-hom₀ 𝓯')) * P) (sym (Ap-∘ (`∘ apply r X) (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))) ⟩
-        Ap (g ∘`) (Ap (`∘ apply r X) (star-hom₀ 𝓯'))
-        * Ap ((`∘ ⟦ F₁ ⟧₁ f) ∘ (`∘ apply r Y)) (star-hom₀ 𝓰')
-          *⟨ Ap (λ P → Ap (g ∘`) (Ap (`∘ apply r X) (star-hom₀ 𝓯')) * P) (Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (`∘ apply r Y) (star-hom₀ 𝓰')) ⟩
-        Ap (g ∘`) (Ap (`∘ apply r X) (star-hom₀ 𝓯'))
-        * Ap (`∘ ⟦ F₁ ⟧₁ f) (Ap (`∘ apply r Y) (star-hom₀ 𝓰')) ∎*
+      lem : (α : ContHom F₁ (F₀ ⋆))
+        → Eq (star-hom₀ (∘-alg₀ 𝓰' 𝓯') ₌∘ apply α X)
+             ((g ∘₌ (star-hom₀ 𝓯' ₌∘ apply α X)) * (star-hom₀ 𝓰' ₌∘ apply α Y) ₌∘ ⟦ F₁ ⟧₁ f)
+      lem α =
+        (star-hom₀ (∘-alg₀ 𝓰' 𝓯') ₌∘ apply α X)
 
+          *⟨ Ap (λ P → Ap (`∘ apply α X) P) (*-∘ 𝓰' 𝓯') ⟩ -- *-⌜
+
+        ((g ∘₌ star-hom₀ 𝓯') * (star-hom₀ 𝓰' ₌∘ ⟦ F₀ ⋆ ⟧₁ f)) ₌∘ apply α X
+
+          *⟨ Ap-* (`∘ apply α X) (Ap (g ∘`) (star-hom₀ 𝓯')) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰')) ⟩
+
+        ((g ∘₌ star-hom₀ 𝓯') ₌∘ apply α X) * ((star-hom₀ 𝓰' ₌∘ ⟦ F₀ ⋆ ⟧₁ f) ₌∘ apply α X)
+
+          *⟨ Ap (λ P → P * Ap (`∘ apply α X) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))) (Ap-swap g (apply α X) (star-hom₀ 𝓯')) ⟩
+
+        (g ∘₌ (star-hom₀ 𝓯' ₌∘ apply α X)) * ((star-hom₀ 𝓰' ₌∘ ⟦ F₀ ⋆ ⟧₁ f) ₌∘ apply α X)
+
+          *⟨ Ap (λ P → Ap (g ∘`) (Ap (`∘ apply α X) (star-hom₀ 𝓯')) * P) (sym (Ap-∘ (`∘ apply α X) (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))) ⟩
+
+        (g ∘₌ (star-hom₀ 𝓯' ₌∘ apply α X)) * (star-hom₀ 𝓰' ₌∘ (apply α Y ∘ ⟦ F₁ ⟧₁ f))
+
+          *⟨ Ap (λ P → Ap (g ∘`) (Ap (`∘ apply α X) (star-hom₀ 𝓯')) * P) (Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (`∘ apply α Y) (star-hom₀ 𝓰')) ⟩
+
+        (g ∘₌ (star-hom₀ 𝓯' ₌∘ apply α X)) * ((star-hom₀ 𝓰' ₌∘ apply α Y) ₌∘ ⟦ F₁ ⟧₁ f) ∎*
+      L = lem l
+      R = lem r
 
   ∘-alg₁ : Alg₁-hom 𝓧 𝓩
   ∘-alg₁ = alg₁-hom (∘-alg₀ 𝓰' 𝓯') ∘₁ 
@@ -131,9 +117,9 @@ module _
 
   id₁ : is-alg₁-hom 𝓧 𝓧 (id-alg₀ 𝓧')
   id₁ =
-    Ap (λ P → Ap (`∘ apply l X) P) (*-id _)
-    *h⊡ vid-square (Ap (idf _) θ₁)
-    ⊡h* sym (Ap (λ P → Ap (`∘ apply r X) P) (*-id _))
+    Ap (λ P → P ₌∘ apply l X) (*-id _)
+    *h⊡ vid-square (Ap (idf (⟦ F₁ ⟧₀ X → X)) θ₁)
+    ⊡h* sym (Ap (λ P → P ₌∘ apply r X) (*-id _))
 
   id-alg₁ : Alg₁-hom 𝓧 𝓧
   id-alg₁ = alg₁-hom (id-alg₀ 𝓧') id₁

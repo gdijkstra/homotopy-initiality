@@ -82,10 +82,7 @@ module _
 
      *⟨ Ap (λ P → P * Ap (`∘ ⟦ F ⟧₁ (g ∘ f)) h₀) (sym (Ap-* (h ∘`) (Ap (g ∘`) f₀) (Ap (`∘ ⟦ F ⟧₁ f) g₀))) ⟩ -- ap-*
 
-    Ap (h ∘`) ( Ap (g ∘`) f₀
-                     * Ap (`∘ ⟦ F ⟧₁ f) g₀
-                     )
-    * Ap (`∘ ⟦ F ⟧₁ (g ∘ f)) h₀
+    (h ∘₌ ((g ∘₌ f₀) * (g₀ ₌∘ ⟦ F ⟧₁ f))) * (h₀ ₌∘ ⟦ F ⟧₁ (g ∘ f))
 
      *⟨ refl ⟩
 

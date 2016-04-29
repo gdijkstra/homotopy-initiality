@@ -1,7 +1,5 @@
 {-# OPTIONS --without-K #-}
 
-open import Admit
-
 open import 1-hits-pf.Core
 open import Container
 
@@ -29,7 +27,16 @@ module _
     (f₁ : is-alg₁-hom 𝓧 𝓨 (alg₀-hom f f₀))
     (g₁ : is-alg₁-hom 𝓧 𝓨 (alg₀-hom f g₀))
     (p₀ : Eq f₀ g₀)
-    (p₁ : Eq (f₁ ⊡h* Ap (λ h₀ → Ap (`∘ apply r X) (star-hom₀ (alg₀-hom f h₀))) p₀)
-             (Ap (λ h₀ → Ap (`∘ apply l X) (star-hom₀ (alg₀-hom f h₀))) p₀ *h⊡ g₁))
+    (p₁ : Eq (f₁ ⊡h* Ap (λ h₀ → (star-hom₀ (alg₀-hom f h₀)) ₌∘ apply r X) p₀)
+             (Ap (λ h₀ → (star-hom₀ (alg₀-hom f h₀)) ₌∘ apply l X) p₀ *h⊡ g₁))
     → Eq (alg₁-hom {𝓧} {𝓨} (alg₀-hom f f₀) f₁) (alg₁-hom {𝓧} {𝓨} (alg₀-hom f g₀) g₁)
-  alg₁-hom=' f f₀ g₀ f₁ g₁ p₀ p₁ = admit _
+  alg₁-hom=' f f₀ g₀ f₁ g₁ p₀ p₁ =
+    Eq-J (λ g₀' p₀' →
+            (g₁' : is-alg₁-hom 𝓧 𝓨 (alg₀-hom f g₀'))
+            (p₁ : Eq (f₁ ⊡h* Ap (λ h₀ → (star-hom₀ (alg₀-hom f h₀)) ₌∘ apply r X) p₀')
+                     (Ap (λ h₀ → (star-hom₀ (alg₀-hom f h₀)) ₌∘ apply l X) p₀' *h⊡ g₁'))
+            → Eq (alg₁-hom {𝓧} {𝓨} (alg₀-hom f f₀) f₁) (alg₁-hom {𝓧} {𝓨} (alg₀-hom f g₀') g₁'))
+         (λ g₁' p₁' → Ap (alg₁-hom (alg₀-hom f f₀)) p₁')
+         p₀
+         g₁
+         p₁

@@ -25,7 +25,7 @@ private
       → Eq 𝓯 𝓰
     alg₀-hom= (alg₀-hom f f₀) (alg₀-hom g g₀) p p₀ = Eq-J (λ g' p' → (g₀' : Eq (g' ∘ θ) (ρ ∘ ⟦ F ⟧₁ g'))
                                            (p₁ : Eq (f₀ * Ap (ρ ∘`) (⟦ F ⟧₌ p')) (Ap (`∘ θ) p' * g₀')) →
-                                           Eq (alg₀-hom f f₀) (alg₀-hom g' g₀')) (λ g₀' p₁ → Ap (alg₀-hom f) p₁) p g₀ p₀
+                                           Eq (alg₀-hom f f₀) (alg₀-hom g' g₀')) (λ g₀' p₀' → Ap (alg₀-hom f) p₀') p g₀ p₀
 
 -- Readable form
 module _
@@ -39,6 +39,7 @@ module _
   
   alg₀-hom= :
     (p : Eq f g)
-    (p₀ : Eq (f₀ * Ap (ρ ∘`) (⟦ F ⟧₌ p)) (Ap (`∘ θ) p * g₀))
+    (p₀ : Eq (f₀ * (ρ ∘₌ ⟦ F ⟧₌ p))
+             ((p ₌∘ θ) * g₀))
     → Eq 𝓯 𝓰
   alg₀-hom= p p₀ = Prim.alg₀-hom= 𝓯 𝓰 p p₀
