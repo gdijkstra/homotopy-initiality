@@ -70,41 +70,42 @@ module _
   open Alg₁-hom 𝓯
 
   ∘₁ : is-alg₁-hom 𝓧 𝓩 (∘-alg₀ 𝓰' 𝓯')
-  ∘₁ = L *h⊡ (T ⊡v B) ⊡h* sym R
+  ∘₁ = lem l *h⊡ ((lem-top l *h⊡ T ⊡h* sym (lem-top r))
+              ⊡v  (lem-bot l *h⊡ B ⊡h* sym (lem-bot r)))
+              ⊡h* sym (lem r)
     where
+      T : Square (g ∘₌ star-hom₀ 𝓯' ₌∘ apply l X) ((g ∘ f) ∘₌ θ₁) (Ap (λ H → g ∘ H ∘ ⟦ F₁ ⟧₁ f) ρ₁) (g ∘₌ star-hom₀ 𝓯' ₌∘ apply r X)
       T = Ap-∘ (g ∘`) (f ∘`) θ₁
           *v⊡ Ap-sq (g ∘`) f₁
           ⊡v* sym (Ap-∘ (g ∘`) (`∘ ⟦ F₁ ⟧₁ f) ρ₁)
+
+      B : Square ((star-hom₀ 𝓰' ₌∘ apply l Y) ₌∘ ⟦ F₁ ⟧₁ f) (Ap (λ H → g ∘ H ∘ ⟦ F₁ ⟧₁ f) ρ₁) (ζ₁ ₌∘ ⟦ F₁ ⟧₁ (g ∘ f)) ((star-hom₀ 𝓰' ₌∘ apply r Y) ₌∘ ⟦ F₁ ⟧₁ f)
       B = Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (g ∘`) ρ₁
           *v⊡ Ap-sq (`∘ ⟦ F₁ ⟧₁ f) g₁
           ⊡v* sym (Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (`∘ ⟦ F₁ ⟧₁ g) ζ₁)
+
+      lem-top : (α : ContHom F₁ (F₀ ⋆))
+        → Eq ((g ∘₌ star-hom₀ 𝓯') ₌∘ apply α X) (g ∘₌ (star-hom₀ 𝓯' ₌∘ apply α X))
+      lem-top α = Ap-swap g (apply α X) (star-hom₀ 𝓯')
+
+      lem-bot : (α : ContHom F₁ (F₀ ⋆))
+        → Eq ((star-hom₀ 𝓰' ₌∘ ⟦ F₀ ⋆ ⟧₁ f) ₌∘ apply α X) ((star-hom₀ 𝓰' ₌∘ apply α Y) ₌∘ ⟦ F₁ ⟧₁ f) 
+      lem-bot α = sym (Ap-∘ (`∘ apply α X) (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))
+                * Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (`∘ apply α Y) (star-hom₀ 𝓰')
+      
       lem : (α : ContHom F₁ (F₀ ⋆))
         → Eq (star-hom₀ (∘-alg₀ 𝓰' 𝓯') ₌∘ apply α X)
-             ((g ∘₌ (star-hom₀ 𝓯' ₌∘ apply α X)) * (star-hom₀ 𝓰' ₌∘ apply α Y) ₌∘ ⟦ F₁ ⟧₁ f)
+             (((g ∘₌ star-hom₀ 𝓯') ₌∘ apply α X) * ((star-hom₀ 𝓰' ₌∘ ⟦ F₀ ⋆ ⟧₁ f) ₌∘ apply α X))
       lem α =
         (star-hom₀ (∘-alg₀ 𝓰' 𝓯') ₌∘ apply α X)
 
-          *⟨ Ap (λ P → Ap (`∘ apply α X) P) (*-∘ 𝓰' 𝓯') ⟩ -- *-⌜
+          *⟨ Ap (λ P → Ap (`∘ apply α X) P) (*-∘ 𝓰' 𝓯') ⟩ -- *-∘
 
         ((g ∘₌ star-hom₀ 𝓯') * (star-hom₀ 𝓰' ₌∘ ⟦ F₀ ⋆ ⟧₁ f)) ₌∘ apply α X
 
-          *⟨ Ap-* (`∘ apply α X) (Ap (g ∘`) (star-hom₀ 𝓯')) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰')) ⟩
+          *⟨ Ap-* (`∘ apply α X) (Ap (g ∘`) (star-hom₀ 𝓯')) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰')) ⟩ -- ap-*
 
-        ((g ∘₌ star-hom₀ 𝓯') ₌∘ apply α X) * ((star-hom₀ 𝓰' ₌∘ ⟦ F₀ ⋆ ⟧₁ f) ₌∘ apply α X)
-
-          *⟨ Ap (λ P → P * Ap (`∘ apply α X) (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))) (Ap-swap g (apply α X) (star-hom₀ 𝓯')) ⟩
-
-        (g ∘₌ (star-hom₀ 𝓯' ₌∘ apply α X)) * ((star-hom₀ 𝓰' ₌∘ ⟦ F₀ ⋆ ⟧₁ f) ₌∘ apply α X)
-
-          *⟨ Ap (λ P → Ap (g ∘`) (Ap (`∘ apply α X) (star-hom₀ 𝓯')) * P) (sym (Ap-∘ (`∘ apply α X) (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ 𝓰'))) ⟩
-
-        (g ∘₌ (star-hom₀ 𝓯' ₌∘ apply α X)) * (star-hom₀ 𝓰' ₌∘ (apply α Y ∘ ⟦ F₁ ⟧₁ f))
-
-          *⟨ Ap (λ P → Ap (g ∘`) (Ap (`∘ apply α X) (star-hom₀ 𝓯')) * P) (Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (`∘ apply α Y) (star-hom₀ 𝓰')) ⟩
-
-        (g ∘₌ (star-hom₀ 𝓯' ₌∘ apply α X)) * ((star-hom₀ 𝓰' ₌∘ apply α Y) ₌∘ ⟦ F₁ ⟧₁ f) ∎*
-      L = lem l
-      R = lem r
+        ((g ∘₌ star-hom₀ 𝓯') ₌∘ apply α X) * ((star-hom₀ 𝓰' ₌∘ ⟦ F₀ ⋆ ⟧₁ f) ₌∘ apply α X) ∎*
 
   ∘-alg₁ : Alg₁-hom 𝓧 𝓩
   ∘-alg₁ = alg₁-hom (∘-alg₀ 𝓰' 𝓯') ∘₁ 
@@ -123,3 +124,13 @@ module _
 
   id-alg₁ : Alg₁-hom 𝓧 𝓧
   id-alg₁ = alg₁-hom (id-alg₀ 𝓧') id₁
+
+open import Cat
+
+Alg₁ : Cat
+Alg₁ = record
+  { obj = Alg₁-obj
+  ; hom = Alg₁-hom
+  ; comp = ∘-alg₁
+  ; id = id-alg₁
+  }

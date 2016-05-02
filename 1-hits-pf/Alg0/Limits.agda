@@ -2,7 +2,6 @@
 
 open import Container
 
--- Equality of algebra morphisms
 module 1-hits-pf.Alg0.Limits (F : Container) where
 
 open import Eq
