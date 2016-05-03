@@ -1,5 +1,7 @@
 {-# OPTIONS --without-K #-}
 
+open import Admit
+
 module Eq.Square where
 
 open import lib.Basics
@@ -87,3 +89,42 @@ hid-square {a₀₀ = a} = Eq-J (λ a' q → Square q refl refl q) ids
 horiz-degen-square : ∀ {i} {A : Type i} {a a' : A} {p q : Eq a a'}
   → Eq p q → Square p refl refl q
 horiz-degen-square {p = p} = Eq-J (λ q α → Square p refl refl q) (hid-square p)
+
+-- Square calculus
+module _ {i} {A : Type i} where
+  ⊡h-assoc :
+    {a₀₀ a₀₁ a₁₀ a₁₁ : A}
+    {p₀₋ p₀₋' : Eq a₀₀ a₀₁} {p₋₀ : Eq a₀₀ a₁₀}
+    {p₋₁ : Eq a₀₁ a₁₁} {p₁₋ p₁₋' : Eq a₁₀ a₁₁}
+    (p : Eq p₀₋' p₀₋)
+    (q : Square p₀₋ p₋₀ p₋₁ p₁₋)
+    (r : Eq p₁₋ p₁₋')
+    → Eq (p *h⊡ (q ⊡h* r))
+         ((p *h⊡ q) ⊡h* r)
+  ⊡h-assoc p q r = admit _
+
+  ⊡h** :
+    {a₀₀ a₀₁ a₁₀ a₁₁ : A}
+    {p₀₋ : Eq a₀₀ a₀₁} {p₋₀ : Eq a₀₀ a₁₀}
+    {p₋₁ : Eq a₀₁ a₁₁} {p₁₋ p₁₋' p₁₋'' : Eq a₁₀ a₁₁}
+    (p : Square p₀₋ p₋₀ p₋₁ p₁₋)
+    (q : Eq p₁₋ p₁₋')
+    (r : Eq p₁₋' p₁₋'')
+    → Eq ((p ⊡h* q) ⊡h* r)
+         (p ⊡h* (q * r))
+  ⊡h** p q r = admit _
+  
+  ⊡-magic :
+    {a₀₀ a₀₁ a₁₀ a₁₁ a₀₂ a₁₂ : A}
+    {p₀₋ p₀₋' : Eq a₀₀ a₀₁} {p₋₀ : Eq a₀₀ a₁₀} {p₋₁ : Eq a₀₁ a₁₁} {p₁₋ p₁₋' : Eq a₁₀ a₁₁}
+    {q₀₋ q₀₋' : Eq a₀₁ a₀₂} {q₋₂ : Eq a₀₂ a₁₂} {q₁₋ q₁₋' : Eq a₁₁ a₁₂}
+    (p : Eq p₀₋' p₀₋)
+    (r : Eq p₁₋ p₁₋')
+    (q : Square p₀₋ p₋₀ p₋₁ p₁₋)
+    (p' : Eq q₀₋' q₀₋)
+    (r' : Eq q₁₋ q₁₋')
+    (q' : Square q₀₋ p₋₁ q₋₂ q₁₋)
+    → Eq ((p *h⊡ q ⊡h* r) ⊡v (p' *h⊡ q' ⊡h* r'))
+         ((Ap (λ P → P * q₀₋') p * Ap (λ P → p₀₋ * P) p') *h⊡ (q ⊡v q')
+         ⊡h* Ap (λ P → P * q₁₋) r * Ap (λ P → p₁₋' * P) r')
+  ⊡-magic p r q p' r' q' = admit _

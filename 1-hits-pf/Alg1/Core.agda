@@ -119,7 +119,7 @@ module _
   id₁ : is-alg₁-hom 𝓧 𝓧 (id-alg₀ 𝓧')
   id₁ =
     Ap (λ P → P ₌∘ apply l X) (*-id _)
-    *h⊡ vid-square (Ap (idf (⟦ F₁ ⟧₀ X → X)) θ₁)
+    *h⊡ vid-square (idf X ∘₌ θ₁)
     ⊡h* sym (Ap (λ P → P ₌∘ apply r X) (*-id _))
 
   id-alg₁ : Alg₁-hom 𝓧 𝓧

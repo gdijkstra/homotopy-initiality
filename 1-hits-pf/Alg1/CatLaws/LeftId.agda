@@ -34,7 +34,7 @@ module _
     (∘₁ (id-alg₁ 𝓨) 𝓯)
     f₁
     left-id₀
-    goal
+    {!!} --goal
     where
       T : Square
             (idf Y ∘₌ star-hom₀ 𝓯' ₌∘ apply l X)
@@ -45,6 +45,9 @@ module _
           *v⊡ Ap-sq (idf Y ∘`) f₁
           ⊡v* sym (Ap-∘ (idf Y ∘`) (`∘ ⟦ F₁ ⟧₁ f) ρ₁)
 
+      T-simpl : Eq T (Ap-idf (star-hom₀ 𝓯' ₌∘ apply l X) *h⊡ f₁ ⊡h* sym (Ap-idf (star-hom₀ 𝓯' ₌∘ apply r X)))
+      T-simpl = {!!}
+
       B : Square
             ((star-hom₀ (id-alg₀ 𝓨') ₌∘ apply l Y) ₌∘ ⟦ F₁ ⟧₁ f)
             (ρ₁ ₌∘ ⟦ F₁ ⟧₁ f)
@@ -53,6 +56,13 @@ module _
       B = Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (idf Y ∘`) ρ₁
           *v⊡ Ap-sq (`∘ ⟦ F₁ ⟧₁ f) (id₁ 𝓨)
           ⊡v* sym (Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (`∘ ⟦ F₁ ⟧₁ (idf Y)) ρ₁)
+
+      B-simpl :
+        Eq B
+           (Ap (λ P → (P ₌∘ apply l Y) ₌∘ ⟦ F₁ ⟧₁ f) (*-id _)
+             *h⊡ vid-square (ρ₁ ₌∘ ⟦ F₁ ⟧₁ f)
+             ⊡h* sym (Ap (λ P → (P ₌∘ apply r Y) ₌∘ ⟦ F₁ ⟧₁ f) (*-id _)))
+      B-simpl = {!!}
 
       lem-top : (α : ContHom F₁ (F₀ ⋆))
         → Eq ((idf Y ∘₌ star-hom₀ 𝓯') ₌∘ apply α X) (idf Y ∘₌ (star-hom₀ 𝓯' ₌∘ apply α X))
@@ -64,33 +74,60 @@ module _
       lem-bot α = sym (Ap-∘ (`∘ apply α X) (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ (id-alg₀ 𝓨')))
                 * Ap-∘ (`∘ ⟦ F₁ ⟧₁ f) (`∘ apply α Y) (star-hom₀ (id-alg₀ 𝓨'))
       
-      lem : (α : ContHom F₁ (F₀ ⋆))
-        → Eq (star-hom₀ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') ₌∘ apply α X)
-             (((idf Y ∘₌ star-hom₀ 𝓯') ₌∘ apply α X) *
-              ((star-hom₀ (id-alg₀ 𝓨') ₌∘ ⟦ F₀ ⋆ ⟧₁ f) ₌∘ apply α X))
-      lem α =
-        (star-hom₀ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') ₌∘ apply α X)
+      top-simpl :
+        Eq (lem-top l *h⊡ T ⊡h* sym (lem-top r))
+           (Ap (λ P → P ₌∘ apply l X) (Ap-idf (star-hom₀ 𝓯')) *h⊡ f₁ ⊡h* sym (Ap (λ P → P ₌∘ apply r X) (Ap-idf (star-hom₀ 𝓯'))))
+      top-simpl = {!!}
 
-          *⟨ Ap (λ P → Ap (`∘ apply α X) P) (*-∘ (id-alg₀ 𝓨') 𝓯') ⟩ -- *-∘
+      bot-simpl :
+        Eq (lem-bot l *h⊡ B ⊡h* sym (lem-bot r))
+           ({!!} *h⊡ vid-square (ρ₁ ₌∘ ⟦ F₁ ⟧₁ f) ⊡h* {!!})
+      bot-simpl = {!!}
 
-        ((idf Y ∘₌ star-hom₀ 𝓯') * (star-hom₀ (id-alg₀ 𝓨') ₌∘ ⟦ F₀ ⋆ ⟧₁ f)) ₌∘ apply α X
+      -- lem : (α : ContHom F₁ (F₀ ⋆))
+      --   → Eq (star-hom₀ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') ₌∘ apply α X)
+      --        (((idf Y ∘₌ star-hom₀ 𝓯') ₌∘ apply α X) *
+      --         ((star-hom₀ (id-alg₀ 𝓨') ₌∘ ⟦ F₀ ⋆ ⟧₁ f) ₌∘ apply α X))
+      -- lem α =
+      --   (star-hom₀ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') ₌∘ apply α X)
 
-          *⟨ Ap-* (`∘ apply α X)
-                  (Ap ((idf Y) ∘`) (star-hom₀ 𝓯'))
-                  (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ (id-alg₀ 𝓨')))
-           ⟩ -- ap-*
+      --     *⟨ Ap (λ P → Ap (`∘ apply α X) P) (*-∘ (id-alg₀ 𝓨') 𝓯') ⟩ -- *-∘
 
-        ((idf Y ∘₌ star-hom₀ 𝓯') ₌∘ apply α X) * ((star-hom₀ (id-alg₀ 𝓨') ₌∘ ⟦ F₀ ⋆ ⟧₁ f) ₌∘ apply α X) ∎*
+      --   ((idf Y ∘₌ star-hom₀ 𝓯') * (star-hom₀ (id-alg₀ 𝓨') ₌∘ ⟦ F₀ ⋆ ⟧₁ f)) ₌∘ apply α X
 
-      id∘𝓯 : Square (star-hom₀ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') ₌∘ apply l X)
-                    (f ∘₌ θ₁) (ρ₁ ₌∘ ⟦ F₁ ⟧₁ f)
-                    (star-hom₀ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') ₌∘ apply r X)
-      id∘𝓯 = lem l *h⊡ ((lem-top l *h⊡ T ⊡h* sym (lem-top r))
-              ⊡v  (lem-bot l *h⊡ B ⊡h* sym (lem-bot r)))
-              ⊡h* sym (lem r)
+      --     *⟨ Ap-* (`∘ apply α X)
+      --             (Ap ((idf Y) ∘`) (star-hom₀ 𝓯'))
+      --             (Ap (`∘ ⟦ F₀ ⋆ ⟧₁ f) (star-hom₀ (id-alg₀ 𝓨')))
+      --      ⟩ -- ap-*
 
-      goal : Eq
-        (id∘𝓯 ⊡h* Ap (λ h₀ → star-hom₀ (alg₀-hom f h₀) ₌∘ apply r X) left-id₀)
-        (Ap (λ h₀ → star-hom₀ (alg₀-hom f h₀) ₌∘ apply l X) left-id₀ *h⊡
-           f₁)
-      goal = {!!}
+      --   ((idf Y ∘₌ star-hom₀ 𝓯') ₌∘ apply α X) * ((star-hom₀ (id-alg₀ 𝓨') ₌∘ ⟦ F₀ ⋆ ⟧₁ f) ₌∘ apply α X) ∎*
+
+      -- id∘𝓯 : Square (star-hom₀ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') ₌∘ apply l X)
+      --               (f ∘₌ θ₁) (ρ₁ ₌∘ ⟦ F₁ ⟧₁ f)
+      --               (star-hom₀ (∘-alg₀ (id-alg₀ 𝓨') 𝓯') ₌∘ apply r X)
+      -- id∘𝓯 = lem l *h⊡ ((lem-top l *h⊡ T ⊡h* sym (lem-top r))
+      --         ⊡v  (lem-bot l *h⊡ B ⊡h* sym (lem-bot r)))
+      --         ⊡h* sym (lem r)
+
+      -- id∘𝓯-simpl :
+      --   Eq id∘𝓯
+      --      (Ap (λ h₀ → star-hom₀ (alg₀-hom f h₀) ₌∘ apply l X) left-id₀ *h⊡ f₁ ⊡h* sym (Ap (λ h₀ → star-hom₀ (alg₀-hom f h₀) ₌∘ apply r X) left-id₀))
+      -- id∘𝓯-simpl = {!!} -- ⊡-magic and coh for *
+
+      -- goal : Eq
+      --   (id∘𝓯 ⊡h* Ap (λ h₀ → star-hom₀ (alg₀-hom f h₀) ₌∘ apply r X) left-id₀)
+      --   (Ap (λ h₀ → star-hom₀ (alg₀-hom f h₀) ₌∘ apply l X) left-id₀ *h⊡ f₁)
+      -- goal =
+      --   (id∘𝓯 ⊡h* z)
+      --   *⟨ Ap (λ H → H ⊡h* z) id∘𝓯-simpl ⟩
+      --   (x *h⊡ y ⊡h* sym z) ⊡h* z
+      --   *⟨ Ap (λ P → P ⊡h* z) (⊡h-assoc x y (sym z)) ⟩
+      --   ((x *h⊡ y) ⊡h* sym z) ⊡h* z
+      --   *⟨ ⊡h** (x *h⊡ y) (sym z) z ⟩
+      --   (x *h⊡ y) ⊡h* (sym z * z)
+      --   *⟨ Ap (λ P → (x *h⊡ y) ⊡h* P) (sym-*-inv-l z) ⟩
+      --   x *h⊡ y ∎*
+      --     where
+      --       x = Ap (λ h₀ → star-hom₀ (alg₀-hom f h₀) ₌∘ apply l X) left-id₀
+      --       y = f₁
+      --       z = Ap (λ h₀ → star-hom₀ (alg₀-hom f h₀) ₌∘ apply r X) left-id₀
