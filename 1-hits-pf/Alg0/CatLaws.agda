@@ -18,11 +18,17 @@ module _
   open Alg₀-obj 𝓧
   open Alg₀-hom 𝓯
 
+  left-id₀ : Eq (∘₀ (id-alg₀ 𝓨) 𝓯) f₀
+  left-id₀ = Ap-idf f₀
+
   left-id-alg₀ : Eq (∘-alg₀ (id-alg₀ 𝓨) 𝓯) 𝓯
-  left-id-alg₀ = Ap (alg₀-hom f) (Ap-idf f₀)
+  left-id-alg₀ = Ap (alg₀-hom f) left-id₀
+
+  right-id₀ : Eq (∘₀ 𝓯 (id-alg₀ 𝓧)) f₀
+  right-id₀ = Ap-idf f₀
 
   right-id-alg₀ : Eq (∘-alg₀ 𝓯 (id-alg₀ 𝓧)) 𝓯
-  right-id-alg₀ = Ap (alg₀-hom f) (Ap-idf f₀)
+  right-id-alg₀ = Ap (alg₀-hom f) right-id₀
 
 module _
   {𝓧 𝓨 𝓩 𝓦 : Alg₀-obj}

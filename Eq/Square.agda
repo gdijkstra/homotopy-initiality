@@ -128,3 +128,15 @@ module _ {i} {A : Type i} where
          ((Ap (λ P → P * q₀₋') p * Ap (λ P → p₀₋ * P) p') *h⊡ (q ⊡v q')
          ⊡h* Ap (λ P → P * q₁₋) r * Ap (λ P → p₁₋' * P) r')
   ⊡-magic p r q p' r' q' = admit _
+
+  ⊡v-right-unit : {a₀₀ a₀₁ a₁₀ a₁₁ : A}
+    {p₀₋ : Eq a₀₀ a₀₁} {p₋₀ : Eq a₀₀ a₁₀} {p₋₁ : Eq a₀₁ a₁₁} {p₁₋ : Eq a₁₀ a₁₁}
+    (sq : Square p₀₋ p₋₀ p₋₁ p₁₋)
+    → Eq (sq ⊡v vid-square p₋₁) sq
+  ⊡v-right-unit sq = admit _
+
+  ⊡v-left-unit : {a₀₀ a₀₁ a₁₀ a₁₁ : A}
+    {p₀₋ : Eq a₀₀ a₀₁} {p₋₀ : Eq a₀₀ a₁₀} {p₋₁ : Eq a₀₁ a₁₁} {p₁₋ : Eq a₁₀ a₁₁}
+    (sq : Square p₀₋ p₋₀ p₋₁ p₁₋)
+    → Eq (vid-square p₋₀ ⊡v sq) sq
+  ⊡v-left-unit sq = admit _

@@ -60,3 +60,33 @@ module _
   
   *-∘ : Eq (star-hom₀ (∘-alg₀ F 𝓰 𝓯)) (∘₀ (F *) (star-hom 𝓰) (star-hom 𝓯))
   *-∘ = admit _
+
+
+
+module _
+  {𝓧 𝓨 : Alg₀-obj F}
+  (𝓯 : Alg₀-hom F 𝓧 𝓨)
+  where
+
+  open Alg₀-obj F 𝓧
+  open Alg₀-obj F 𝓨 renaming (X to Y ; θ to ρ)
+  open Alg₀-hom F 𝓯
+  open import 1-hits-pf.Alg0.CatLaws 
+  
+  private
+    f₀* = star-hom₀ 𝓯
+
+  *-left-id :
+    Eq (Ap (λ h₀ → star-hom₀ (alg₀-hom f h₀)) (left-id₀ F 𝓯))
+       (*-∘ (id-alg₀ F 𝓨) 𝓯
+       * Ap (λ P → (idf Y ∘₌ f₀*) * (P ₌∘ ⟦ F * ⟧₁ f)) (*-id 𝓨)
+       * left-id₀ (F *) (star-hom 𝓯))
+  *-left-id = admit _
+
+  *-right-id :
+    Eq (Ap (λ h₀ → star-hom₀ (alg₀-hom f h₀)) (right-id₀ F 𝓯))
+       (*-∘ 𝓯 (id-alg₀ F 𝓧) 
+       * Ap (λ P → (f ∘₌ P) * (f₀* ₌∘ ⟦ F * ⟧₁ (idf X))) (*-id 𝓧)
+       * right-id₀ (F *) (star-hom 𝓯))
+  *-right-id = admit _
+
