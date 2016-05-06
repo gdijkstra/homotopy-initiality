@@ -90,6 +90,13 @@ horiz-degen-square : ∀ {i} {A : Type i} {a a' : A} {p q : Eq a a'}
   → Eq p q → Square p refl refl q
 horiz-degen-square {p = p} = Eq-J (λ q α → Square p refl refl q) (hid-square p)
 
+from-disc : ∀ {i} {A : Type i} 
+  {a₀₀ a₀₁ a₁₀ a₁₁ : A}
+  {p₀₋ : Eq a₀₀ a₀₁} {p₋₀ : Eq a₀₀ a₁₀} {p₋₁ : Eq a₀₁ a₁₁} {p₁₋ : Eq a₁₀ a₁₁}
+  → Eq (p₀₋ * p₋₁) (p₋₀ * p₁₋)
+  → Square p₀₋ p₋₀ p₋₁ p₁₋
+from-disc p = admit _
+
 -- Square calculus
 module _ {i} {A : Type i} where
   ⊡h-assoc :
